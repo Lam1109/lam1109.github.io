@@ -18,8 +18,6 @@ menu:
     url: /about
   - title: Contact
     url: /contact
-  - title: Feed
-    url: /feed.xml
 
 
 # Social Media Settings
@@ -100,4 +98,4 @@ exclude: [
 ]
 
 # Theme
-version: v3.1.0
+version: v1.1.0
