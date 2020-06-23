@@ -11,8 +11,7 @@ tags:
   - java
 author: Lam
 ---
-
-[toc]  
+  
 # 第1章
 
 > Java程序设计平台  
