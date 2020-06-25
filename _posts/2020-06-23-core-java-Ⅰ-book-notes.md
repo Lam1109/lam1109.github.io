@@ -74,13 +74,6 @@ author: Lam
 
 # 第2章 Java程序设计环境
 
-术语名 | 缩写 | 解释
----|---|---
-Java Development Kit（Java开发工具包） | JDK | 编写Java程序的程序员使用的软件
-Java Runtime Environment（Java运行时环境） | JRE | 运行Java程序的用户使用的软件
-Server JRE（服务器JRE） | —— | 在服务器上运行Java程序的软件
-Standard Edition（标准版） | SE | 用于桌面或简单服务器应用的Java平台
-Enterprise Edition（企业版） | EE | 用于复杂服务器应用的Java平台
 
 <table>
   <thead>
@@ -132,12 +125,6 @@ Enterprise Edition（企业版） | EE | 用于复杂服务器应用的Java平�
 ## 3.1 数据类型
 
 ### 3.1.1 整型
-类型 | 存储需求 | 取值范围
----|---|---
-int | 4字节 | -2 147 483 648 ~ 2 147 483 （2^4*8^）
-short | 2字节 | -32 768 ~ 32767 （2^2*8^）
-long | 8字节 | -9 223 372 036 854 775 808 ~ 9 223 372 036 854 775 807 （2^8*8^）
-byte | 1字节 | -128 ~ 127 （2^1*8^）
 
 <table>
   <thead>
@@ -172,11 +159,6 @@ byte | 1字节 | -128 ~ 127 （2^1*8^）
 </table>
 
 ### 3.1.2 浮点型
-类型 | 存储需求 | 取值范围
----|---|---
-float | 4字节 | 大约±3.402 823 47E+38F（有效位数为6~7位）
-double | 8字节 | 大约±1.797 693 134 862 315 70E+308（有效位数为15位）
-
 <table>
   <thead>
     <tr>
@@ -215,17 +197,19 @@ double | 8字节 | 大约±1.797 693 134 862 315 70E+308（有效位数为15位�
 
 ### 3.2.1 变量声明与初始化
 - 如果可以从变量的初始值推断出它的类型，就可以使用关键字var而无须指定类型。
-```
+
+```java
 var n = 12; //number is an int
 var s = "Lam"; //s is a String
 ```
 ### 3.2.2 常量
-- 在Java中，利用关键字final指示常量，表示这个变量只能被赋值一次。习惯上，常量名使用全大写。
-```
+- 在Java中，利用关键字final指示常量，表示这个变量只能被赋值一次。习惯上，常量名使用全大写。  
+
+```java
 final double PI = 3.14;
 ```
 ### 3.2.3 枚举类型
-```
+```java
 enum Size { SMALL, MEDIUM, LARGE, EXTRA_LARGE };
 //现在可以声明这种类型的变量
 Size s = Size.MEDIUM;
@@ -234,12 +218,12 @@ Size s = Size.MEDIUM;
 
 ### 3.3.1 算术运算符
 ### 3.3.2 数学函数与常量
-```
+```java
 double y = Math.pow(x,a); //将y的值设置为x的a次幂
 double x = Math.PI； //将x的值设置为π
 ```
 ### 3.3.3 强制类型转换
-```
+```java
 double x = 9.997;
 int nx = (int) x; //nx = 9，截取整数部分
 int nx = (int) Math.round(x); //nx =10，四舍五入
@@ -251,22 +235,23 @@ int nx = (int) Math.round(x); //nx =10，四舍五入
 - “~” （非）
 - “>>” （右移）
 - “<<” （左移）
-> 移位运算符的右操作数要完成模**32**的运算（左操作数为long类型时，模64）。
-```
+> 移位运算符的右操作数要完成模**32**的运算（左操作数为long类型时，模64）。  
+
+```java
 1 << 35 = 1 << 3;
 ```
 ## 3.4 字符串
 - Java没有**内置**的字符串类型，而是在标准Java类库中提供了一个预定义类**String**。
 
 ### 3.4.1 子串
-```
+```java
 String greeting = "Hello";
 String s = greeting.substring(0,3); // s = "Hel"
 ```
 - substring方法的第二个参数是**不想复制的第一个位置**。
 
 ### 3.4.2 拼接
-```
+```java
 //join方法
 String all = String.join("/","S","M","L","XL"); // all is "S/M/L/XL";
 //repeat方法
@@ -275,9 +260,9 @@ String repeated = "LAM".repeat(3);// repeated is "LAMLAMLAM";
 - 提示: Java字符串不是字符数组。（C程序员初学Java误区。）
 
 ### 3.4.3 检测字符串是否相等
-- 不能使用 == 运算符检测两个字符串是否相等，而要使用**equals**方法。
+- 不能使用 == 运算符检测两个字符串是否相等，而要使用**equals**方法。  
 
-```
+```java
 s.equals(t); //返回值为 true 或者 false
 ```
 
@@ -286,12 +271,12 @@ s.equals(t); //返回值为 true 或者 false
 - 空串是一个Java对象，有自己的串长度（0）和内容（空）。
 - 检查一个字符串既不是null也不是空串
 
-```
+```java
 if (str != null && str.length() != 0) //先检查是否null，因为对null串调用length()方法会报错
 ```
 
 ### 3.4.5 构建字符串
-```
+```java
 StringBuilder sb = new StringBuilder();
 sb.append(ch);// appends a single character
 sb.append(str);// appends a string
@@ -301,7 +286,7 @@ String completedString = sb.toString();
 ## 3.5 输入与输出
 
 ### 3.5.1 读取输入
-```
+```java
 Scanner in = new Scanner(System.in);
 String name = in.nextLine();
 ```
@@ -311,13 +296,13 @@ String name = in.nextLine();
   nextInt() 读一整数
 
 ### 3.5.2 格式化输出
-```
+```java
 System.out.println("LAM"); // print LAM
 ```
 
 ### 3.5.3 文件输入与输出
 
-```
+```java
 //文件输入
 
 //方法一
@@ -338,7 +323,7 @@ pw.close();// 必要
 
 ### 3.5.4 中断控制流程的语句
 
-```
+```java
 break; // 终止循环
 continue； // 终止本次循环，跳到循环首部(进行下一次循环)。
 ```
@@ -350,13 +335,13 @@ continue； // 终止本次循环，跳到循环首部(进行下一次循环)。
 
 ### 3.7.1 声明数组
 
-```
+```java
 int[] a = new int[100]; // or var a = new int[100];
 ```
 
 ### 3.7.2 for each 循环
 
-```
+```java
 for (int e : a){
     System.out.println(e); // 打印数组a中每一个元素
 }
@@ -365,7 +350,7 @@ for (int e : a){
 ### 3.7.3 数组拷贝
 - 在Java中，允许将一个数组变量拷贝到另一个数组变量。
 
-```
+```java
 int[] lunckyNumbers = smallPrimes;
 luckyNumbers[5] = 12; // now smallPrimes[5] is also 12
 //即不会新建数组，本质上是同一个数组。
@@ -373,7 +358,7 @@ luckyNumbers[5] = 12; // now smallPrimes[5] is also 12
 
 - 要新建一个数组，可以使用**Arrays**类中的**copyOf**方法。
 
-```
+```java
 inr[] copy = Arrays.copyOf(luckyNumbers, luckyNumbers.length); // copy是一个新的数组
 ```
 
@@ -382,7 +367,7 @@ inr[] copy = Arrays.copyOf(luckyNumbers, luckyNumbers.length); // copy是一个�
 ### 3.7.4 数组排序
 - 使用**Arrays**类中的**sort**方法。
 
-```
+```java
 // int[] a = {3,1,2};
 Arrays.sort(a); //  升序，优化的快速排序（QuickSort）算法
 // now a = {1,2,3}
