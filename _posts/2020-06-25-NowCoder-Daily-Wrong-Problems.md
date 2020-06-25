@@ -15,7 +15,7 @@ paginate: true
 ---
 
 ## 2020.6.25
-![image](https://gitee.com/Team3_1/img/blob/master/problem1.png)
+![image](/assets/img/uploads/profile.png)
 
 
 
