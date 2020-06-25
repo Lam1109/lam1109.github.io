@@ -14,8 +14,8 @@ author: Lam
 
 # 第1章 Java程序设计概述
 
-> Java程序设计平台 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Java发展简史  
-Java“白皮书”的关键术语  &nbsp;&nbsp; Java applet与Internet  
+> Java程序设计平台&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Java发展简史  
+Java“白皮书”的关键术语&nbsp;&nbsp;&nbsp;&nbsp;Java applet与Internet  
 
 ## 1.1 程序设计平台
 - Java并不只是一种语言，更是一个完整的平台。
@@ -111,10 +111,10 @@ Java“白皮书”的关键术语  &nbsp;&nbsp; Java applet与Internet
 </table>
 
 # 第3章 Java的基本程序设计结构
-> 数据类型 &nbsp;&nbsp; 变量与常量  
-  运算符 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 字符串  
-  输入输出 &nbsp;&nbsp; 控制流  
-  大数 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 数组  
+> 数据类型&nbsp;&nbsp;&nbsp;&nbsp;变量与常量  
+  运算符&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;字符串  
+  输入输出&nbsp;&nbsp;&nbsp;&nbsp;控制流  
+  大数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数组  
 
 ## 3.1 数据类型
 
