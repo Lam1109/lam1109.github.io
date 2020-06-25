@@ -3,7 +3,7 @@ date: 2020-06-23 14:22:40
 layout: post
 title: Core Java™, Volume I–Fundamentals
 subtitle: (Eleventh Edition) Book Notes
-description: This revised edition of the classic Core Java™, Volume I–Fundamentals , is the definitive guide to Java for serious programmers who want to put Java to work on real projects.
+description: The book notes of Core Java™, Volume I–Fundamentals.
 image: assets/img/post_img/java1.png
 optimized_image: assets/img/post_img/java2.png
 category: java
