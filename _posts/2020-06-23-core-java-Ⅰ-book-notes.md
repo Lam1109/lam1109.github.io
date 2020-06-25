@@ -11,13 +11,11 @@ tags:
   - java
 author: Lam
 ---
-  
+
 # 第1章 Java程序设计概述
 
-> Java程序设计平台  
-  Java发展简史  
-  Java“白皮书”的关键术语  
-  Java applet与Internet  
+> Java程序设计平台 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Java发展简史  
+Java“白皮书”的关键术语  &nbsp;&nbsp; Java applet与Internet  
 
 ## 1.1 程序设计平台
 - Java并不只是一种语言，更是一个完整的平台。
@@ -66,7 +64,7 @@ author: Lam
 - Java能够适应不断发展的环境。
 
 ## 1.3 Java applet 与 Internet
--在网页中运行的Java程序称为 applet。
+- 在网页中运行的Java程序称为 applet。
 
 ## 1.4 Java发展简史
 - Sun公式的“Green”项目。
@@ -113,14 +111,10 @@ author: Lam
 </table>
 
 # 第3章 Java的基本程序设计结构
-> 数据类型  
-  变量与常量  
-  运算符  
-  字符串  
-  输入输出  
-  控制流  
-  大数  
-  数组  
+> 数据类型 &nbsp;&nbsp; 变量与常量  
+  运算符 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 字符串  
+  输入输出 &nbsp;&nbsp; 控制流  
+  大数 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 数组  
 
 ## 3.1 数据类型
 
@@ -138,22 +132,22 @@ author: Lam
     <tr>
       <td>int</td>
       <td>4字节</td>
-      <td>-2 147 483 648 ~ 2 147 483 （2^4*8^）</td>
+      <td>-2 147 483 648 ~ 2 147 483 （2<sup>4*8</sup>）</td>
     </tr>
     <tr>
       <td>short</td>
       <td>2字节</td>
-      <td>-32 768 ~ 32767 （2^2*8^）</td>
+      <td>-32 768 ~ 32767 （2<sup>2*8</sup>）</td>
     </tr>
     <tr>
       <td>long</td>
       <td>8字节</td>
-      <td>-9 223 372 036 854 775 808 ~ 9 223 372 036 854 775 807 （2^8*8^）</td>
+      <td>-9 223 372 036 854 775 808 ~ 9 223 372 036 854 775 807 （2<sup>8*8</sup>）</td>
     </tr>
     <tr>
       <td>byte</td>
       <td>1字节</td>
-      <td> -128 ~ 127 （2^1*8^）</td>
+      <td> -128 ~ 127 （2<sup>1*8</sup>）</td>
     </tr>
   </tbody>
 </table>
