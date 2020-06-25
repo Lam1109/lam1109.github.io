@@ -6,7 +6,7 @@ subtitle: Daily Code
 description: Daily programming questions from leetcode.
 image: assets/img/post_img/LeetCode1.png
 optimized_image: assets/img/post_img/LeetCode2.png
-category: java
+category: LeetCode
 tags:
   - programming
   - java
@@ -21,7 +21,7 @@ paginate: true
 > 说明：
 - 拆分时可以重复使用字典中的单词。
 - 你可以假设字典中没有重复的单词。
-- 链接：https://leetcode-cn.com/problems/word-break
+- 链接：<a href="https://leetcode-cn.com/problems/word-break">https://leetcode-cn.com/problems/word-break</a>
 
 ### Solution
 
@@ -45,7 +45,9 @@ class Solution {
 }
 ```
 ### Get
+
 - **contains**方法 返回布尔值
+
 ```java
 /* String s;
    List<String> list = new ArrayList<String>(); */
