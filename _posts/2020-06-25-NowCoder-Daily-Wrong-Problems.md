@@ -15,7 +15,7 @@ paginate: true
 ---
 
 ## 2020.6.25
-![image](https://github.com/Lam1109/lam1109.github.io/blob/master/assets/img/NowCoder_img/20200625/problem1.png)
+![image](https://gitee.com/Team3_1/img/blob/master/problem1.png)
 
 
 
