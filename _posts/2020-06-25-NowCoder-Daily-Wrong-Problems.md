@@ -4,8 +4,8 @@ layout: post
 title: NowCoder Daily Problems
 subtitle: Daily Problems
 description: Daily Problems from NowCoder.
-image: assets/img/post_img/NowCoder1.png
-optimized_image: /assets/img/uploads/profile.png
+image: /assets/img/post_img/NowCoder1.png
+optimized_image: /assets/img/post_img/NowCoder2.png
 category: NowCoder
 tags:
   - problems
