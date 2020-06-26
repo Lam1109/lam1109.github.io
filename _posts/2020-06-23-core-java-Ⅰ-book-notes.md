@@ -371,122 +371,132 @@ Arrays.sort(a); //  升序，优化的快速排序（QuickSort）算法
 ### 3.7.5 多维数组
 - Java实际上没有多维数组，多维数组被解释为“数组的数组”。
 
-  
+# 第4章 对象与类
+> 面对对象程序设计概述  
+  对象构造  
+  使用预定义类  
+  包  
+  用户自定义类  
+  静态字段与静态方法  
+  文档注释
+  方法参数  
+  类设计技巧
 
+## 4.1 面对对象程序设计概述
+- 面对对象程序设计（object-oriented programming，**OOP**）是当今主流的程序设计范型。
+- Algorithms + Data Structures = Programs
 
+### 4.1.1 类
+- **类**（class）是构造对象的模板或者蓝图。
 
+### 4.1.2 对象
+- 对象的三个主要特性：
+> 对象的行为——可以对对象完成哪些操作，或者可以对对象应用哪些方法？
+  对象的状态——当调用方法时，对象会如何响应？
+  对象的标识——如何区分具有相同行为与状态的不同对象？
 
+### 4.1.3 识别类
+- 识别类的一个简单经验是在分析问题的过程中寻找名词，而方法对应着动词。
 
+### 4.1.4 类之间的关系
+- **依赖**（use-a）
+- **聚合**（has-a）
+- **继承**（is-a）
 
+## 4.2 使用预定义类
+### 4.2.1 对象与对象变量
+- 构造器的名字应该与类名相同。
 
+## 4.3 静态字段与静态方法
+### 4.3.1 静态字段
+- 如果将一个字段定一为**static**，每个类只有一个这样的字段。
+- 静态字段被称为**类字段**。术语“静态”至少沿用了C++的叫法，并无实际意义。
 
-## Inline HTML elements
+```java
+class Employee{
+    private static int nextId = 1;
+    private int id;
+    ...
+}
+```
+> 每一个Employee对象都有一个自己的id字段，但这个类的所有实例将共享一个nextId字段。
 
-HTML defines a long list of available inline tags, a complete list of which can be found on the [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/HTML/Element).
+### 4.3.2 静态常量
 
-- **To bold text**, use `<strong>`.
-- *To italicize text*, use `<em>`.
-- Abbreviations, like <abbr title="HyperText Markup Langage">HTML</abbr> should use `<abbr>`, with an optional `title` attribute for the full phrase.
-- Citations, like <cite>&mdash; Thiago Rossener</cite>, should use `<cite>`.
-- <del>Deleted</del> text should use `<del>` and <ins>inserted</ins> text should use `<ins>`.
-- Superscript <sup>text</sup> uses `<sup>` and subscript <sub>text</sub> uses `<sub>`.
+```java
+public class Math{
+    ...
+    public static final double PI = 3.14159265358979323846;
+    ...
+}
+```
+> 在程序中我们就可以使用Math.PI来访问这个常量。
 
-Most of these elements are styled by browsers with few modifications on our part.
+### 4.3.3 静态方法
+- 以下两种情况可以使用静态方法：
+> 方法不需要访问对象状态，因为它需要的所有参数都通过显示参数提供（例如：Math.pow）。  
+  方法只需要访问类的静态字段。
 
-# Heading 1
+## 4.4 方法参数
+- 在Java中，对方法参数能做什么和不能做什么：
+> 方法不能修改基本数据类型的参数（即数值型和布尔型）。  
+  方法可以改变对象参数的状态。
+  方法不能让一个对象参数引用一个新的对象。
 
-## Heading 2
+## 4.5 对象构造
+### 4.5.1 重载
+- 有些类有多个构造器。这种功能叫做**重载**（overloading）。
 
-### Heading 3
+### 4.5.2 默认字段初始化
+- 数值为0
+- 布尔值为false
+- 对象引用为null
 
-#### Heading 4
+### 4.5.3 无参数的构造器
+- 由无参数构造器创建对象时，对象的状态会设置为设当的默认值。如果写一个类时没有编写构造器，就会为你提供一个无参数构造器。
 
-Vivamus sagittis lacus vel augue rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+### 4.5.4 参数名
 
-## Code
-
-Cum sociis natoque penatibus et magnis dis `code element` montes, nascetur ridiculus mus.
-
-```js
-// Example can be run directly in your JavaScript console
-
-// Create a function that takes two arguments and returns the sum of those arguments
-var adder = new Function("a", "b", "return a + b");
-
-// Call the function
-adder(2, 6);
-// > 8
+```java
+public Employee(String name, double salary){
+    this.name = name;
+    this.salary = salary;
+}
 ```
 
-Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa.
+## 4.6 包
+- C/C&#43;&#43;程序员经常将import与#include弄混。实际上，两者完全不同。C/C&#43;&#43;编译器无法查看任何其他文件的内部，必须使用#include来加载外部特性的声明。Java编译器则不同，可以查看其他文件的内部，只需要告诉它到哪里去查看就可以了。
 
-## Lists
+## 4.7 文档注释
+### 4.7.1 类注释
+- 类注释必须放在import语句之后，类定义之前。
 
-Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+### 4.7.2 方法注释
+```java
+/**
+* @param variable description 参数
+* @return description 返回值
+* @throws class description 可能的异常
+*/
+```
 
-* Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-* Donec id elit non mi porta gravida at eget metus.
-* Nulla vitae elit libero, a pharetra augue.
+### 4.7.3 通用注释
 
-Donec ullamcorper nulla non metus auctor fringilla. Nulla vitae elit libero, a pharetra augue.
+```java
+/**
+* @author name 作者
+* @version text 版本
+*/
+```
 
-1. Vestibulum id ligula porta felis euismod semper.
-2. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-3. Maecenas sed diam eget risus varius blandit sit amet non magna.
-
-Cras mattis consectetur purus sit amet fermentum. Sed posuere consectetur est at lobortis.
-
-Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nullam quis risus eget urna mollis ornare vel eu leo.
-
-## Images
-
-Quisque consequat sapien eget quam rhoncus, sit amet laoreet diam tempus. Aliquam aliquam metus erat, a pulvinar turpis suscipit at.
-
-![placeholder](https://placehold.it/800x400 "Large example image")
-![placeholder](https://placehold.it/400x200 "Medium example image")
-![placeholder](https://placehold.it/200x200 "Small example image")
-
-## Tables
-
-Aenean lacinia bibendum nulla sed consectetur. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Upvotes</th>
-      <th>Downvotes</th>
-    </tr>
-  </thead>
-  <tfoot>
-    <tr>
-      <td>Totals</td>
-      <td>21</td>
-      <td>23</td>
-    </tr>
-  </tfoot>
-  <tbody>
-    <tr>
-      <td>Alice</td>
-      <td>10</td>
-      <td>11</td>
-    </tr>
-    <tr>
-      <td>Bob</td>
-      <td>4</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <td>Charlie</td>
-      <td>7</td>
-      <td>9</td>
-    </tr>
-  </tbody>
-</table>
-
-Nullam id dolor id nibh ultricies vehicula ut id elit. Sed posuere consectetur est at lobortis. Nullam quis risus eget urna mollis ornare vel eu leo.
-
-
+## 4.8 类设计技巧
+- 1. 一定要保证数据私有。
+- 2. 一定要对数据进行初始化。
+- 3. 不要在类中使用过多的基本类型。
+- 4. 不是所有的字段都需要单独的字段访问器和字段更改器。
+- 5. 分解有过多职责的类。
+- 6. 类名和方法名要能够体现它们的职责。
+- 7. 优先使用不可变的类。
 
 
 
