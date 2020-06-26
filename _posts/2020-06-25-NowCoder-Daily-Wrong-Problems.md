@@ -14,6 +14,10 @@ author: Lam
 paginate: true
 ---
 
+* [2020\.6\.26](#2020626)
+  * [Problem 1](#problem-1)
+  * [Analysis](#analysis)
+
 ## 2020.6.26
 
 ### Problem 1
