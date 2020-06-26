@@ -4,8 +4,8 @@ layout: post
 title: Core Java™, Volume I–Fundamentals
 subtitle: (Eleventh Edition) Book Notes
 description: The book notes of Core Java™, Volume I–Fundamentals.
-image: assets/img/post_img/java1.png
-optimized_image: assets/img/post_img/java2.png
+image: /assets/img/post_img/java1.png
+optimized_image: /assets/img/post_img/java2.png
 category: java
 tags:
   - java
