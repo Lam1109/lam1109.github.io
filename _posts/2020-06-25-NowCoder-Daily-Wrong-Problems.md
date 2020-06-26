@@ -14,8 +14,51 @@ author: Lam
 paginate: true
 ---
 
-## 2020.6.25
-![image](/assets/img/NowCoder_img/20200625/problem1.png)
+## 2020.6.26
 
+### Problem 1
+![image](/assets/img/NowCoder_img/20200626_1.png)
 
+### Analysis
 
+<table>
+  <thead>
+    <tr>
+      <th>作用域</th>
+      <th>当前类</th>
+      <th>统一package</th>
+      <th>子孙类</th>
+      <th>其他package</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>public</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+    </tr>
+    <tr>
+      <td>protected</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>friendly</td>
+      <td>√</td>
+      <td>√</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>private</td>
+      <td>√</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+  </tbody>
+</table>
