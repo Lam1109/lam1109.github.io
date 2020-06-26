@@ -22,6 +22,16 @@ paginate: true
 - 拆分时可以重复使用字典中的单词。
 - 你可以假设字典中没有重复的单词。
 - 链接：<a href="https://leetcode-cn.com/problems/word-break">https://leetcode-cn.com/problems/word-break</a>
+- 示例：
+
+```java
+输入: s = "leetcode", wordDict = ["leet", "code"]
+输出: true
+解释: 返回 true 因为 "leetcode" 可以被拆分成 "leet code"。
+
+输入: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
+输出: false
+```
 
 ### Solution
 
@@ -55,7 +65,121 @@ class Solution {
    list.contains("hello"); //检验list（集合）是否包含元素"hello"
 ```
 
+## 2020.06.26
+### Problem
+- 编写代码，移除未排序链表中的重复节点。保留最开始出现的节点。
 
+> 说明：
+- 链接：<a href="https://leetcode-cn.com/problems/remove-duplicate-node-lcci">https://leetcode-cn.com/problems/remove-duplicate-node-lcci</a>
+- 示例：
+
+```java
+输入：[1, 2, 3, 3, 2, 1]
+输出：[1, 2, 3]
+
+输入：[1, 1, 1, 1, 2]
+输出：[1, 2]
+```
+
+### Solution
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode removeDuplicateNodes(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+
+        ListNode dummyHead = new ListNode(-1);
+        dummyHead.next = head;
+
+        ListNode hold = dummyHead;
+        if(head==null){
+            return head;
+        }
+        while(hold.next != null){
+            if(!list.contains(hold.next.val)){
+                list.add(hold.next.val);
+                hold = hold.next;
+            }
+            else{
+                hold.next = hold.next.next;
+            }
+        }
+        return dummyHead.next;
+    }
+}
+```
+
+### Get
+- Java中的**集合**  
+
+
+<table>
+  <thead>
+    <tr>
+      <th>集合名</th>
+      <th>线程安全</th>
+      <th>线程同步</th>
+      <th>元素重复</th>
+      <th>允许null</th>
+      <th>存储有序</th>
+      <th>添加方法</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>ArrayList</td>
+      <td>×</td>
+      <td>×</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+      <td>add()</td>
+    </tr>
+    <tr>
+      <td>LinkedList</td>
+      <td>×</td>
+      <td>×</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+      <td>add()</td>
+    </tr>
+    <tr>
+      <td>HashSet</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>add()</td>
+    </tr>
+    <tr>
+      <td>HashMap</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>put()</td>
+    </tr>
+    <tr>
+      <td>Hashtable</td>
+      <td>√</td>
+      <td>√</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+      <td>add()</td>
+    </tr>
+  </tbody>
+</table>
 
 
 
