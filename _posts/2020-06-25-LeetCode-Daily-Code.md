@@ -10,10 +10,19 @@ category: LeetCode
 tags:
   - programming
   - java
-author: thiagorossener
+author: Lam
 paginate: true
 ---
 
+* [2020\.06\.25](#20200625)
+  * [Problem](#problem)
+  * [Solution](#solution)
+  * [Get](#get)
+* [2020\.06\.26](#20200626)
+  * [Problem](#problem-1)
+  * [Solution](#solution-1)
+  * [Get](#get-1)
+ 
 ## 2020.06.25
 ### Problem
 - 给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定s 是否可以被空格拆分为一个或多个在字典中出现的单词。
@@ -180,10 +189,4 @@ class Solution {
     </tr>
   </tbody>
 </table>
-
-
-
-
-
-
 
