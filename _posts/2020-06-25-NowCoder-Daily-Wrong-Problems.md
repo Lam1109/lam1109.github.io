@@ -15,7 +15,7 @@ paginate: true
 ---
 
 ## 2020.6.25
-![image](/assets/img/uploads/profile.png)
+![image](/assets/img/NowCoder_img/20200625/problem1.png)
 
 
 
