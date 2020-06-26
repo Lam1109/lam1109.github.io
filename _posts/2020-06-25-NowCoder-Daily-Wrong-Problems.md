@@ -17,7 +17,7 @@ paginate: true
 ## 2020.6.26
 
 ### Problem 1
-![image](/assets/img/NowCoder_img/20200626_1.png)
+![image](/assets/img/nowcoder_img/20200626_1.png)
 
 ### Analysis
 
