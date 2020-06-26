@@ -5,7 +5,7 @@ title: LeetCode Daily Code
 subtitle: Daily Code
 description: Daily programming questions from leetcode.
 image: assets/img/post_img/LeetCode1.png
-optimized_image: assets/img/post_img/LeetCode2.png
+optimized_image: /assets/img/uploads/profile.png
 category: LeetCode
 tags:
   - programming
