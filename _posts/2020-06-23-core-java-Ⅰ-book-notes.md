@@ -12,7 +12,6 @@ tags:
   - fundamentals
 author: Lam
 ---
-
 * [第1章 Java程序设计概述](#%E7%AC%AC1%E7%AB%A0-java%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E6%A6%82%E8%BF%B0)
   * [1\.1 程序设计平台](#11-%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E5%B9%B3%E5%8F%B0)
   * [1\.2 Java“白皮书”的关键术语](#12-java%E7%99%BD%E7%9A%AE%E4%B9%A6%E7%9A%84%E5%85%B3%E9%94%AE%E6%9C%AF%E8%AF%AD)
@@ -87,6 +86,60 @@ author: Lam
     * [4\.7\.2 方法注释](#472-%E6%96%B9%E6%B3%95%E6%B3%A8%E9%87%8A)
     * [4\.7\.3 通用注释](#473-%E9%80%9A%E7%94%A8%E6%B3%A8%E9%87%8A)
   * [4\.8 类设计技巧](#48-%E7%B1%BB%E8%AE%BE%E8%AE%A1%E6%8A%80%E5%B7%A7)
+* [第5章 继承](#%E7%AC%AC5%E7%AB%A0-%E7%BB%A7%E6%89%BF)
+  * [5\.1 类、超类和子类](#51-%E7%B1%BB%E8%B6%85%E7%B1%BB%E5%92%8C%E5%AD%90%E7%B1%BB)
+    * [5\.1\.1 定义子类](#511-%E5%AE%9A%E4%B9%89%E5%AD%90%E7%B1%BB)
+    * [5\.1\.2 子类构造器](#512-%E5%AD%90%E7%B1%BB%E6%9E%84%E9%80%A0%E5%99%A8)
+    * [5\.1\.3 继承层次](#513-%E7%BB%A7%E6%89%BF%E5%B1%82%E6%AC%A1)
+    * [5\.1\.4 阻止继承：final类和方法](#514-%E9%98%BB%E6%AD%A2%E7%BB%A7%E6%89%BFfinal%E7%B1%BB%E5%92%8C%E6%96%B9%E6%B3%95)
+    * [5\.1\.5 抽象类](#515-%E6%8A%BD%E8%B1%A1%E7%B1%BB)
+    * [5\.1\.6 受保护的访问](#516-%E5%8F%97%E4%BF%9D%E6%8A%A4%E7%9A%84%E8%AE%BF%E9%97%AE)
+  * [5\.2 Object: 所有类的超类](#52-object-%E6%89%80%E6%9C%89%E7%B1%BB%E7%9A%84%E8%B6%85%E7%B1%BB)
+    * [5\.2\.1 Object类型的变量](#521-object%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8F%98%E9%87%8F)
+    * [5\.2\.2 equals方法](#522-equals%E6%96%B9%E6%B3%95)
+    * [5\.2\.3 相等测试与继承](#523-%E7%9B%B8%E7%AD%89%E6%B5%8B%E8%AF%95%E4%B8%8E%E7%BB%A7%E6%89%BF)
+  * [5\.3 泛型数组列表](#53-%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84%E5%88%97%E8%A1%A8)
+    * [5\.3\.1 声明数组列表](#531-%E5%A3%B0%E6%98%8E%E6%95%B0%E7%BB%84%E5%88%97%E8%A1%A8)
+    * [5\.3\.2 访问数组列表元素](#532-%E8%AE%BF%E9%97%AE%E6%95%B0%E7%BB%84%E5%88%97%E8%A1%A8%E5%85%83%E7%B4%A0)
+  * [5\.4 对象包装器与自动装箱](#54-%E5%AF%B9%E8%B1%A1%E5%8C%85%E8%A3%85%E5%99%A8%E4%B8%8E%E8%87%AA%E5%8A%A8%E8%A3%85%E7%AE%B1)
+  * [5\.5 反射](#55-%E5%8F%8D%E5%B0%84)
+    * [5\.5\.1 Class类](#551-class%E7%B1%BB)
+    * [5\.5\.2 声明异常入门](#552-%E5%A3%B0%E6%98%8E%E5%BC%82%E5%B8%B8%E5%85%A5%E9%97%A8)
+  * [5\.6 继承的设计技巧](#56-%E7%BB%A7%E6%89%BF%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%8A%80%E5%B7%A7)
+* [第6章 接口、lambda表达式与内部类](#%E7%AC%AC6%E7%AB%A0-%E6%8E%A5%E5%8F%A3lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%8E%E5%86%85%E9%83%A8%E7%B1%BB)
+  * [6\.1 接口](#61-%E6%8E%A5%E5%8F%A3)
+    * [6\.1\.1 接口的概念](#611-%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%A6%82%E5%BF%B5)
+    * [6\.1\.2 接口的属性](#612-%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%B1%9E%E6%80%A7)
+    * [6\.1\.3 接口与抽象类](#613-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB)
+    * [6\.1\.4 静态和私有方法](#614-%E9%9D%99%E6%80%81%E5%92%8C%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95)
+    * [6\.1\.5 接口与回调](#615-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E5%9B%9E%E8%B0%83)
+    * [6\.1\.6 对象克隆](#616-%E5%AF%B9%E8%B1%A1%E5%85%8B%E9%9A%86)
+  * [6\.2 lambda表达式](#62-lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+    * [6\.2\.1 为什么引入lambda表达式](#621-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BC%95%E5%85%A5lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+    * [6\.2\.2 lambda表达式的语法](#622-lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E8%AF%AD%E6%B3%95)
+  * [6\.3 内部类](#63-%E5%86%85%E9%83%A8%E7%B1%BB)
+* [第7章 异常、断言和日志](#%E7%AC%AC7%E7%AB%A0-%E5%BC%82%E5%B8%B8%E6%96%AD%E8%A8%80%E5%92%8C%E6%97%A5%E5%BF%97)
+  * [7\.1 处理错误](#71-%E5%A4%84%E7%90%86%E9%94%99%E8%AF%AF)
+    * [7\.1\.1 异常分类](#711-%E5%BC%82%E5%B8%B8%E5%88%86%E7%B1%BB)
+    * [7\.1\.2 声明检查型异常](#712-%E5%A3%B0%E6%98%8E%E6%A3%80%E6%9F%A5%E5%9E%8B%E5%BC%82%E5%B8%B8)
+    * [7\.1\.3 如何抛出异常](#713-%E5%A6%82%E4%BD%95%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8)
+    * [7\.1\.4 创建异常类](#714-%E5%88%9B%E5%BB%BA%E5%BC%82%E5%B8%B8%E7%B1%BB)
+  * [7\.2 捕获异常](#72-%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8)
+    * [7\.2\.1 捕获异常](#721-%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8)
+    * [7\.2\.2 捕获多个异常](#722-%E6%8D%95%E8%8E%B7%E5%A4%9A%E4%B8%AA%E5%BC%82%E5%B8%B8)
+    * [7\.2\.3 再次抛出异常与异常链](#723-%E5%86%8D%E6%AC%A1%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8%E4%B8%8E%E5%BC%82%E5%B8%B8%E9%93%BE)
+    * [7\.2\.4 finally子句](#724-finally%E5%AD%90%E5%8F%A5)
+    * [7\.2\.5 分析堆栈轨迹元素](#725-%E5%88%86%E6%9E%90%E5%A0%86%E6%A0%88%E8%BD%A8%E8%BF%B9%E5%85%83%E7%B4%A0)
+  * [7\.3 使用异常的技巧](#73-%E4%BD%BF%E7%94%A8%E5%BC%82%E5%B8%B8%E7%9A%84%E6%8A%80%E5%B7%A7)
+  * [7\.4 使用断言](#74-%E4%BD%BF%E7%94%A8%E6%96%AD%E8%A8%80)
+    * [7\.4\.1 断言的概念](#741-%E6%96%AD%E8%A8%80%E7%9A%84%E6%A6%82%E5%BF%B5)
+    * [7\.4\.2 启用和禁用断言](#742-%E5%90%AF%E7%94%A8%E5%92%8C%E7%A6%81%E7%94%A8%E6%96%AD%E8%A8%80)
+    * [7\.4\.3 使用断言完成参数检查](#743-%E4%BD%BF%E7%94%A8%E6%96%AD%E8%A8%80%E5%AE%8C%E6%88%90%E5%8F%82%E6%95%B0%E6%A3%80%E6%9F%A5)
+  * [7\.5 日志](#75-%E6%97%A5%E5%BF%97)
+    * [7\.5\.1 基本日志](#751-%E5%9F%BA%E6%9C%AC%E6%97%A5%E5%BF%97)
+    * [7\.5\.2 高级日志](#752-%E9%AB%98%E7%BA%A7%E6%97%A5%E5%BF%97)
+    * [7\.5\.3 处理器](#753-%E5%A4%84%E7%90%86%E5%99%A8)
+    * [7\.5\.4 日志技巧](#754-%E6%97%A5%E5%BF%97%E6%8A%80%E5%B7%A7)
   
 # 第1章 Java程序设计概述
 
@@ -834,7 +887,7 @@ Comparable x = new Employee(...); // OK provided Employee implements Comparable
 - 在**Java 8**中，允许在接口中增加静态方法。
 
 ### 6.1.5 接口与回调
-- 回调（callback）是一种常见的程序设计模式。在这种模式中，可以指定某个特定事件发生时应该采取的动作。
+- **回调**（callback）是一种常见的程序设计模式。在这种模式中，可以指定某个特定事件发生时应该采取的动作。
 
 ```java
 import java.awt.*;
@@ -861,7 +914,7 @@ var original = new Employee("Lam", 50000);
 Employee copy = original; // 本质上是同一个对象
 copy.raiseSalary(10); // oops--also changed original
 ```
-- 如果希望copy是一个新的对象，就需要使用clone方法。
+- 如果希望copy是一个新的对象，就需要使用**clone**方法。
 
 ```java
 Employee copy = original.clone();
@@ -871,10 +924,10 @@ copy.raiseSalary(10); // OK--just copy changed
 ## 6.2 lambda表达式
 
 ### 6.2.1 为什么引入lambda表达式
-- lambda表达式是一个可传递的代码块，可以在以后执行一次或多次。
+- **lambda**表达式是一个可传递的代码块，可以在以后执行一次或多次。
 
 ### 6.2.2 lambda表达式的语法
-- lambda表达式的一种形式：
+- **lambda**表达式的一种形式：
 
 ```java
 (String first, String second) -> 
@@ -885,7 +938,7 @@ copy.raiseSalary(10); // OK--just copy changed
 }
 ```
 
-- 如果一个lambda表达只在某些分支返回一个值，而另外一些分支不返回值，这是不合法的。例如，(int x) -> { if (x >= 0) return 1; }就不合法。
+- 如果一个lambda表达只在某些分支返回一个值，而另外一些分支不返回值，这是不合法的。例如，**(int x) -> { if (x >= 0) return 1; }**就不合法。
 
 ## 6.3 内部类
 - 内部类是定义在另一个类中的类。
@@ -914,3 +967,246 @@ copy.raiseSalary(10); // OK--just copy changed
 ### 7.1.1 异常分类
 
 ![image](/assets/img/post_img/Exception.png)
+
+- 所有的异常都是由**Throwable**继承而来的，但在下一层立即分解为两个分支：**Error**和**Exception**。
+- **Error**类层次结构描述了Java运行时系统的内部错误和资源耗尽错误。
+- **Exception**类层次：
+- 派生于RuntimeException的异常包括以下问题：
+> 1. 错误的强制类型转换  
+> 2. 数组访问越界  
+> 3. 访问null指针
+
+- 不是派生于RuntimeException的异常包括：
+> 1. 试图超越文件末尾继续读取数据。  
+> 2. 试图打开一个不存在的文件。
+> 3. 试图根据给定的字符串查找Class对象，而这个字符串表示的类并不存在。
+
+- Java语言规范将派生于**Error**类或**RuntimeException**类的所有异常称为**非检查型**（unchecked）异常，所有其他的异常称为**检查型**（checked）异常。
+
+### 7.1.2 声明检查型异常
+- 4种情况会抛出异常：
+> 1. 调用了一个抛出检查型异常的方法，例如，**FileInputStream**构造器。
+> 2. 检测到一个错误，并且利用throw语句抛出一个检查型异常。
+> 3. 程序出现错误，例如，**a[-1] = 0**会抛出一个非检查型异常。
+> 4. Java虚拟机或运行时库出现内部错误。
+
+- 一个方法必须声明所有可能抛出的检查型异常，而非检查型异常要么在你的控制之外（**Error**），要么是由从一开始就应该避免的情况所导致的（**RuntimeException**）。
+- 若超类方法没有抛出任何检查型异常，子类也不能抛出任何检查型异常。
+
+### 7.1.3 如何抛出异常
+
+```java
+String readData(Scanner in) throws EOFException{
+    ...
+    while(...){
+        if (!in.hasNext()) // EOF encountered
+        {
+            if (n < len)
+                throw new EOFException();
+        }
+        ...
+    }
+    return s;
+}
+```
+
+### 7.1.4 创建异常类
+- 定义一个派生于**Exception**的类，或者派生于**Exception**的某个子类，如**IOException**。
+- 自定义的异常类通常包含两个构造器，一个是默认的构造器，另一个是包含详细描述信息的构造器。
+
+```java
+class FileFormatException extends IOException{
+    public FileFormatException() {
+    
+    }
+    public FileFormatException(String gripe){
+        super(gripe);
+    }
+}
+```
+
+- 现在，就可以抛出自定义的异常类型了。
+
+```java
+String readData(BufferedReader in) throws FileFormatException{
+    ...
+    while(...){
+        if (ch == -1) // EOF encountered
+        {
+            if (n < len)
+                throw new FileFormatException();
+        }
+        ...
+    }
+    return s;
+}
+```
+
+## 7.2 捕获异常
+### 7.2.1 捕获异常
+- 捕获异常需要设置**try/catch**语句块。
+
+```java
+try {
+    code
+    more code
+    more code
+}
+catch (ExceptionType e){
+    handler for this type
+}
+```
+- 若try语句块中的任何代码抛出了catch子句中指定的一个异常类，那么
+1. 程序将跳过try语句块的其余代码。
+2. 程序将执行catch子句中的处理器代码。
+
+- 若try语句块中的代码没有抛出任何异常，那么程序将跳过catch语句。
+
+### 7.2.2 捕获多个异常
+
+```java
+try {
+    code that might throw exceptions
+}
+catch (FileNotFoundException e){
+    emergency action for missing files
+}
+catch (IOException e){
+    emergency action for all other I/O problems
+}
+...
+```
+
+- **e.getMessage()**得到详细的错误消息，**e.getClass().getName()**得到异常对象的实际类型。
+
+### 7.2.3 再次抛出异常与异常链
+
+```java
+try {
+    access the database
+}
+catch (SQLException e) {
+    throw new ServletException("database error: " + e.getMessage());
+}
+```
+
+### 7.2.4 finally子句
+- 不管是否有异常被捕获，finally子句中的代码都会执行。
+
+```java
+var in = new FileInputStream(...);
+try {
+    // 1
+    code that might throw exceptions
+    // 2
+}
+catch (IOException e){
+    // 3
+    show error message
+    // 4
+}
+finally {
+    // 5
+    in.close();
+}
+// 6
+```
+
+- 执行顺序：
+1. 代码没有抛出异常。执行顺序为 1、2、5、6。
+2. 代码抛出了一个异常，并在一个catch子句中捕获。  
+    若catch子句没有抛出异常，程序将执行finally子句之后的第一条语句。执行顺序为 1、3、4、5、6。  
+    若catch子句抛出了一个异常，异常将会被抛回到这个方法的调用者。执行顺序为 1、3、5。  
+3. 代码抛出了一个异常，但是没有任何catch子句捕获这个异常。执行完finally子句中的语句后，会将异常抛回给这个方法的调用者。执行顺序为 1、5。
+
+- 当try语句块和finally语句块中都有return语句时。利用return语句从try语句块中间退出。在方法返回前，会执行finally子句块。finally中的返回值会覆盖原来的返回值。
+
+```java
+public static int parseInt(String s) {
+    try {
+        return Integer.parseInt(s);
+    }
+    finally {
+        return 0;
+    }
+}
+// will return 0
+```
+
+### 7.2.5 分析堆栈轨迹元素
+- **堆栈轨迹**（stack trace）是程序执行过程中某个特定点上所有挂起的方法调用的一个列表。
+
+## 7.3 使用异常的技巧
+> 1. 异常处理不能代替简单的测试。
+> 2. 不要过分的细化异常。
+> 3. 充分利用异常层次结构。
+> 4. 不要压制异常。
+> 5. 在检测错误时，“苛刻”要比放任好。
+> 6. 不要羞于传递异常。
+
+## 7.4 使用断言
+
+### 7.4.1 断言的概念
+- 断言机制允许在测试期间向代码中添加一些检查，而在生产代码中会自动删除这些检查。
+- 关键字 **assert**。
+- 断言x是一个非负数：assert x >= 0;  
+  或者 assert x >= 0 : x; （将x的实际值传递给AssertionError对象，以便以后显示）
+
+### 7.4.2 启用和禁用断言
+- 在默认情况下，断言是禁用的。
+
+### 7.4.3 使用断言完成参数检查
+- 在Java语言中，给出了三种处理系统错误的机制：
+> 抛出一个异常。  
+  日志。  
+  使用断言。
+
+- 断言的使用
+> 断言失败是致命的、不可恢复的错误。  
+  断言检查只是在开发和测试阶段打开（“在靠近海岸的时候穿上救身衣，但在海里就把救生衣脱掉”）。
+
+## 7.5 日志
+- 每个Java程序员都很熟悉在有问题的代码中插入输出语句来观察程序的行为。找到问题的根源之后，就又将这些输出语句从代码中删去。日志API就是为了解决这个问题而设计的。
+
+### 7.5.1 基本日志
+- 使用**全局日志记录器**（global logger）并调用其**info**方法：
+
+```java
+Logger.getGlobal().info("File->Open menu item selected");
+
+/* will print：
+
+ May 10，2013 10:12:15 PM LoggingImageViewer fileOpen
+ INFO: File->Open menu item selected
+ 
+ */
+```
+
+### 7.5.2 高级日志
+- 调用**getLogger**方法创建或获取日志记录器：
+
+```java
+private static final Logger myLogger = Logger.getLogger("com.mycompany.myapp");
+```
+
+- 日志级别：
+> SEVERE  
+  WARNING  
+  INFO  
+  CONFIG  
+  FINE   
+  FINER  
+  FINEST  
+
+- 在默认情况下，实际上只记录前3个级别。也可以设置一个不同的级别：
+
+```java
+logger.setlevel(Level.FINE); // FINE及所有更高级别的日志都会记录。
+```
+
+### 7.5.3 处理器
+- 对于一个要记录的日志记录，它的日志级别必须高于日志记录器和处理器二者的阈值。
+
+### 7.5.4 日志技巧
+> 1. 对于一个简单的应用，选择一个日志记录器。
+> 2. 默认的日志配置会把级别等于或高于INFO的所有消息记录到控制台。
