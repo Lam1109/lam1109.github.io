@@ -18,7 +18,7 @@ paginate: true
   * [Problem 1](#problem-1)
   * [Analysis](#analysis)
 
-## 2020.6.26
+## 2020.06.26
 
 ### Problem 1
 ![image](/assets/img/nowcoder_img/20200626_1.png)
@@ -30,7 +30,7 @@ paginate: true
     <tr>
       <th>作用域</th>
       <th>当前类</th>
-      <th>统一package</th>
+      <th>同一package</th>
       <th>子孙类</th>
       <th>其他package</th>
     </tr>
@@ -51,7 +51,7 @@ paginate: true
       <td>×</td>
     </tr>
     <tr>
-      <td>friendly</td>
+      <td>friendly（不修饰）</td>
       <td>√</td>
       <td>√</td>
       <td>×</td>
@@ -66,3 +66,10 @@ paginate: true
     </tr>
   </tbody>
 </table>
+
+## 2020.06.29
+### Problem 1
+![image](/assets/img/nowcoder_img/20200629_1.png)
+
+### Analysis
+- Java中静态变量只能在类主体中定义，不能在方法中定义。静态变量属于类所有而不属于方法。
