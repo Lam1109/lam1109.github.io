@@ -547,6 +547,7 @@ public Employee(String name, double salary){
 - 类注释必须放在import语句之后，类定义之前。
 
 ### 4.7.2 方法注释
+
 ```java
 /**
 * @param variable description 参数
@@ -622,6 +623,7 @@ public Manager(String name, double salary, int year, int month, int day){
 
 ### 5.1.4 阻止继承：final类和方法
 - 不允许扩展的类被称为final类。
+
 ```java
 public final class Example{
     ...
@@ -629,6 +631,7 @@ public final class Example{
 ```
 
 - 方法声明为final，意味着子类不能覆盖整个方法（final类中的所有方法自动地成为final方法）。
+
 ```java
 public class Employee{
     ...
@@ -689,6 +692,7 @@ public class Employee{
 ## 5.2 Object: 所有类的超类
 ### 5.2.1 Object类型的变量
 - 可以使用Object类型的变量引用任何类型的对象：
+
 ```java
 Object obj = new Employee("Lam",35000);
 ```
@@ -708,6 +712,7 @@ Object obj = new Employee("Lam",35000);
 
 ### 5.3.1 声明数组列表
 - 声明和构造一个保存Employee对象的数组列表：
+
 ```java
 ArrayList<Employee> staff = new ArrayList<Employee>();
 //or ArrayList<Employee> staff = new ArrayList<>();
@@ -717,6 +722,7 @@ var staff = new new ArrayList<Employee>();
 ```
 
 - 方法：
+
 ```java
 //添加
 staff.add(new Employee("Lam", ...);
@@ -737,6 +743,7 @@ staff.get(i);
 
 ## 5.4 对象包装器与自动装箱
 - 数组列表<>中的类型参数不允许是基本类型。
+
 ```java
 var list = new ArrayList<Integer>(); // instead of new ArrayList<int>();
 ```
@@ -761,6 +768,7 @@ Class cl = e.getClass();
 ```
 
 - 最常用的Class方法就是getName，这个方法会返回类的名字。
+
 ```java
 System.out.println(e.getClass().getName() + " " + e.getName());
 // if Eployee e, print "Employee Lam"
@@ -770,6 +778,7 @@ System.out.println(e.getClass().getName() + " " + e.getName());
 ### 5.5.2 声明异常入门
 - 异常有两种类型：**非检查型**（unchecked）异常和**检查型**（checked）异常。
 - 如果一个方法包含一条可能抛出检查型异常的语句，则在方法名上增加一个throws子句。
+
 ```java
 public static void doSomethingWithClass(String name)
     throws ReflectiveOperationException{
@@ -801,6 +810,7 @@ public static void doSomethingWithClass(String name)
 ### 6.1.1 接口的概念
 - 接口不是类，而是对希望符合这个接口的类的一组需求。
 - 实现接口使用关键字implements。
+
 ```java
 // Comparable是一个接口
 class Employee implements Comparable
