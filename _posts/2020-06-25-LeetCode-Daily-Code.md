@@ -28,6 +28,7 @@ paginate: true
 - 给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定s 是否可以被空格拆分为一个或多个在字典中出现的单词。
 
 > 说明：
+
 - 拆分时可以重复使用字典中的单词。
 - 你可以假设字典中没有重复的单词。
 - 链接：<a href="https://leetcode-cn.com/problems/word-break">https://leetcode-cn.com/problems/word-break</a>
@@ -79,6 +80,7 @@ class Solution {
 - 编写代码，移除未排序链表中的重复节点。保留最开始出现的节点。
 
 > 说明：
+
 - 链接：<a href="https://leetcode-cn.com/problems/remove-duplicate-node-lcci">https://leetcode-cn.com/problems/remove-duplicate-node-lcci</a>
 - 示例：
 
@@ -127,7 +129,6 @@ class Solution {
 
 ### Get
 - Java中的**集合**  
-
 
 <table>
   <thead>
@@ -190,3 +191,186 @@ class Solution {
   </tbody>
 </table>
 
+## 2020.06.27
+### Problem
+- 给你一个未排序的整数数组，请你找出其中没有出现的最小的正整数。
+
+> 说明：
+
+- 链接：<a href="https://leetcode-cn.com/problems/first-missing-positive">https://leetcode-cn.com/problems/first-missing-positive</a>
+- 示例：
+
+```java
+输入: [1,2,0]
+输出: 3
+
+输入: [7,8,9,11,12]
+输出: 1
+```
+
+### Solution
+
+```java
+class Solution {
+    public int firstMissingPositive(int[] nums) {
+        if(nums.length == 0){
+            return 1;
+        }
+        var list = new ArrayList<Integer>();
+        int ans = 0;
+        for(int i = 0;i < nums.length;i++){
+            list.add(nums[i]);
+        }
+        //list.size()+2 可应对[1],[0,1,2...]等特殊数组
+        for(int i = 1;i<list.size() + 2;i++){
+            if(!list.contains(i)){
+                ans = i;
+                break;
+            } 
+        }
+        return ans;
+    }
+}
+```
+
+## 2020.06.29
+### Problem
+- 在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+> 说明：
+
+- 链接：<a href="https://leetcode-cn.com/problems/kth-largest-element-in-an-array/">https://leetcode-cn.com/problems/kth-largest-element-in-an-array/</a>
+- 实例：
+
+```java
+输入: [3,2,1,5,6,4] 和 k = 2
+输出: 5
+
+输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
+输出: 4
+```
+
+### Solution
+
+```java
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        //调用库函数
+        if(nums.length == 0) return 0;
+        Arrays.sort(nums);
+        return nums[nums.length-k];
+        
+        /* 手写某一种排序算法
+        var len = nums.length;
+        for (var i = 0; i < len - 1; i++) {
+            for (var j = 0; j < len - 1 - i; j++) {
+                if (nums[j] > nums[j+1]) {        // 相邻元素两两对比
+                    var temp = nums[j+1];        // 元素交换
+                    nums[j+1] = nums[j];
+                    nums[j] = temp;
+                }
+            }
+        }
+        return nums[len-k];
+        */
+    }
+}
+```
+
+### Get
+- 排序算法
+
+<table>
+  <thead>
+    <tr>
+      <th>排序方法</th>
+      <th>时间复杂度（平均）</th>
+      <th>时间复杂度（最坏）</th>
+      <th>时间复杂度（最好）</th>
+      <th>空间复杂度</th>
+      <th>稳定性</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>插入排序</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(n)</td>
+      <td>O(1)</td>
+      <td>稳定</td>
+    </tr>
+    <tr>
+      <td>希尔排序</td>
+      <td>O(n<sup>1.3</sup>)</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(n)</td>
+      <td>O(1)</td>
+      <td>不稳定</td>
+    </tr>
+    <tr>
+      <td>选择排序</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(1)</td>
+      <td>不稳定</td>
+    </tr>
+    <tr>
+      <td>堆排序</td>
+      <td>O(nlog<sub>2</sub>n)</td>
+      <td>O(nlog<sub>2</sub>n)</td>
+      <td>O(nlog<sub>2</sub>n)</td>
+      <td>O(1)</td>
+      <td>不稳定</td>
+    </tr>
+    <tr>
+      <td>冒泡排序</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(n)</td>
+      <td>O(1)</td>
+      <td>稳定</td>
+    </tr>
+    <tr>
+      <td>快速排序</td>
+      <td>O(nlog<sub>2</sub>n)</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(nlog<sub>2</sub>n)</td>
+      <td>O(nlog<sub>2</sub>n)</td>
+      <td>不稳定</td>
+    </tr>
+        <tr>
+      <td>归并排序</td>
+      <td>O(nlog<sub>2</sub>n)</td>
+      <td>O(nlog<sub>2</sub>n)</td>
+      <td>O(nlog<sub>2</sub>n)</td>
+      <td>O(n)</td>
+      <td>稳定</td>
+    </tr>
+    <tr>
+      <td>计数排序</td>
+      <td>O(n+k)</td>
+      <td>O(n+k)</td>
+      <td>O(n+k)</td>
+      <td>O(n+k)</td>
+      <td>稳定</td>
+    </tr>
+    <tr>
+      <td>桶排序</td>
+      <td>O(n+k)</td>
+      <td>O(n<sup>2</sup>)</td>
+      <td>O(n)</td>
+      <td>O(n+k)</td>
+      <td>稳定</td>
+    </tr>
+    <tr>
+      <td>基数排序</td>
+      <td>O(n*k)</td>
+      <td>O(n*k)</td>
+      <td>O(n*k)</td>
+      <td>O(n+k)</td>
+      <td>稳定</td>
+    </tr>
+  </tbody>
+</table>
