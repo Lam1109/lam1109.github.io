@@ -573,10 +573,334 @@ public Employee(String name, double salary){
 > 6. 类名和方法名要能够体现它们的职责。
 > 7. 优先使用不可变的类。
 
+# 第5章 继承
+> 类、超类和子类  
+  参数数量可变的方法  
+  Object：所有类的超类  
+  枚举类  
+  泛型数组列表  
+  反射  
+  对象包装器与自动装箱  
+  继承的设计技巧  
+  
+## 5.1 类、超类和子类
+### 5.1.1 定义子类
+- 可以如下继承Employee类定义Manager类，使用关键字**extends**表示继承。
 
+```java
+/* public class Employee{
+    ...
+    int getSalary(){
+        ...
+    }
+}
+*/
+public class Manager extends Employee{
+    //子类特有字段
+    private double bonus;
+    ...
+    //调用父类中的方法
+    super.getSalary();
+}
+```
 
+- 一般的方法放在超类中，特殊的方法放在子类中。
 
+### 5.1.2 子类构造器
 
+```java
+public Manager(String name, double salary, int year, int month, int day){
+    super(name, salary, year, month, day);
+    bonus = 0;
+}
+```
 
+- 一个对象变量可以指示多种实际类型的现象称为多态。在运行中能够自动地选择适当的方法，称为动态绑定。
 
+### 5.1.3 继承层次
+- 继承不仅限于一个层次。
 
+### 5.1.4 阻止继承：final类和方法
+- 不允许扩展的类被称为final类。
+```java
+public final class Example{
+    ...
+}
+```
+
+- 方法声明为final，意味着子类不能覆盖整个方法（final类中的所有方法自动地成为final方法）。
+```java
+public class Employee{
+    ...
+    public final String getName(){
+        return name;
+    }
+    ...
+}
+```
+
+### 5.1.5 抽象类
+- 关键字a**bstract**
+- 包含一个或多个抽象方法的类本身必须被声明为抽象的。
+
+### 5.1.6 受保护的访问
+<table>
+  <thead>
+    <tr>
+      <th>作用域</th>
+      <th>当前类</th>
+      <th>同一package</th>
+      <th>子孙类</th>
+      <th>其他package</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>public</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+    </tr>
+    <tr>
+      <td>protected</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>friendly（不修饰）</td>
+      <td>√</td>
+      <td>√</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>private</td>
+      <td>√</td>
+      <td>×</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+  </tbody>
+</table>
+
+## 5.2 Object: 所有类的超类
+### 5.2.1 Object类型的变量
+- 可以使用Object类型的变量引用任何类型的对象：
+```java
+Object obj = new Employee("Lam",35000);
+```
+
+### 5.2.2 equals方法
+- Object类中的equals方法用于检测一个对象是否等于另外一个对象。
+
+### 5.2.3 相等测试与继承
+- 自反性：对于任何非空引用x，x.equals(x)应该返回true。
+- 对称性：对于任何引用x和y，当且仅当x.equals(y)返回true时，y.equals(x)返回true。
+- 传递性：对于任何引用x、y和z，如果x.equals(y)返回true，y.equals(z)返回true，x.equals(z)也应该返回true。
+- 一致性：如果x和y引用的对象没有发生变化，反复调用x.equals(y)应该返回同样的结果。
+- 对于任何非空引用x，x.equals(null)应该返回false。
+
+## 5.3 泛型数组列表
+- ArrayList是一个有类型参数的泛型类。
+
+### 5.3.1 声明数组列表
+- 声明和构造一个保存Employee对象的数组列表：
+```java
+ArrayList<Employee> staff = new ArrayList<Employee>();
+//or ArrayList<Employee> staff = new ArrayList<>();
+
+// Java 10中，避免重复写类名
+var staff = new new ArrayList<Employee>();
+```
+
+- 方法：
+```java
+//添加
+staff.add(new Employee("Lam", ...);
+
+//元素个数
+staff.size();
+```
+
+### 5.3.2 访问数组列表元素
+
+```java
+//set 修改第i个元素
+staff.set(i,lam); // var lam = new Employee("Lam", ...);
+
+//get 获取第i个元素
+staff.get(i);
+```
+
+## 5.4 对象包装器与自动装箱
+- 数组列表<>中的类型参数不允许是基本类型。
+```java
+var list = new ArrayList<Integer>(); // instead of new ArrayList<int>();
+```
+- 调用list.add(3);时，会自动变换成list.add(Integer.valueOf(3)); 这种变换称为自动装箱（autoboxing）。
+
+## 5.5 反射
+- 反射库提供了一个丰富且精巧的工具集，可以用来编写能够动态操纵Java代码的程序。
+- 反射机制可以用来：
+> 在运行时分析类的能力。  
+  在运行时检查对象。  
+  实现泛型数组操作代码。  
+  利用Method对象，这个对象很像C++中的函数指针。
+
+### 5.5.1 Class类
+- 在程序运行期间，Java运行时系统始终为所有对象维护一个**运行时类型标识**。
+- Object类中的getClass()方法将会返回一个Class类型的实例。
+
+```java
+Employee e;
+...
+Class cl = e.getClass();
+```
+
+- 最常用的Class方法就是getName，这个方法会返回类的名字。
+```java
+System.out.println(e.getClass().getName() + " " + e.getName());
+// if Eployee e, print "Employee Lam"
+// if Manager e, print "Manager Lam"
+```
+
+### 5.5.2 声明异常入门
+- 异常有两种类型：**非检查型**（unchecked）异常和**检查型**（checked）异常。
+- 如果一个方法包含一条可能抛出检查型异常的语句，则在方法名上增加一个throws子句。
+```java
+public static void doSomethingWithClass(String name)
+    throws ReflectiveOperationException{
+        Class cl = Class.forName(name); // might throw exception
+        ...
+    }
+```
+
+## 5.6 继承的设计技巧
+> 1. 将公共操作和字段放在超类中。  
+> 2. 不要使用受保护的字段。  
+> 3. 使用继承实现“is-a”关系。  
+> 4. 除非所有继承的方法都有意义，否则不要使用继承。  
+> 5. 在覆盖方法时，不要改变预期的行为。  
+> 6. 使用多态，而不要使用类型信息。  
+> 7. 不要滥用反射。  
+
+# 第6章 接口、lambda表达式与内部类
+> 接口  
+  服务加载器  
+  lambda表达式  
+  代理  
+  内部类  
+  
+## 6.1 接口
+- **接口**（interface）用来描述类应该做什么，而不指定它们具体应该如何做。
+- 一个类可以实现一个或多个接口。
+
+### 6.1.1 接口的概念
+- 接口不是类，而是对希望符合这个接口的类的一组需求。
+- 实现接口使用关键字implements。
+```java
+// Comparable是一个接口
+class Employee implements Comparable
+```
+
+### 6.1.2 接口的属性
+- 接口不是类。具体来说，不能使用new运算符实例化一个接口。但是可以声明接口的变量，接口变量必须引用实现了这个接口的类对象：
+
+```java
+x = new Comparable(...); // ERROR
+```
+
+```java
+Comparable x = new Employee(...); // OK provided Employee implements Comparable
+```
+
+### 6.1.3 接口与抽象类
+- 使用抽象类表示通用属性存在一个严重的问题——每个类只能扩展一个类。
+
+### 6.1.4 静态和私有方法
+- 在**Java 8**中，允许在接口中增加静态方法。
+
+### 6.1.5 接口与回调
+- 回调（callback）是一种常见的程序设计模式。在这种模式中，可以指定某个特定事件发生时应该采取的动作。
+
+```java
+import java.awt.*;
+import java.awt.event.*;
+import java,time.*;
+import javax.swing.*;
+
+public class TimerTest{
+    public static void main(String[] args){
+        var listener = new TimePrinter();
+        // construct a timer that calls the listener
+        // once every second
+        var timer = new Timer(1000, listener);
+        timer,start();
+        
+
+    }
+}
+```
+### 6.1.6 对象克隆
+
+```java
+var original = new Employee("Lam", 50000);
+Employee copy = original; // 本质上是同一个对象
+copy.raiseSalary(10); // oops--also changed original
+```
+- 如果希望copy是一个新的对象，就需要使用clone方法。
+
+```java
+Employee copy = original.clone();
+copy.raiseSalary(10); // OK--just copy changed
+```
+
+## 6.2 lambda表达式
+
+### 6.2.1 为什么引入lambda表达式
+- lambda表达式是一个可传递的代码块，可以在以后执行一次或多次。
+
+### 6.2.2 lambda表达式的语法
+- lambda表达式的一种形式：
+
+```java
+(String first, String second) -> 
+{
+    if(first.length() < second.length()) return -1;
+    else if (first.length() > second.length()) return 1;
+    else return 0;
+}
+```
+
+- 如果一个lambda表达只在某些分支返回一个值，而另外一些分支不返回值，这是不合法的。例如，(int x) -> { if (x >= 0) return 1; }就不合法。
+
+## 6.3 内部类
+- 内部类是定义在另一个类中的类。
+> 内部类可以对同一个包中的其他类隐藏。  
+  内部类方法可以访问定义这个类的作用域中的数据，包括原本私有的数据。
+
+# 第7章 异常、断言和日志
+> 处理错误  
+  使用断言  
+  捕获异常  
+  日志  
+  使用异常的技巧  
+  调试技巧  
+
+## 7.1 处理错误
+- 如果由于出现错误而使得某些操作没有完成，程序应该：
+> 1. 返回到一种安全状态，并且能够让用户执行其他的命令；或者
+> 2. 允许用户保存所有工作的结果，并且以妥善的方式终止程序。
+
+- 错误类型：
+> 1. 用户输入错误。
+> 2. 设备错误。
+> 3. 物理限制。
+> 4. 代码错误。
+
+### 7.1.1 异常分类
+
+![image](/assets/img/post_img/Exception.png)
