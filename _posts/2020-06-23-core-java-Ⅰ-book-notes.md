@@ -1210,3 +1210,259 @@ logger.setlevel(Level.FINE); // FINE及所有更高级别的日志都会记录�
 ### 7.5.4 日志技巧
 > 1. 对于一个简单的应用，选择一个日志记录器。
 > 2. 默认的日志配置会把级别等于或高于INFO的所有消息记录到控制台。
+
+# 第8章 泛型程序设计
+> 限制与局限性  
+  定义简单泛型类  
+  泛型类型的继承规则  
+  泛型方法  
+  通配符类型
+
+## 8.1 为什么要使用泛型程序设计
+- 泛型程序设计（generic programming）意味着编写的代码可以对多种不同的类型对象重用。
+
+### 8.1.1 类型参数的好处
+- 泛型提供了一个更好的解决方案：类型参数（type parameter）。ArrayList类有一个类型参数用来指示元素的类型：
+
+```java
+var list = new ArrayList<String>();
+```
+### 8.1.2 谁想成为泛型程序员
+- 利用**通配符类型**（wildcard type），构建类库的程序员可以编写出尽可能灵活的方法。
+
+## 8.2 定义简单泛型类
+- 泛型类（generic class）就是有一个或多个类型变量的类。
+
+```java
+public class Pair<T> {
+    private T first;
+    private T second;
+    
+    public Pair() { first = null; second = null;}
+    public Pair(T first, T second) { this.first = first; this.second = second;}
+    
+    public T getFirst() { return first;}
+    public T getSecond() { return second;}
+    
+    public void setFirst(T newValue) { first = newValue;}
+    public void setSecond(T newValue) { second = newValue;}
+}
+```
+
+## 8.3 泛型方法
+
+```java
+class ArrayAlg {
+    public static <T> T getMiddle(T...a) {
+        return a[a.length / 2];
+    }
+}
+```
+
+## 8.4 类型变量的限定
+
+```java
+public static <T extends Comparable> T min(T[] a)...
+//尖括号中语句表示 限制T只能是实现了Comparable接口的类。
+```
+
+## 8.5 泛型代码和虚拟机
+- 虚拟机没有泛型类型对象——所有对象都属于普通类。
+
+# 第9章 集合
+> Java集合框架  
+  视图与包装器  
+  集合框架中的接口  
+  算法  
+  具体集合  
+  遗留的集合  
+  映射  
+
+## 9.1 Java集合框架
+### 9.1.1 集合接口与实现分离
+- 与现代的数据结构类库的常见做法一样，Java集合类库也将接口与实现分离。
+
+### 9.1.2 Collection接口
+- 在Java类库中，集合类的基本接口是Collection接口。
+
+```java
+public interface Collection<E> {
+    boolean add(E element);
+    Iterator<E> iterator();
+    ...
+}
+```
+- iterator方法用于返回一个实现了Iterator接口的对象。可以使用这个迭代器对象依次访问集合中的元素。
+
+### 9.1.3 迭代器
+- Iterator接口包含4个方法：
+
+```java
+public interface Iterator<E> {
+    E next();
+    boolean hasNext();
+    void remove();
+    default void forEachRemaining(Consumer<? super E> action);
+}
+```
+
+## 9.2 集合框架中的接口
+
+![image](/assets/img/post_img/Collection.png)
+
+## 9.3 具体集合
+### 9.3.1 链表
+- 从数组中删除（或添加）一个元素开销很大，其原因是数组中后续的所有元素都要移动。
+- 在Java程序设计语言中，所有链表实际上都是**双向链接**的——即每个链接还存放着其前驱的引用。
+
+### 9.3.2 数组列表
+- ArrayList封装了一个动态再分配的对象数组。
+
+### 9.3.3 散列集
+- **散列表**（hash table）可以用于快速地查找对象。
+- 散列表为每个对象计算一个整数，称为**散列码**（hash code）。
+- 在Java中，散列表用链表实现。每个列表被称为**桶**（bucket）。
+- 查找表中对象的位置：先计算它的散列码，然后与桶的总数取余，所得到的结果就是保存这个元素的桶的索引。
+- **散列冲突**（hash collision）：桶已经被填充的现象称为散列冲突。
+
+### 9.3.4 树集
+- 树集是一个**有序集合**（sorted collection）。
+- 排序是用一个树数据结构完成的（当前使用的是红黑树（red-black tree）。每次将一个元素添加到树中时，都会将其放置在正确的排序位置上。
+
+### 9.3.5 队列与双端队列
+- **双端队列**（deuqe）允许在头部和尾部都高效地添加或删除元素。
+
+### 9.3.6 优先队列
+- **优先队列**（priority queue）中的元素可以按照任意的顺序插入，但会按照有序的顺序进行检索。
+
+## 9.4 映射
+- **映射**（map）用来存放键/值对。如果提供了键，就能够查找到值。
+
+### 9.4.1 基本映射操作
+- Java类库为映射提供了两个通用的实现：HashMap和TreeMap。这两个类都实现了Map接口。
+- 散列映射对键进行散列，树映射根据键的顺序将元素组织为一个搜索树。散列或比较函数值应用于键。与键关联的值不进行散列或比较。
+
+### 9.4.2 更新映射条目
+
+```java
+counts.put(word, counts.get(word) + 1);
+// 第一次看到word时，get会返回null，会出现NullPointerException异常
+
+/** 补救方法 1 
+  * getOrDefault方法 
+  * 若未在映射中找到这个键，
+  * 则返回defaulValue。
+  */
+counts.put(word, counts.getOrDefault(word, 0) + 1);
+
+/** 补救方法 2
+  * 只有当键原先存在（或者映射到null）时，
+  * 才会放入一个值。
+  */
+counts.putIfAbsent(word, 0);
+counts.put(word, counts.get(word) + 1);
+
+/** 补救方法 3
+  * merge方法
+  * 若键原先不存在，
+  * word会与 1 关联，
+  * 否则使用Integer::sum将原值与1求和。
+  */
+counts.merge(word, 1, Integer::sum);
+```
+
+### 9.4.3 映射视图
+- 有3种视图：键集、值集合（不是一个集）以及键/值对集。
+
+```java
+Set<K> keySet() // return 键集
+
+Collection<V> values() // return 值集合
+
+Set<Map.Entry<K, V>> entrySet() // return 键/值对集
+```
+
+### 9.4.4 弱散列映射
+- 假定对某个键的最后一个引用已经消失，那么不会再有任何途径可以引用这个值的对象了。由于程序中的任何部分不会再有这个键，所以，无法从映射中删除这个键/值对。
+- 垃圾回收器会跟踪活动的对象。只要映射对象是活动的，其中所有桶也是活动的，所以不能被回收。
+- **WeakHashMap**（弱散列映射）：当对键的唯一引用来自散列表映射条目时，这个数据结构将于垃圾回收器协同工作一起删除键/值对。
+- **WeakHashMap**使用弱引用（weak references）保存键。
+
+### 9.4.5 链接散列集与映射
+- **LinkedHashSet**和**LinkedHashMap**类会记住插入元素项的顺序。这样可以避免散列表中的项看起来顺序是随机的。
+
+### 9.4.6 枚举集与映射
+- EnumSet是一个枚举类型的元素集的高效实现。
+- 由于枚举类型只有有限个实例，所以EnumSet内部用位序列实现。如果对于的值在集中，则相应的位被置为1。
+
+### 9.4.7 标识散列映射
+- 类IdentityHashMap有特殊的用途。
+- 在对两个对象进行比较时，IdentityHashMap类使用 == ，而不适用equals。也就是说，不同的键对象即使内容相同，也被视为不同的对象。
+
+## 9.5 视图与包装器
+### 9.5.1 小集合
+- Java 9 引入了一些静态方法，可以生成给定元素的集或者列表，以及给定键/值对的映射。
+
+```java
+List<String> names = List.of("Peter", "Paul", "Mary");
+Set<Integer> numbers = Set.of(2, 3, 5);
+// 会分别生成包含3个元素的一个列表和一个集
+
+Mao<String, Integer> scores = Map.of("Peter",2, "Paul",3, "Mary",5);
+// 生成一个映射
+```
+
+- 元素、键或值不能为null。
+
+### 9.5.2 子范围
+- 可以为很多集合建力**子范围**（subrange）视图。
+
+```java
+List<Employee> group2 = staff.subList(10,20);
+// subList方法与String类中的substring方法类似
+```
+
+### 9.5.3 不可修改的视图
+- Collections类可以生成集合的**不可修改视图**（unmodifiable view）。
+
+### 9.5.4 同步视图
+- 若从多个线程访问集合，必须确保集合不会被意外地破坏。
+
+```java
+var map = Collections.synchronizeMap(new HashMap<String, Employee());
+// Collections类的静态synchronizedMap方法可以将任何一个映射转换成有同步访问方法的Map
+```
+
+### 9.5.5 检查型视图
+- **检查型视图**用来对泛型类型可能出现的问题提供调试支持。
+
+## 9.6 算法
+### 9.6.1 为什么使用泛型算法
+- 泛型集合接口有一个很大的优点，即算法只需要实现一次。
+
+### 9.6.2 排序与混排
+
+```java
+var staff = new LinkedList<String>();
+fill collection
+Collection.sort(staff);
+// Collections类中的sort方法可以对实现了List接口的集合进行排序。
+```
+
+### 9.6.3 批操作
+
+```java
+coll1.removeAlL(coll2); // 从集合1中删除集合2中出现的所有元素
+
+coll2.retainAll(coll2); // 从集合1中删除所有未在集合2中出现的元素
+```
+
+## 9.7 遗留的集合
+### 9.7.1 属性映射
+- **属性映射**（property map）是一个特殊类型的映射结构。它有下面3个特性：
+> 1. 键与值都是字符串。
+> 2. 这个映射可以很容易地保存到文件以及从文件加载。
+> 3. 有一个二级表存放默认值。
+
+### 9.7.2 位集
+- Java平台的BitSet类用于存储一个位序列（他不是数学上的集，如果称为位向量或位数组可能更为合适）。
