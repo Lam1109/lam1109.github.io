@@ -140,7 +140,99 @@ author: Lam
     * [7\.5\.2 高级日志](#752-%E9%AB%98%E7%BA%A7%E6%97%A5%E5%BF%97)
     * [7\.5\.3 处理器](#753-%E5%A4%84%E7%90%86%E5%99%A8)
     * [7\.5\.4 日志技巧](#754-%E6%97%A5%E5%BF%97%E6%8A%80%E5%B7%A7)
+* [第8章 泛型程序设计](#%E7%AC%AC8%E7%AB%A0-%E6%B3%9B%E5%9E%8B%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1)
+  * [8\.1 为什么要使用泛型程序设计](#81-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E6%B3%9B%E5%9E%8B%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1)
+    * [8\.1\.1 类型参数的好处](#811-%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0%E7%9A%84%E5%A5%BD%E5%A4%84)
+    * [8\.1\.2 谁想成为泛型程序员](#812-%E8%B0%81%E6%83%B3%E6%88%90%E4%B8%BA%E6%B3%9B%E5%9E%8B%E7%A8%8B%E5%BA%8F%E5%91%98)
+  * [8\.2 定义简单泛型类](#82-%E5%AE%9A%E4%B9%89%E7%AE%80%E5%8D%95%E6%B3%9B%E5%9E%8B%E7%B1%BB)
+  * [8\.3 泛型方法](#83-%E6%B3%9B%E5%9E%8B%E6%96%B9%E6%B3%95)
+  * [8\.4 类型变量的限定](#84-%E7%B1%BB%E5%9E%8B%E5%8F%98%E9%87%8F%E7%9A%84%E9%99%90%E5%AE%9A)
+  * [8\.5 泛型代码和虚拟机](#85-%E6%B3%9B%E5%9E%8B%E4%BB%A3%E7%A0%81%E5%92%8C%E8%99%9A%E6%8B%9F%E6%9C%BA)
+* [第9章 集合](#%E7%AC%AC9%E7%AB%A0-%E9%9B%86%E5%90%88)
+  * [9\.1 Java集合框架](#91-java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6)
+    * [9\.1\.1 集合接口与实现分离](#911-%E9%9B%86%E5%90%88%E6%8E%A5%E5%8F%A3%E4%B8%8E%E5%AE%9E%E7%8E%B0%E5%88%86%E7%A6%BB)
+    * [9\.1\.2 Collection接口](#912-collection%E6%8E%A5%E5%8F%A3)
+    * [9\.1\.3 迭代器](#913-%E8%BF%AD%E4%BB%A3%E5%99%A8)
+  * [9\.2 集合框架中的接口](#92-%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6%E4%B8%AD%E7%9A%84%E6%8E%A5%E5%8F%A3)
+  * [9\.3 具体集合](#93-%E5%85%B7%E4%BD%93%E9%9B%86%E5%90%88)
+    * [9\.3\.1 链表](#931-%E9%93%BE%E8%A1%A8)
+    * [9\.3\.2 数组列表](#932-%E6%95%B0%E7%BB%84%E5%88%97%E8%A1%A8)
+    * [9\.3\.3 散列集](#933-%E6%95%A3%E5%88%97%E9%9B%86)
+    * [9\.3\.4 树集](#934-%E6%A0%91%E9%9B%86)
+    * [9\.3\.5 队列与双端队列](#935-%E9%98%9F%E5%88%97%E4%B8%8E%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97)
+    * [9\.3\.6 优先队列](#936-%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97)
+  * [9\.4 映射](#94-%E6%98%A0%E5%B0%84)
+    * [9\.4\.1 基本映射操作](#941-%E5%9F%BA%E6%9C%AC%E6%98%A0%E5%B0%84%E6%93%8D%E4%BD%9C)
+    * [9\.4\.2 更新映射条目](#942-%E6%9B%B4%E6%96%B0%E6%98%A0%E5%B0%84%E6%9D%A1%E7%9B%AE)
+    * [9\.4\.3 映射视图](#943-%E6%98%A0%E5%B0%84%E8%A7%86%E5%9B%BE)
+    * [9\.4\.4 弱散列映射](#944-%E5%BC%B1%E6%95%A3%E5%88%97%E6%98%A0%E5%B0%84)
+    * [9\.4\.5 链接散列集与映射](#945-%E9%93%BE%E6%8E%A5%E6%95%A3%E5%88%97%E9%9B%86%E4%B8%8E%E6%98%A0%E5%B0%84)
+    * [9\.4\.6 枚举集与映射](#946-%E6%9E%9A%E4%B8%BE%E9%9B%86%E4%B8%8E%E6%98%A0%E5%B0%84)
+    * [9\.4\.7 标识散列映射](#947-%E6%A0%87%E8%AF%86%E6%95%A3%E5%88%97%E6%98%A0%E5%B0%84)
+  * [9\.5 视图与包装器](#95-%E8%A7%86%E5%9B%BE%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8)
+    * [9\.5\.1 小集合](#951-%E5%B0%8F%E9%9B%86%E5%90%88)
+    * [9\.5\.2 子范围](#952-%E5%AD%90%E8%8C%83%E5%9B%B4)
+    * [9\.5\.3 不可修改的视图](#953-%E4%B8%8D%E5%8F%AF%E4%BF%AE%E6%94%B9%E7%9A%84%E8%A7%86%E5%9B%BE)
+    * [9\.5\.4 同步视图](#954-%E5%90%8C%E6%AD%A5%E8%A7%86%E5%9B%BE)
+    * [9\.5\.5 检查型视图](#955-%E6%A3%80%E6%9F%A5%E5%9E%8B%E8%A7%86%E5%9B%BE)
+  * [9\.6 算法](#96-%E7%AE%97%E6%B3%95)
+    * [9\.6\.1 为什么使用泛型算法](#961-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E6%B3%9B%E5%9E%8B%E7%AE%97%E6%B3%95)
+    * [9\.6\.2 排序与混排](#962-%E6%8E%92%E5%BA%8F%E4%B8%8E%E6%B7%B7%E6%8E%92)
+    * [9\.6\.3 批操作](#963-%E6%89%B9%E6%93%8D%E4%BD%9C)
+  * [9\.7 遗留的集合](#97-%E9%81%97%E7%95%99%E7%9A%84%E9%9B%86%E5%90%88)
+    * [9\.7\.1 属性映射](#971-%E5%B1%9E%E6%80%A7%E6%98%A0%E5%B0%84)
+    * [9\.7\.2 位集](#972-%E4%BD%8D%E9%9B%86)
+* [第10章 图形用户界面程序设计](#%E7%AC%AC10%E7%AB%A0-%E5%9B%BE%E5%BD%A2%E7%94%A8%E6%88%B7%E7%95%8C%E9%9D%A2%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1)
+* [第11章 Swing用户界面组件](#%E7%AC%AC11%E7%AB%A0-swing%E7%94%A8%E6%88%B7%E7%95%8C%E9%9D%A2%E7%BB%84%E4%BB%B6)
+* [第12章 并发](#%E7%AC%AC12%E7%AB%A0-%E5%B9%B6%E5%8F%91)
+  * [12\.1 什么是线程](#121-%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E7%A8%8B)
+  * [12\.2 线程状态](#122-%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81)
+    * [12\.2\.1 新建线程](#1221-%E6%96%B0%E5%BB%BA%E7%BA%BF%E7%A8%8B)
+    * [12\.2\.2 可运行线程](#1222-%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%BA%BF%E7%A8%8B)
+    * [12\.2\.3 阻塞和等待线程](#1223-%E9%98%BB%E5%A1%9E%E5%92%8C%E7%AD%89%E5%BE%85%E7%BA%BF%E7%A8%8B)
+    * [12\.2\.4 终止进程](#1224-%E7%BB%88%E6%AD%A2%E8%BF%9B%E7%A8%8B)
+  * [12\.3 线程属性](#123-%E7%BA%BF%E7%A8%8B%E5%B1%9E%E6%80%A7)
+    * [12\.3\.1 中断线程](#1231-%E4%B8%AD%E6%96%AD%E7%BA%BF%E7%A8%8B)
+    * [12\.3\.2 守护线程](#1232-%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B)
+    * [12\.3\.3 线程名](#1233-%E7%BA%BF%E7%A8%8B%E5%90%8D)
+    * [12\.3\.4 未捕获异常的处理器](#1234-%E6%9C%AA%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8)
+    * [12\.3\.5 线程优先级](#1235-%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7)
+  * [12\.4 同步](#124-%E5%90%8C%E6%AD%A5)
+    * [12\.4\.1 竞态条件的一个例子](#1241-%E7%AB%9E%E6%80%81%E6%9D%A1%E4%BB%B6%E7%9A%84%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90)
+    * [12\.4\.2 锁对象](#1242-%E9%94%81%E5%AF%B9%E8%B1%A1)
+    * [12\.4\.3 条件对象](#1243-%E6%9D%A1%E4%BB%B6%E5%AF%B9%E8%B1%A1)
+    * [12\.4\.4 synchronized关键字](#1244-synchronized%E5%85%B3%E9%94%AE%E5%AD%97)
+    * [12\.4\.5 同步块](#1245-%E5%90%8C%E6%AD%A5%E5%9D%97)
+    * [12\.4\.6 监视器概念](#1246-%E7%9B%91%E8%A7%86%E5%99%A8%E6%A6%82%E5%BF%B5)
+    * [12\.4\.7 volatile字段](#1247-volatile%E5%AD%97%E6%AE%B5)
+    * [12\.4\.8 final变量](#1248-final%E5%8F%98%E9%87%8F)
+    * [12\.4\.9 原子性](#1249-%E5%8E%9F%E5%AD%90%E6%80%A7)
+    * [12\.4\.10 死锁](#12410-%E6%AD%BB%E9%94%81)
+    * [12\.4\.11 线程局部变量](#12411-%E7%BA%BF%E7%A8%8B%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F)
+    * [12\.4\.12 为什么废弃stop和suspend方法](#12412-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BA%9F%E5%BC%83stop%E5%92%8Csuspend%E6%96%B9%E6%B3%95)
+  * [12\.5 线程安全的集合](#125-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E9%9B%86%E5%90%88)
+    * [12\.5\.1 阻塞队列](#1251-%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97)
+    * [12\.5\.2 高效的映射、集和队列](#1252-%E9%AB%98%E6%95%88%E7%9A%84%E6%98%A0%E5%B0%84%E9%9B%86%E5%92%8C%E9%98%9F%E5%88%97)
+    * [12\.5\.3 映射条目的原子更新](#1253-%E6%98%A0%E5%B0%84%E6%9D%A1%E7%9B%AE%E7%9A%84%E5%8E%9F%E5%AD%90%E6%9B%B4%E6%96%B0)
+    * [12\.5\.4 对并发散列映射的批操作](#1254-%E5%AF%B9%E5%B9%B6%E5%8F%91%E6%95%A3%E5%88%97%E6%98%A0%E5%B0%84%E7%9A%84%E6%89%B9%E6%93%8D%E4%BD%9C)
+    * [12\.5\.5 并发集视图](#1255-%E5%B9%B6%E5%8F%91%E9%9B%86%E8%A7%86%E5%9B%BE)
+    * [12\.5\.6 写数组拷贝](#1256-%E5%86%99%E6%95%B0%E7%BB%84%E6%8B%B7%E8%B4%9D)
+    * [12\.5\.7 并行数组算法](#1257-%E5%B9%B6%E8%A1%8C%E6%95%B0%E7%BB%84%E7%AE%97%E6%B3%95)
+    * [12\.5\.8 较早的线程安全集合](#1258-%E8%BE%83%E6%97%A9%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%9B%86%E5%90%88)
+  * [12\.6 任务和线程池](#126-%E4%BB%BB%E5%8A%A1%E5%92%8C%E7%BA%BF%E7%A8%8B%E6%B1%A0)
+    * [12\.6\.1 Callable与Future](#1261-callable%E4%B8%8Efuture)
+    * [12\.6\.2 执行器](#1262-%E6%89%A7%E8%A1%8C%E5%99%A8)
+    * [12\.6\.3 控制任务组](#1263-%E6%8E%A7%E5%88%B6%E4%BB%BB%E5%8A%A1%E7%BB%84)
+    * [12\.6\.4 fork\-join框架](#1264-fork-join%E6%A1%86%E6%9E%B6)
+  * [12\.7 异步计算](#127-%E5%BC%82%E6%AD%A5%E8%AE%A1%E7%AE%97)
+    * [12\.7\.1 可完成Future](#1271-%E5%8F%AF%E5%AE%8C%E6%88%90future)
+  * [12\.8 进程](#128-%E8%BF%9B%E7%A8%8B)
+    * [12\.8\.1 建立一个进程](#1281-%E5%BB%BA%E7%AB%8B%E4%B8%80%E4%B8%AA%E8%BF%9B%E7%A8%8B)
+    * [12\.8\.2 运行一个进程](#1282-%E8%BF%90%E8%A1%8C%E4%B8%80%E4%B8%AA%E8%BF%9B%E7%A8%8B)
+    * [12\.8\.3 进程句柄](#1283-%E8%BF%9B%E7%A8%8B%E5%8F%A5%E6%9F%84)
   
+***
+
 # 第1章 Java程序设计概述
 
 > Java程序设计平台&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Java发展简史  
@@ -199,6 +291,8 @@ Java“白皮书”的关键术语&nbsp;&nbsp;&nbsp;&nbsp;Java applet与Internet
 - Sun公式的“Green”项目。
 - 由“Oak”改名为“Java”。
 
+***
+
 # 第2章 Java程序设计环境
 
 
@@ -238,6 +332,8 @@ Java“白皮书”的关键术语&nbsp;&nbsp;&nbsp;&nbsp;Java applet与Internet
     </tr>
   </tbody>
 </table>
+
+***
 
 # 第3章 Java的基本程序设计结构
 > 数据类型&nbsp;&nbsp;&nbsp;&nbsp;变量与常量  
@@ -510,6 +606,8 @@ Arrays.sort(a); //  升序，优化的快速排序（QuickSort）算法
   方法参数  
   类设计技巧
 
+***
+
 ## 4.1 面对对象程序设计概述
 - 面对对象程序设计（object-oriented programming，**OOP**）是当今主流的程序设计范型。
 - Algorithms + Data Structures = Programs
@@ -626,6 +724,8 @@ public Employee(String name, double salary){
 > 5. 分解有过多职责的类。
 > 6. 类名和方法名要能够体现它们的职责。
 > 7. 优先使用不可变的类。
+
+***
 
 # 第5章 继承
 > 类、超类和子类  
@@ -849,6 +949,8 @@ public static void doSomethingWithClass(String name)
 > 6. 使用多态，而不要使用类型信息。  
 > 7. 不要滥用反射。  
 
+***
+
 # 第6章 接口、lambda表达式与内部类
 > 接口  
   服务加载器  
@@ -944,6 +1046,8 @@ copy.raiseSalary(10); // OK--just copy changed
 - 内部类是定义在另一个类中的类。
 > 内部类可以对同一个包中的其他类隐藏。  
   内部类方法可以访问定义这个类的作用域中的数据，包括原本私有的数据。
+
+***
 
 # 第7章 异常、断言和日志
 > 处理错误  
@@ -1211,6 +1315,8 @@ logger.setlevel(Level.FINE); // FINE及所有更高级别的日志都会记录�
 > 1. 对于一个简单的应用，选择一个日志记录器。
 > 2. 默认的日志配置会把级别等于或高于INFO的所有消息记录到控制台。
 
+***
+
 # 第8章 泛型程序设计
 > 限制与局限性  
   定义简单泛型类  
@@ -1268,6 +1374,8 @@ public static <T extends Comparable> T min(T[] a)...
 
 ## 8.5 泛型代码和虚拟机
 - 虚拟机没有泛型类型对象——所有对象都属于普通类。
+
+***
 
 # 第9章 集合
 > Java集合框架  
@@ -1467,11 +1575,17 @@ coll2.retainAll(coll2); // 从集合1中删除所有未在集合2中出现的元
 ### 9.7.2 位集
 - Java平台的BitSet类用于存储一个位序列（他不是数学上的集，如果称为位向量或位数组可能更为合适）。
 
+***
+
 # 第10章 图形用户界面程序设计
 - 略
 
+***
+
 # 第11章 Swing用户界面组件
 - 略
+
+***
 
 # 第12章 并发
 > 什么是线程  
@@ -1542,4 +1656,598 @@ while(!Thread.currentThread().isInterrupted()) {
 > interrupted方法是一个静态方法，它检查**当前线程**是否被中断，并且清除该线程的中断状态。  
   isInterrupted方法是一个实例方法，它见擦汗是否有线程被中断，不会改变中断状态。
 
+### 12.3.2 守护线程
+- 可以通过调用**t.setDaemon(true);**将一个线程转换为守护线程（daemon thread）。
+- 守护线程的唯一用途是**为其他线程提供服务**。
+- 当只剩下守护线程时，虚拟机就会退出。因为如果只剩下守护线程，就没必要继续运行程序了。
 
+### 12.3.3 线程名
+- 可以用setName方法为线程设置任何名字：
+
+```java
+var t = new Thread(runnable);
+t.setName("Web crawler");
+```
+
+### 12.3.4 未捕获异常的处理器
+- 线程的run方法不能抛出任何检查型异常，但是，非检查型异常可能会导致线程终止。在这种情况下，线程会死亡。
+- 在线程死亡之前，异常会传递到一个用于处理**未捕获异常**的处理器。
+- **ThreadGroup**类实现了**Thread.UncaughtExceptionHandler**接口。它的**uncaughtException**方法执行以下操作：
+> 1, 如果该线程组有父线程组，那么调用父线程组的**uncaughtException**方法。
+> 2. 否则，如果**Thread.getDefaultExceptionHandler**方法返回一个非null的处理器，则调用该处理器。
+> 3. 否则，如果**Throwable**是**ThreadDeath**的一个实例，什么都不做。
+> 4. 否则，将**线程的名字**以及**Throwable**的栈轨迹输出到**System.err**。
+
+### 12.3.5 线程优先级
+- 在Java程序设计语言中，每一个线程都有一个**优先级**。
+- 一个线程会继承构造它的那个线程的优先级。
+
+> MIN_PRIORITY: 1  
+  MAX_PRIORITY: 10  
+  NORM_PRIORITY: 5
+
+- 在没有使用操作系统线程的Java早期版本中，线程优先级可能很有用，不过现在不要使用线程优先级了。
+
+## 12.4 同步
+- 两个或两个以上的线程需要共享对同一数据的存取，这两个线程会相互覆盖，可能导致对象被破坏。这种情况通常称为**竞态条件**（race condition）。
+
+### 12.4.1 竞态条件的一个例子
+
+```java
+// Bank.java
+
+package threads;
+
+import java.util.Arrays;
+
+public class Bank {
+    private final double[] accounts;
+
+    public Bank(int n, double initialBalance) {
+        accounts = new double[n];
+        Arrays.fill(accounts,initialBalance);
+    }
+
+    public void transfer(int from, int to, double amount){
+        if(accounts[from]<amount) return;
+        System.out.println(Thread.currentThread());
+        accounts[from] -= amount;
+        System.out.printf(" %10.2f from %d to %d", amount, from, to);
+        accounts[to] += amount;
+        System.out.printf(" Total Balance: %10.2f%n", getTotalBalance());
+    }
+
+    public double getTotalBalance() {
+        double sum = 0;
+
+        for (double a : accounts)
+            sum += a;
+
+        return sum;
+    }
+
+    public int size(){
+        return accounts.length;
+    }
+}
+```
+
+```java
+// UnsynchBankTest.java
+package threads;
+
+public class UnsynchBankTest {
+    public static final int NACCOUNTS = 100;
+    public static final double INITIAL_BALANCE = 1000;
+    public static final double MAX_AMOUNT = 1000;
+    public static final int DELAY = 10;
+
+    public static void main(String[] args) {
+        var bank = new Bank(NACCOUNTS, INITIAL_BALANCE);
+        for (int i = 0; i < NACCOUNTS; i++) {
+            int fromAccount = i;
+            Runnable r = () -> {
+                try {
+                    while (true) {
+                        int toAccount = (int) (bank.size() * Math.random());
+                        double amount = MAX_AMOUNT * Math.random();
+                        bank.transfer(fromAccount, toAccount, amount);
+                        Thread.sleep((int) (DELAY * Math.random()));
+                    }
+                } catch (InterruptedException e) {
+
+                }
+            };
+            var t = new Thread(r);
+            t.start();
+        }
+    }
+}
+```
+
+### 12.4.2 锁对象
+- 有两种机制可以防止并发访问代码块。Java语言提供了一个**synchronized**关键字和**ReentrantLock**类。
+- ReentrantLock保护代码块的基本结构：
+
+```java
+myLock.lock(); // a ReentrantLock object
+try {
+    crirical section
+}
+finally {
+// unlock操作必须，否则，其他线程将永远阻塞
+    myLock.unlock(); // make sure the lock is unlocked even if an exception is thrown
+}
+```
+
+- 一旦一个线程锁定了锁对象，其他任何线程都无法通过lock语句。当其他线程调用lock时，它们会暂停，直到第一个线程释放这个锁对象。
+
+- 使用锁来保护Bank类的transfer方法：
+
+```java
+public class Bank {
+    ReentrantLock bankLock = new ReentrantLock();
+    ...
+    public void transfer(int from, int to, int amount) {
+        banKLock.lock();
+        try {
+            System.out.print(Thread.currentThread());
+            accounts[from] -= amount;
+            System.out.printf(" %10.2f from %d to %d", amount, from, to);
+            accounts[to] += amount;
+            System.out.printf(" Total Balance: %10.2f%n", getTotalBalance());
+        }
+        finally {
+            bankLock.unlock();
+        }
+    }
+}
+```
+
+### 12.4.3 条件对象
+- 考虑一个账户没有足够资金转出的情况：
+
+```java
+// 错误方式
+if(bank.getBalance(from) >= amount) {
+    // thread might be deactivated at this point
+    bank.transfer(from, to, amount);
+}
+
+// 正确方式
+public void transfer(int from, int to, int amount) {
+    bankLock.lock();
+    try {
+        while(accounts[from] < amount) {
+            // wait
+            ...
+        }
+        // transfer funds
+        ...
+    }
+    finally {
+        bankLock.unlock();
+    }
+}
+```
+- 完整代码：
+
+```java
+package threads;
+
+import java.util.Arrays;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Bank {
+    private final double[] accounts;
+    // ReentrantLock bankLock = new ReentrantLock();
+    private Lock bankLock;
+    private Condition sufficientFunds;
+
+    public Bank(int n, double initialBalance) {
+        accounts = new double[n];
+        Arrays.fill(accounts,initialBalance);
+        bankLock = new ReentrantLock();
+        sufficientFunds = bankLock.newCondition(); // new一个条件对象
+    }
+
+
+    public void transfer(int from, int to, double amount) throws InterruptedException{
+        bankLock.lock();
+        try {
+        /** 当发现资金不足，调用sufficientFunds.await();
+          * 当前线程暂停，并放弃锁。
+          * 这就允许另一个线程执行。
+          */
+            while(accounts[from] < amount)
+                sufficientFunds.await();
+            System.out.println(Thread.currentThread());
+            accounts[from] -= amount;
+            System.out.printf(" %10.2f from %d to %d", amount, from, to);
+            accounts[to] += amount;
+            System.out.printf(" Total Balance: %10.2f%n", getTotalBalance());
+        /** 当另一个线程完成转账时，调用sufficientFunds.signalAll();
+          * signalAll方法通知等待线程，
+          * 现在有可能满足条件，值得再次检查。
+          */
+            sufficientFunds.signalAll();
+        }
+        finally {
+            bankLock.unlock();
+        }
+    }
+
+    public double getTotalBalance() {
+        bankLock.lock();
+        try{
+
+        double sum = 0;
+
+        for (double a : accounts)
+            sum += a;
+
+        return sum;
+        }
+        finally {
+            bankLock.unlock();
+        }
+
+    }
+
+    public int size(){
+        return accounts.length;
+    }
+}
+```
+
+### 12.4.4 synchronized关键字
+- **锁**和**条件**：
+> 1. **锁**用来保护代码片段，一次只能有一个线程执行被保护的代码。
+> 2. **锁**可以管理试图进入被保护代码段的线程。
+> 3. 一个**锁**可以有**一个**或**多个**相关联的**条件对象**。
+> 4. 每个**条件对象**管理那些已经进入被保护代码段但还不能运行的线程。
+
+- synchronized关键字的使用：
+
+```java
+public synchronized void method() {
+    method body
+}
+// 等价于
+public void method() {
+    this.intrinsicLock.lock();
+    try {
+        method body
+    }
+    finally {
+        this.intrinsicLock.unlock();
+    }
+}
+```
+
+- 内部锁和条件存在一些限制。包括：
+> 1. 不能中断一个正在尝试获得锁的线程。
+> 2. 不能指定尝试获得锁时的超时时间。
+> 3. 每个锁仅有一个条件可能是不够的。
+
+- Lock和Condition对象 or 同步方法？
+> 1. 最好两者都不使用。在许多情况下，可以使用java.util.concurrent包中的某种机制，它会为你处理所有的锁定。
+> 2. 如果synchronized关键字适合程序，那么尽量使用这种做法，可以减少编写的代码量，并且降低出错的概率。
+> 3. 如果特别需要Lock/Condition结构提供的额外能力，则使用Lock/Condition。
+
+### 12.4.5 同步块
+- 每一个Java对象都有一个锁。线程可以通过调用同步方法获得锁。还有另一种机制可以获得锁：即进入一个**同步块**。
+
+```java
+synchronized(obj) // this is the syntax for a synchronized block
+{
+    critical section
+}
+// 会获得obj的锁
+```
+
+### 12.4.6 监视器概念
+- 锁和条件是实现线程同步的强大工具，但是，严格来讲，它们不是面向对象的。
+- 监视器的特性：
+> 1. 监视器是只包含私有字段的类。
+> 2. 监视器类的每个对象有一个关联的锁。
+> 3. 所有方法由这个锁锁定。
+> 4. 锁可以有任意多个相关联的条件。
+
+### 12.4.7 volatile字段
+- volatile关键字为实例字段的同步访问提供了一种免锁机制。如果声明一个字段为volatile，那么编译器和虚拟机就知道该字段可能被另一个线程并发更新。
+- 假设一个对象有一个boolean标记done，它的值由一个线程设置，而由另一个线程查询：
+
+```java
+// 1. 使用锁
+private boolean done;
+public synchronized boolean isDone() { return done; }
+public synchronized bollean setDone() { done = true; }
+
+// 2. 使用volatile字段
+private volatile boolean done;
+public boolean isDone() { return done; }
+public void setDone() { done = true; }
+```
+
+### 12.4.8 final变量
+
+```java
+final var accounts = new HashMap<String, Double>();
+/** 其他线程会在构造器完成构造之后才看到这个accounts变量。
+  * 若不使用final，
+  * 就无法保证其他线程看到的是accounts更新后的值，
+  * 它们可能都只是看到null，而不是新构造的HashMap。
+  */
+```
+
+### 12.4.9 原子性
+- **原子性**就是指该操作是不可再分的。不论是多核还是单核，具有原子性的量，同一时刻只能有一个线程来对它进行操作。简而言之，在整个操作过程中不会被线程调度器中断的操作，都可认为是原子性。比如 a = 1；
+- 若对共享变量除了赋值之外并不做其他操作，那么可以将这些共享变量声明为**volatile**。
+
+### 12.4.10 死锁
+- **死**锁是指两个或两个以上的进程在执行过程中，由于竞争资源或者由于彼此通信而造成的一种阻塞的现象，若无外力作用，它们都将无法推进下去。
+
+```java
+账户1： $200
+账户2： $300
+线程1： 从账户1转$300到账户2
+线程2： 从账户2转$400到账户1
+```
+
+### 12.4.11 线程局部变量
+- 避免共享变量，使用ThreadLocal辅助类为各个线程提供各自的实例。
+
+### 12.4.12 为什么废弃stop和suspend方法
+- stop方法天生就不安全，suspend方法经常会导致死锁。
+
+## 12.5 线程安全的集合
+### 12.5.1 阻塞队列
+- 当试图向队列添加元素而队列已满，或是想从队列移出元素而队列为空的时候，**阻塞队列**（blocking queue）将导致线程阻塞。
+- 队列会自动地平衡负载。如果第一组线程运行得比第二组慢，第二组在等待结果时会阻塞。如果第一组线程运行得更快，队列会填满，直到第二组赶上来。
+- 阻塞队列方法
+
+<table>
+  <thead>
+    <tr>
+      <th>方法</th>
+      <th>正常动作</th>
+      <th>特殊情况下动作</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>add</td>
+      <td>添加一个元素</td>
+      <td>如果队列满，则抛出IllegalStateException异常</td>
+    </tr>
+    <tr>
+      <td>element</td>
+      <td>返回队头元素</td>
+      <td>如果队列空，则抛出NoSuchElementException异常</td>
+    </tr>
+    <tr>
+      <td>offer</td>
+      <td>添加一个元素并返回true</td>
+      <td>如果队列满，则返回false</td>
+    </tr>
+    <tr>
+      <td>peek</td>
+      <td>返回队头元素</td>
+      <td>如果队列空，则返回null</td>
+    </tr>
+    <tr>
+      <td>poll</td>
+      <td>移除并返回队头元素</td>
+      <td>如果队列空，则返回null</td>
+    </tr>
+    <tr>
+      <td>put</td>
+      <td>添加一个元素</td>
+      <td>如果队列满，则阻塞</td>
+    </tr>
+    <tr>
+      <td>remove</td>
+      <td>移除并返回队头元素</td>
+      <td>如果队列空，则抛出NoSuchElementException异常</td>
+    </tr>
+    <tr>
+      <td>take</td>
+      <td>移除并返回队头元素</td>
+      <td>如果队列空，则阻塞</td>
+    </tr>
+  </tbody>
+</table>
+
+### 12.5.2 高效的映射、集和队列
+- java.util.concurrent包提供了映射、有序集和队列的高效实现：ConcurrentHashMap、ConcurrentSkipListMap、ConcurrentSkipListSet和ConcurrentLinkedQueue。
+- 这些集合使用复杂的算法，通过允许并发地访问数据结构的不同部分尽可能减少竞争。
+- 这些类的size方法不一定在常量时间内完成操作。确定这些集合当前的大小通常需要遍历。
+
+### 12.5.3 映射条目的原子更新
+- 调用compute方法时可以提供一个键和一个计算新值的函数。
+
+```java
+// 1
+map.compute(word, (k, v) -> v == null ? 1 ：v + 1);
+
+// 2 
+map.merge(word, 1L, (existingValue, new Value) -> existingValue + newValue);
+// or  map.merge(word, 1L, Long::sum);
+```
+
+### 12.5.4 对并发散列映射的批操作
+- 有3种不同的操作：
+
+> 1. search（搜索）为每个键或值应用一个函数，直到函数生成一个非null的结果。然后搜索终止，返回这个函数的结果。
+> 2. reduce（规约）组合所有键或值，这里要使用所提供的一个累加函数。
+> 3. forEach为所有键或值应用一个函数。
+
+- 每个操作都有4个版本：
+> 1. operationKeys：处理键。
+> 2. operationValues：处理值。
+> 3. operation：处理键和值。
+> 4. operationEntries：处理Map.Entry对象。
+
+- 对于上述各个操作，需要指定一个**参数化阈值**（parallelism threshold）。如果映射包含的元素多余这个阈值，就会并行完成批操作。如果希望批操作在一个线程中运行，可以使用阈值**Long.MAX_VALUE**。如果希望用尽可能多的线程运行批操作，可以使用阈值**1**。
+
+### 12.5.5 并发集视图
+- keySet方法
+
+```java
+// keySet方法可以生成一个映射的键集
+Set<String> words = map.keySet(1L);
+words.add("Java");
+// 如果“Java”在words中不存在，现在它会有一个值1。
+```
+
+### 12.5.6 写数组拷贝
+- **CopyOnWriteArrayList**和**CopyOnWriteArraySet**是线程安全的集合，其中所有更改器会建立底层数组的一个副本。
+
+### 12.5.7 并行数组算法
+- Arrays类提供了大量并行化操作。静态Arrays.parallelSort方法可以对一个基本类型值或对象的数组排序。
+
+### 12.5.8 较早的线程安全集合
+- 任何集合类都可以通过使用**同步包装器**（synchronization wrapper）变成线程安全的：
+
+```java
+List<E> synchArrayList = Collections.synchronizedList(new ArrayList<E>())；
+Map<K, V> synchHashMap = Collections.synchronizedMap(new HashMap<K, V>());
+```
+
+## 12.6 任务和线程池
+- 线程池中包含许多准备运行的线程，为线程提供一个Runnable，就会有一个线程调用run方法。当run方法退出时，这个线程不会死亡，而是留在池中为下一个请求提供服务。
+
+### 12.6.1 Callable与Future
+- Runnable封装一个异步运行的任务，可以把它想象成一个没有参数和返回值的异步方法。Callable与Runnable类似，但是有返回值。
+
+```java
+public interface Callable<V> {
+    V call() throws Exception;
+}
+```
+
+- Future保存异步计算的结果。
+
+### 12.6.2 执行器
+- **执行器**（Executors）类有许多静态工厂方法，用来构造线程池。
+
+<table>
+  <thead>
+    <tr>
+      <th>方法</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>newCachedThreadPool</td>
+      <td>必要时创建线程；空闲线程会保留60秒</td>
+    </tr>
+    <tr>
+      <td>newFixedThreadPool</td>
+      <td>池中包含固定数目的线程；空闲线程会一直保留</td>
+    </tr>
+    <tr>
+      <td>newWorkStealingPool</td>
+      <td>一种适合“fork-join”任务的线程池，其中复杂的任务会分解为更简单的任务，空闲线程会“密取”较简单的任务</td>
+    </tr>
+    <tr>
+      <td>newSingleThreadExecutor</td>
+      <td>只有一个线程的“池”，会顺序地执行所提交的任务</td>
+    </tr>
+    <tr>
+      <td>newScheduledThreadPool</td>
+      <td>用于调度执行的固定线程池</td>
+    </tr>
+    <tr>
+      <td>newSingleThreadScheduledExecutor</td>
+      <td>用于调度执行的单线程“池”</td>
+    </tr>
+  </tbody>
+</table>
+
+### 12.6.3 控制任务组
+- invokeAny方法提交一个Callable对象集合中的所有对象，并返回某个已完成任务的结果。
+
+### 12.6.4 fork-join框架
+- 假设有一个处理任务，它可以很自然地分解为子任务，如下所示：
+
+```java
+if (problemSize < threshold) {
+    solve problem directly
+}
+else {
+    break problem into subproblems
+    recursively solve each subproblem
+    combine the results
+}
+```
+
+```java
+class Counter extends RecursiveTask<Integer> {
+    ...
+    protected Integer compute() {
+        if (to - from < THRESHOLD) {
+            solve problem directly
+        }
+        else {
+            int mid = (from + to) / 2;
+            var first = new Counter(values, from, mid, filter);
+            var second = new Counter(values, mid, to, filter);
+            invokeAll(first, second);
+            return first.join() + second.join();
+        }
+    }
+}
+/** invokeAll方法接收到很多任务并阻塞，
+  * 直到所有这些任务全部完成。
+  * join方法将生成结果。
+  * 对每个子任务调用join，
+  * 并返回其总合。
+  */
+```
+
+- 在后台，fork-join框架使用了一种有效的智能方法来平衡可用线程的工作负载，这种方法称为**工作密取**（work stealing）。
+
+## 12.7 异步计算
+### 12.7.1 可完成Future
+- CompletableFuture类实现了Future接口，它提供了获得结果的另一种机制。注册一个**回调**，一旦结果可用，就会（在某个线程中）利用该结果调用这个回调。
+
+```java
+CompletableFuture<String> f = ...;
+f.thenAccept(s -> Process the result string s);
+```
+
+## 12.8 进程
+- Process类在一个单独的操作系统进程中执行一个命令，允许与标准输入、输出和错误流交互。
+- ProcessBuilder类则允许配置Process对象。
+
+### 12.8.1 建立一个进程
+- 首先指定想要执行的命令。可以提供一个List<String>，或者直接提供命令字符串。
+
+```java
+var builder = new ProcessBuilder("gcc", "myapp.c");
+```
+
+### 12.8.2 运行一个进程
+- 配置了构建器之后，要调用start方法启动进程。
+
+### 12.8.3 进程句柄
+- 要获得程序启动的一个进程的更多信息，或者想更多地了解计算机上正在运行的任何其他进程，可以使用ProcessHandle接口。可以用4种方式得到一个ProcessHandle：
+> 1. 给定一个Process对象p，p.toHandle()会生成它的ProcessHandle。
+> 2. 给定一个long类型的操作系统进程ID，ProcessHandle.of(id)可以生成这个进程的句柄。
+> 3. Process.current()是运行这个Java虚拟机的进程的句柄。
+> 4. ProcessHandle.allProcesses()可以生成对当前进程可见的所有操作系统进程的Stream<ProcessHandle>。
+
+- 给定一个进程句柄，可以得到它的进程ID、父进程、子进程和后代进程：
+
+```java
+long pid = handle.pid();
+Optional<ProcessHandle> parent = handle.parent();
+Stream<ProcessHandle> children = handle.children();
+Stream<ProcessHandle> descendants = handle.descedants();
+```
+***
