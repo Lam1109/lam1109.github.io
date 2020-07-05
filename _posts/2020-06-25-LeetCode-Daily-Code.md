@@ -1,5 +1,5 @@
 ---
-date: 2020-06-25 12:26:40
+date: 2020-06-21 12:26:40
 layout: post
 title: LeetCode Daily Code
 subtitle: Daily Code
@@ -424,3 +424,121 @@ class Solution {
     }
 }
 ```
+
+## 2020.07.04
+### Problem
+- 给定一个只包含 '(' 和 ')' 的字符串，找出最长的包含有效括号的子串的长度。
+
+> 说明：
+
+- 链接：<a href="https://leetcode-cn.com/problems/longest-valid-parentheses">https://leetcode-cn.com/problems/longest-valid-parentheses</a>
+- 示例：
+
+```java
+输入: "(()"
+输出: 2
+解释: 最长有效括号子串为 "()"
+
+输入: ")()())"
+输出: 4
+解释: 最长有效括号子串为 "()()"
+```
+
+### Solution
+
+```java
+class Solution {
+public int longestValidParentheses(String s) {
+	char[] chars = s.toCharArray();
+	return Math.max(calc(chars, 0, 1, chars.length, '('), calc(chars, chars.length -1, -1, -1, ')'));
+}
+private static int calc(char[] chars , int i ,  int flag,int end, char cTem){
+	int max = 0, sum = 0, currLen = 0,validLen = 0;
+	for (;i != end; i += flag) {
+		sum += (chars[i] == cTem ? 1 : -1);
+        currLen ++;
+		if(sum < 0){
+			max = max > validLen ? max : validLen;
+			sum = 0;
+			currLen = 0;
+            validLen = 0;
+		}else if(sum == 0){
+            validLen = currLen;
+        }
+	}
+	return max > validLen ? max : validLen;
+}
+}
+```
+
+## 2020.07.05
+### Problem
+- 给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 '?' 和 '*' 的通配符匹配。
+- '?' 可以匹配任何单个字符。'*' 可以匹配任意字符串（包括空字符串）。
+
+> 说明：
+
+- s 可能为空，且只包含从 a-z 的小写字母。
+- p 可能为空，且只包含从 a-z 的小写字母，以及字符 ? 和 *。
+- 链接：<a href="https://leetcode-cn.com/problems/wildcard-matching">https://leetcode-cn.com/problems/wildcard-matching</a>
+- 示例：
+
+```java
+输入:
+s = "aa"
+p = "a"
+输出: false
+解释: "a" 无法匹配 "aa" 整个字符串。
+
+输入:
+s = "aa"
+p = "*"
+输出: true
+解释: '*' 可以匹配任意字符串。
+
+输入:
+s = "cb"
+p = "?a"
+输出: false
+解释: '?' 可以匹配 'c', 但第二个 'a' 无法匹配 'b'。
+```
+
+### Solution
+
+```java
+class Solution {
+    public static boolean isMatch(String s, String p) {
+        int sn = s.length();
+        int pn = p.length();
+        boolean[][] dp = new boolean[sn + 1][pn + 1];
+        char[] sArray = s.toCharArray();
+        char[] pArray = p.toCharArray();
+        dp[0][0] = true;
+        for (int i = 1; i <= pn; ++i) {
+            if (pArray[i-1] == '*') {
+                dp[0][i] = true;
+            } else {
+                break;
+            }
+        }
+        for (int i = 1; i <= sn; ++i) {
+            for (int j = 1; j <= pn; ++j) {
+                if (pArray[j-1] == '*') {
+                    dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+                } else if (pArray[j-1] == '?' || sArray[i-1] == pArray[j-1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+            }
+        }
+        return dp[sn][pn];
+    }
+}
+```
+
+### Get
+- 动态规划
+- 动态规划问题，大致可以通过以下四部进行解决。
+> 1. 划分状态，即划分子问题。
+> 2. 状态表示，即如何让计算机理解子问题。
+> 3. 状态转移，即父问题是如何由子问题推导出来的。
+> 4. 确定边界，确定初始状态是什么？最小的子问题？最终状态又是什么？
