@@ -1,5 +1,5 @@
 ---
-date: 2020-06-25 12:27:40
+date: 2020-06-20 12:27:40
 layout: post
 title: NowCoder Daily Problems
 subtitle: Daily Problems
@@ -73,3 +73,14 @@ paginate: true
 
 ### Analysis
 - Java中静态变量只能在类主体中定义，不能在方法中定义。静态变量属于类所有而不属于方法。
+
+## 2020.07.05
+### Problem 1
+![image](/assets/img/nowcoder_img/20200705_1.png)
+
+### Analysis
+- 假设两线程为A、B，设有3种情况：  
+
+> 1. AB不并发：此时相当于两个方法顺序执行。A执行完后a=-1，B使用-1作为a的初值，B执行完后a=-2。  
+> 2. AB完全并发：此时读写冲突，相当于只有一个线程对a的读写最终生效。相同于方法只执行了一次。此时a=-1。  
+> 3. AB部分并发：假设A先进行第一次读写，得到a=1;之后A的读写被B覆盖了。B使用用1作为a的初值，B执行完后a=0。  
