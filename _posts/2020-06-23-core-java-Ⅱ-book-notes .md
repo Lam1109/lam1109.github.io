@@ -9,7 +9,7 @@ optimized_image: /assets/img/post_img/java2.png
 category: java
 tags:
   - java
-  - dvanced features.
+  - dvanced features
 author: Lam
 ---
 
@@ -525,5 +525,204 @@ Stream<String> parallelWords = Stream.of(wordArray).parallel();
 > 1. 并行化会导致大量的开销，只有面对非常大的数据集才划算。
 > 2. 只有在底层的数据源可以被有效地分割为多个部分时，将流并行化才有意义。
 > 3. 并行流使用的线程池可能会因诸如文件I/O或网络访问这样的操作被阻塞而饿死。只有面对海量的内存数据和运算密集处理，并行流才会工作最佳。
+
+***
+
+# 第2章 输入与输出
+> 输入/输出流  
+  内存映射文件  
+  读写二进制数据  
+  文件锁机制  
+  对象输入/输出流与序列化  
+  正则表达式  
+  操作文件  
+
+## 2.1 输入/输出流
+- 在Java API中，可以从其中读入一个字节序列的对象称作输入流，而可以向其中写入一个字节序列的对象称作输出流。
+- 抽象类**InputStream**和**OutputStream**构成了输入/输出（I/O）类层次结构的基础。
+
+### 2.1.1 读写字节
+- **InputStream**类有一个抽象方法：
+
+```java
+abstract int read()
+/** 该方法将读入一个字节，
+  * 并返回读入的字节，
+  * 或者在遇到输入源结尾时返回-1。
+```
+
+```java
+// 从Java 9开始，读取流中所有字节的方法
+byte[] bytes = in.readAllBytes();
+```
+
+- OutputStream类有一个抽象方法：
+
+```java
+// 向某个输出位置写出一个字节
+abstract void write(int b)
+```
+
+```java
+// 一次性写出一个字节数组
+byte[] values = ...;
+out.write(values);
+
+// transferTo方法可以将所有字节从一个输入流传递到输出流
+in.transferTo(out);
+```
+
+- read和write方法在执行时都将**阻塞**，直至字节确实被读入或写出。
+- 当完成对输入/输出流的读写时，应该通过调用**close**方法关闭它，这会释放掉十分有限的操作系统资源。**而且，如果不关闭文件，那么写出字节的最后一个包可能永远也得不到传递，从而导致写文件失败。**
+
+### 2.1.2 完整的流家族
+- **Java**拥有一个流家族，包含各种输入/输出流类型，其数量超过60个。
+
+### 2.1.3 组合输入/输出流过滤器
+- FileInputStream和FileInputStream可以提供附着在一个磁盘文件上的输入流和输出流，而只需要向其构造器提供文件的完整路径名。
+
+```java
+var fin = new FileInputStream("employee.dat");
+// 这行代码可以查看用户目录下名为“employee.dat”的文件。
+```
+
+> 由于反斜杠字符在Java字符串中是转义字符，因此要确保在Windows风格的路径名中使用\\\。
+
+- 某些输入流可以从文件和其他更外部的位置上获取字节，而其他输入流可以将字节组装到更有用的数据类型中。例如，为了从文件中读入数字，首先要创建一个FileInputStream，然后将其传递给DataInputStream的构造器：
+
+```java
+var fin = new FileInputStream("employee.dat");
+var din = new DataInputStream(fin);
+double x = din.readDouble();
+```
+
+### 2.1.4 文本读入与输出
+- 在保存数据时，可以选择二进制格式或文本格式。例如，整数1234存储成二进制数时候，会被写为由字节 00 00 04 D2构成的序列（16进制表示法），而存储成文本格式时，则被存成了字符串“1234”。
+
+### 2.1.5 如何写出文本输出
+- 文本输出，可以使用PrintWriter。
+
+```java
+var out = new PrintWriter("employee.txt", StandardCharsets.UTF_8);
+String name = "Lam";
+double salary = 75000;
+out.print(name);
+out.print(' ');
+out.println(salary);
+// employee.txt文件中有 Lam 75000.0
+```
+
+### 2.1.6 如何读入文本输入
+
+```java
+// 最简单 Scanner类
+Scanner in = new Scanner(Path.of("inputfile.txt"),StandardCharsets.UTF_8);
+String s1=in.nextLine();
+
+// 将短小的文本文件读入到一个字符串中
+var content = (Files.read String path, charset);
+
+// 一行一行地读入
+List<String> lines = Files.readAllLines(path, charset);
+
+// 较大文件，将行惰性处理为一个Stream<String>对象
+try (Stream<String> lines = Files.lines(path, charset)) {
+    ...
+}
+
+// 使用扫描器来读入符号（token），即由分隔符分隔的字符串，默认的分隔符是空白字符
+Scanner in = ...;
+in.useDelimiter("\\PL+"); // 将分隔符修改为任意的正则表达式
+
+// 调用next方法可以产生下一个符号
+while (in.hasNext()) {
+    String word = in.next();
+    ...
+}
+
+// 获取一个包含所有符号的流
+Stream<String> words = in.tokens();
+```
+
+- 在早期的Java版本中，处理文本输入的唯一方式就是通过BufferedReader类。它的readLine会产生一行文本，或者在无法获得更多的输入时返回null。
+
+```java
+InputStream inputStream = ...;
+try (var in = new BufferedReader(new InputStreamReader(inputStream, charset))) {
+    String line;
+    while ((line = in.readLine()) != null) {
+        do something with line
+    }
+}
+```
+
+### 2.1.7 以文本格式存储对象
+- 输出
+```java
+public static void writeEmployee(PrintWriter out, Employee e) {
+    out.println(e.getName() + "|" + e.getSalary + "|" + e.getHireDay());
+}
+//在调用该方法之后 切记使用out.close()关闭文件
+
+// 调用该方法打印到文本文件中
+    Harry Hacker|35500|1989-10-01
+    Carl Cracker|75000|1987-12-15
+    Tony Tester|38000|1990-03-15
+```
+
+- 输入
+
+```java
+/** 每次读入一行，
+  * 然后分离所有字段。
+  * 用扫描器来读入每一行，
+  * 然后用String.split方法将这一行断开成一组标记。
+  */
+public static Employee readEmployee(Scanner in) {
+    String line = in.nextLine();
+    String[] tokens = line.split("\\|");
+    String name = tokens[0];
+    double salary = Double.parseDouble(tokens[1]);
+    LocalDate hireDate = LocalDate.parse(tokens[2]);
+    int year = hireDate.getYear();
+    int month = hireDate.getMonthValue();
+    int day = hireDate.getDayOfMonth();
+    return new Employee(name, salary, year, month, day);
+}
+/** split方法的参数是一个描述分隔符的正则表达式，
+  * 碰巧的是，
+  * 竖线（|）在正则表达式中具有特殊的含义，
+  * 因此需要用\字符来表示转义，
+  * 而这个\又需要另一个\来转义，
+  * 因此产生了“\\|”表达式。
+  */
+```
+
+### 2.1.8 字符编码方式
+- 最常见的编码方式是UTF-8，它将每个Unicode编码点编码为1到4个字节的序列。UTF-8的好处是传统的包含了英语中用到的所有字符的ASCII字符集中的每个字符都只会占用一个字节。
+- UTF-16，它会将每个Unicode编码点编码为1个或2个16位值。
+- StandardCharsets类具有类型为Charset的静态变量，用于表示每种Java虚拟机都必须支持的字符编码方式：
+
+> StandardCharsets.UTF_8  
+  StandardCharsets.UTF_16  
+  StandardCharsets.UTF_16BE  
+  StandardCharsets.UTF_16LE  
+  StandardCharsets.ISO_8859_1  
+  StandardCharsets.US_ASCII  
+
+- 静态的forName方法可以获得另一种编码方式的Charset
+
+```java
+Charset shiftJIS = Charset.forName("Shift-JIS");
+```
+
+- 在读入或写出文本时，使用Charset对象。
+
+```java
+var str = new String(bytes, StandardCharsets.UTF_8);
+// 将一个字节数组转换为字符串
+```
+
+## 2.2 读取二进制数据
 
 
