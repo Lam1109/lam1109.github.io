@@ -579,7 +579,7 @@ in.transferTo(out);
 - **Java**拥有一个流家族，包含各种输入/输出流类型，其数量超过60个。
 
 ### 2.1.3 组合输入/输出流过滤器
-- FileInputStream和FileInputStream可以提供附着在一个磁盘文件上的输入流和输出流，而只需要向其构造器提供文件的完整路径名。
+- **FileInputStream**和**FileInputStream**可以提供附着在一个磁盘文件上的输入流和输出流，而只需要向其构造器提供文件的完整路径名。
 
 ```java
 var fin = new FileInputStream("employee.dat");
@@ -588,7 +588,7 @@ var fin = new FileInputStream("employee.dat");
 
 > 由于反斜杠字符在Java字符串中是转义字符，因此要确保在Windows风格的路径名中使用\\\。
 
-- 某些输入流可以从文件和其他更外部的位置上获取字节，而其他输入流可以将字节组装到更有用的数据类型中。例如，为了从文件中读入数字，首先要创建一个FileInputStream，然后将其传递给DataInputStream的构造器：
+- 某些输入流可以从文件和其他更外部的位置上获取字节，而其他输入流可以将字节组装到更有用的数据类型中。例如，为了从文件中读入数字，首先要创建一个**FileInputStream**，然后将其传递给**DataInputStream**的构造器：
 
 ```java
 var fin = new FileInputStream("employee.dat");
@@ -597,10 +597,12 @@ double x = din.readDouble();
 ```
 
 ### 2.1.4 文本读入与输出
-- 在保存数据时，可以选择二进制格式或文本格式。例如，整数1234存储成二进制数时候，会被写为由字节 00 00 04 D2构成的序列（16进制表示法），而存储成文本格式时，则被存成了字符串“1234”。
+- 在保存数据时，可以选择**二进制格式**或**文本格式**。例如，整数1234存储成二进制数时候，会被写为由字节 00 00 04 D2构成的序列（16进制表示法），而存储成文本格式时，则被存成了字符串“1234”。
+- 文本格式：人类可阅读。  
+- 二进制格式：效率高。
 
 ### 2.1.5 如何写出文本输出
-- 文本输出，可以使用PrintWriter。
+- 文本输出，可以使用**PrintWriter**。
 
 ```java
 var out = new PrintWriter("employee.txt", StandardCharsets.UTF_8);
@@ -644,7 +646,7 @@ while (in.hasNext()) {
 Stream<String> words = in.tokens();
 ```
 
-- 在早期的Java版本中，处理文本输入的唯一方式就是通过BufferedReader类。它的readLine会产生一行文本，或者在无法获得更多的输入时返回null。
+- 在早期的Java版本中，处理文本输入的唯一方式就是通过**BufferedReader**类。它的**readLine**会产生一行文本，或者在无法获得更多的输入时返回null。
 
 ```java
 InputStream inputStream = ...;
@@ -699,9 +701,9 @@ public static Employee readEmployee(Scanner in) {
 ```
 
 ### 2.1.8 字符编码方式
-- 最常见的编码方式是UTF-8，它将每个Unicode编码点编码为1到4个字节的序列。UTF-8的好处是传统的包含了英语中用到的所有字符的ASCII字符集中的每个字符都只会占用一个字节。
-- UTF-16，它会将每个Unicode编码点编码为1个或2个16位值。
-- StandardCharsets类具有类型为Charset的静态变量，用于表示每种Java虚拟机都必须支持的字符编码方式：
+- 最常见的编码方式是**UTF-8**，它将每个Unicode编码点编码为1到4个字节的序列。**UTF-8**的好处是传统的包含了英语中用到的所有字符的ASCII字符集中的每个字符都只会占用一个字节。
+- **UTF-16**，它会将每个Unicode编码点编码为1个或2个16位值。
+- **StandardCharsets**类具有类型为Charset的静态变量，用于表示每种Java虚拟机都必须支持的字符编码方式：
 
 > StandardCharsets.UTF_8  
   StandardCharsets.UTF_16  
@@ -710,7 +712,7 @@ public static Employee readEmployee(Scanner in) {
   StandardCharsets.ISO_8859_1  
   StandardCharsets.US_ASCII  
 
-- 静态的forName方法可以获得另一种编码方式的Charset
+- 静态的**forName**方法可以获得另一种编码方式的Charset
 
 ```java
 Charset shiftJIS = Charset.forName("Shift-JIS");
@@ -724,5 +726,284 @@ var str = new String(bytes, StandardCharsets.UTF_8);
 ```
 
 ## 2.2 读取二进制数据
+### 2.2.1 DataInput和DataOutput接口
+- **DataOutput**接口定义了下面用于以二进制格式写数组、字符、boolean值和字符串的方法：
+
+```java
+  writeInt    writeDouble
+  writeShort  writeChar
+  writeLong   writeBoolean
+  writeFloat  writeUTF
+  writeChars  writeByte  
+  // 例如，writeInt总是将一个整数写出为4字节的二进制数量值，而不管它有多少位。
+```
+
+- 为了读回数据，可以使用在**DataInput**接口中定义的下列方法：
+
+```java
+  readInt    readDouble
+  readShort  readChar
+  readLong   readBoolean
+  readFloat  readUTF
+```
+- example
+
+```java
+/** DataInputStream类实现了DataInput接口，
+  * 为了从文件中读入二进制数据，
+  * 可以将DataInputStream与某个字节源相组合，
+  * 例如FileInputStream：
+  */
+var in = new DataInputStream(new FileInputStream("employee.dat"));
+
+/** 类似地，
+  * 要写出二进制数据，
+  * 可以使用实现了DataOutput接口的DataOutputStream类：
+  */
+var out = new DataOutputStream(new FileOutputStream("employee.dat"));
+```
+
+### 2.2.2 随机访问文件
+- **RandomAccessFile**类可以在文件中的任何位置查找或写入数据。
+
+```java
+var in = new RandomAccessFile("employee.dat", "r");
+var inOut = new RandomAccessFile("employee.dat", "rw");
+// r表示只读(read)，rw表示读写(read and write)
+```
+
+- 随机访问文件有一个表示下一个将被读入或写出的字节所处位置的文件指针，**seek**方法用来将这个指针设置到文件中的任意的字节位置，seek的参数是一个long类型的整数，它的值位于0到文件按照字节来度量的长度之间。
+- **getFilePointer**方法将返回文件指针的当前位置。
+
+### 2.2.3 ZIP文档
+- ZIP文档（通常）以压缩格式存储了一个或多个文件，每个ZIP文档都有一个头，包含诸如每个文件名字和所使用的压缩方法等信息。
+- 读入：
+
+```java
+var zin = new ZipInputStream(new FileInputStream(zipname));
+ZipEntry entry;
+while ((entry = zin.getNextEntry()) != null) {
+    read the contents of zin
+    zin.closeEntry();
+}
+zin.close();
+```
+
+- 写出：
+
+```java
+var fout = new FileOutputStream("test.zip");
+var zout = new ZipOutputStream(fout);
+for all files
+{
+    var ze = new ZipEntry(filename);
+    zout.putNextEntry(ze);
+    send data to zout
+    zout.closeEntry();
+}
+zout.close();
+```
+
+## 2.3 对象输入/输出流与序列化
+- Java语言支持一种称为**对象序列化**（object serialization）的非常通用的机制，它可以将任何对象写出到输出流中，并在之后将其返回。
+
+### 2.3.1 保存和加载序列化对象
+- 写出：
+
+```java
+// 创建一个ObjectOutputStream对象
+var out = new ObjectOutputStream(new FileOutputStream("employee.dat");
+// 使用writeObject方法保存对象
+var harry = new Employee("Harry Hacker", 50000, 1989, 10, 1);
+var boss = new Manager("Carl Cracker", 80000, 1987, 12, 15);
+
+out.writeObject(harry);
+out.writeObject(boss);
+```
+
+- 读入：
+
+```java
+// 创建一个ObjectInputStream对象
+var in = new ObjectInputStream(new FileInputStream("employee.dat"));
+// 使用readObject方法获得对象
+var e1 = (Employee) in.readObject();
+var e2 = (Employee) in.readObject();
+```
+
+- 每个对象都是用一个**序列号**（serial number）保存的。序列化对象算法：
+
+> 1. 对于遇到的每一个对象引用都关联一个序列号。
+> 2. 对于每个对象，当第一次遇到时，保存其对象数据到输出流中。
+> 3. 若某个对象之前已经被保存过，那么只写出“与之前保存过的序列号为x的对象相同”。
+
+- 在读回对象时，整个过程反过来：
+
+> 1. 对于对象输入流中的对象，在第一次遇到其序列号时，构建它，并使用流中数据来初始化它，然后记录这个顺序号和新对象之间的关联。
+> 2. 当遇到“与之前保存过的序列号为x的对象相同”这一标记时，获取与这个序列号相关联的对象引用。
+
+## 2.4 操作文件
+- Path和Files类封装了在用户机器上处理文件系统所需的所有功能。
+
+### 2.4.1 Path
+- 静态的Paths.get方法接受一个或多个字符串，并将它们用默认文件系统的路径分隔符（类UNIX文件系统是/，Windows是\）连接起来。
+
+```java
+Path absolute = Paths.get("/home", "harry");
+Path relative = Paths.get("myprog", "conf", "user.properties");
+```
+
+- 相关方法：
+
+```java
+/** 1. resolve方法
+  * 调用p.resolve(q)将按照下列规则返回一个路径：
+  * 若q是绝对路径，则结果就是q。
+  * 否则，根据文件系统的规则，将“p后面跟着q”作为结果。
+  */
+Path workRelative = Paths.get("work");
+Path workPath = basePath.resolve(workRelative);
+  // resolve方法有一种快捷方式，它接受一个字符串而不是路径。
+Path workPath = basePath.resolve("work");
+
+/** 2. resolveSibling方法
+  * 若workPath是 /opt/myapp/wokr ，
+  * 下面的调用，
+  * 将创建 /opt/myapp/temp 。
+  */
+Path tempPath = workPath.resolveSibling("temp");
+
+/** 3. relativize方法
+  * 以“/home/harry”为目标对“/home/fred/input.txt”进行相对化操作，
+  * 会产生“../fred/input.txt”，
+  * 其中，假设..表示文件系统中的父目录。
+  **/
+  
+/** 4. normalize方法
+  * 该方法会移除所有冗余的.和.. ，
+  * 规范化 /home/harry/../fred/./input.txt ，
+  * 将产生 /home/fred/input.txt 。
+  */
+  
+/** 5. toAbsolutePath方法
+  * 将产生给定路径的绝对路径。
+  */
+```
+
+### 2.4.2 读写文件
+- Files类可以使得普通文件操作变得快捷。
+
+```java
+// 读取文件的所有内容
+byte[] bytes = Files.readAllBytes(path);
+
+// 从文本文件中读取内容
+var content = Files.readString(path, charset);
+
+// 将文件当作行序列读入
+List<String> lines = Files.readAllLines(path, charset);
+
+// 写出一个字符串到文件中
+Files.writeString(path, content.charset);
+
+// 向指定文件追加内容
+Filse.write(path, content.getBytes(charset), StandardOpenOption.APPEND);
+
+// 将一个行的集合写出到文件中
+Files.write(path, lines, charset);
+
+/** 以上简便方法适用于处理中等长度的文本文件，
+  * 若要处理文件长度比较大，
+  * 或者是二进制文件，
+  * 那么还是应该使用输入/输出流或者读入器/写出器：
+  */
+InputStream in = Files.newInputStream(path);
+OutputStream out = Files.newOutputStream(paht);
+
+Reader in = Files.newBufferedReader(path, charset);
+Writer out = Files.newBufferedWriter(path, charset);
+```
+
+### 2.4.3 创建文件和目录
+
+```java
+// 1. 创建新目录
+/** createDirecoty方法
+  * F:\\IDEAWORKSPACE\\TestDemo文件夹已经存在 \\newDir不存在
+  ***************************************************************
+  * String pathstr = "F:\\IDEAWORKSPACE\\TestDemo\\newDir";
+  * Path path = Paths.get(pathstr);
+  */
+Files.createDirecoty(path);
+
+/** createDirecoties方法
+  * F:\\IDEAWORKSPACE\\TestDemo路径已经存在 \\midDir\\newDir不存在
+  ***************************************************************
+  * String pathstr = "F:\\IDEAWORKSPACE\\TestDemo\\midDir\\newDir";
+  * Path path = Paths.get(pathstr);
+  */
+Files.createDirecoties(path);  
+
+// 2. 创建文件
+/** createFile方法
+  * F:\\IDEAWORKSPACE\\TestDemo路径已经存在 myfile.txt不存在
+  ***************************************************************
+  * String pathstr = "F:\\IDEAWORKSPACE\\TestDemo\\myfile.txt";
+  * Path path = Paths.get(pathstr);
+  */
+Files.createFile(path);
+// 会在指定路径下创建myfile.txt空文件
+```
+
+- 有些便捷方法可以用来在给定个位置或者系统指定位置创建临时文件或者临时目录：
+
+```java
+Path newPath = Files.createTempFile(dir, prefix, suffix);
+Path newPath = Files.createTempFile(prefix, suffix);
+Path newPath = Files.createTempDirectory(dir, prefix);
+Path newPath = Files.createTempDirectory(prefix);
+/** dir是一个Path对象，prefix和suffix是可以为null的字符串。
+  * 例如，调用Files.createTempFile(null, ".txt")
+  * 可能会返回一个像 /temp/1234405522364837194.txt 这样的路径。
+  */
+```
+
+### 2.4.4 复制、移动和删除文件
+
+```java
+// 1. 复制
+Files.copy(fromPath, toPath);
+
+// 2. 移动
+Files.move(fromPath, toPath);
+
+/** 若目标路径已经存在，
+  * 则复制或移动将失败。
+  * 若要覆盖已有的目标路径，
+  * 可以使用REPLACE_EXISTING选项。
+  * 若要复制所有的文件属性，
+  * 可以使用COPY_ATTRIBUTES选项。
+  */
+Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+
+/** 将操作定义为原子性的，
+  * 以此保证要么移动操作成功完成，
+  * 要么源文件继续保持在原来位置。
+  * 使用ATOMIC_MOVE实现。
+  */
+Files.move(fromPath, toPath, StandardCopyOption.ATOMIC_MOVE);
+
+/** 将一个输入流复制到Path中，
+  * 表示想要将该输入流存储到硬盘上。
+  * 类似地，可以将一个Path复制到输出流中。
+  */
+Files.copy(inputStream, toPath);
+Files.copy(fromPath, outputStream);
+
+// 3. 删除
+Files.delete(path); // 文件不存在会报错
+// 使用deleteIfExists方法
+boolean deleted = Files.deleteIfExists(path);
+```
 
 
