@@ -542,3 +542,116 @@ class Solution {
 > 2. 状态表示，即如何让计算机理解子问题。
 > 3. 状态转移，即父问题是如何由子问题推导出来的。
 > 4. 确定边界，确定初始状态是什么？最小的子问题？最终状态又是什么？
+
+## 2020.07.06
+### Problem
+- 一个机器人位于一个m x n  网格的左上角。机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下。
+现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
+
+> 说明：
+
+- 链接：<a href="https://leetcode-cn.com/problems/unique-paths-ii">https://leetcode-cn.com/problems/unique-paths-ii</a>
+- m 和 n 的值均不超过 100。
+- 网格中的障碍物和空位置分别用 1 和 0 来表示。
+- 示例：
+
+```java
+输入:
+[
+ [0,0,0],
+ [0,1,0],
+ [0,0,0]
+]
+输出: 2
+解释:
+3x3 网格的正中间有一个障碍物。
+从左上角到右下角一共有 2 条不同的路径：
+1. 向右 -> 向右 -> 向下 -> 向下
+2. 向下 -> 向下 -> 向右 -> 向右
+```
+
+### Solution
+
+```java
+class Solution {
+       public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        if (obstacleGrid[0][0] == 1) return 0;
+        int row = obstacleGrid.length;
+        int col = obstacleGrid[0].length;
+
+        int[][] dp = new int[row][col];
+        dp[0][0] = 1;
+        
+        // base case
+        for (int i = 1; i < row; i ++) {
+            if (dp[i - 1][0] == 1 && obstacleGrid[i][0] != 1) dp[i][0] = 1;
+            else break;
+        }
+        for (int i = 1; i < col; i ++) {
+            if (dp[0][i - 1] == 1 && obstacleGrid[0][i] != 1) dp[0][i] = 1;
+            else break;
+        }
+
+        for (int i = 1; i < row; i ++) {
+            for (int j = 1; j < col; j ++) {
+                if (obstacleGrid[i][j] == 1) continue;
+
+                dp[i][j] = (obstacleGrid[i - 1][j] == 1 ? 0 : dp[i - 1][j])
+                        + (obstacleGrid[i][j - 1] == 1 ? 0 : dp[i][j - 1]);
+            }
+        }
+        return dp[row - 1][col - 1];
+    }
+}
+
+```
+
+## 2020.07.07
+### Problem
+- 给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。
+
+
+
+> 说明：
+
+- 链接：<a href="https://leetcode-cn.com/problems/path-sum">https://leetcode-cn.com/problems/path-sum</a>
+- 说明: 叶子节点是指没有子节点的节点。
+- 示例：
+
+```java
+给定如下二叉树，以及目标和 sum = 22
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \      \
+        7    2      1
+返回 true, 因为存在目标和为 22 的根节点到叶子节点的路径 5->4->11->2。
+```
+
+### Solution
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if(root == null) {
+            return false;
+        }
+        if(root.left == null && root.right == null) {
+            return root.val == sum;
+        }
+        return hasPathSum(root.left, sum - root.val) 
+            || hasPathSum(root.right, sum - root.val);
+    }
+}
+```
