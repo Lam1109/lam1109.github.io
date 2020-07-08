@@ -1316,3 +1316,107 @@ FileLock trylock(long start, long size, boolean shared);
 > 1. 字符类是一个括在括号中的可选择的字符集。例如，[Jj]、[0-9]、[A-Za-z]或[^0-9]。这里“-”表示是一个范围，而“^”表示补集。
 > 2. 如果字符类中包含“-”，那么它必须是第一项或是最后一项；如果要包含“[”，那么它必须是第一项；如果要包含“^”，那么它可以是除开始位置之外的任何位置。其中，只需要转义“[”和“\”。
 > 3. 有许多预定义的字符类，例如\d（数字）和\p{Sc}（Unicode货币符号）。
+
+- 语法总结：
+
+> 1. 大部分字符都可以与它们自身匹配。
+> 2. .符号可以匹配任何字符（有可能不包括行终止符，这取决于标志的设置）。
+> 3. 使用\作为转义字符，例如\\.匹配句号而\\\匹配反斜线。
+> 4. ^和$分别匹配一行的开头和结尾。
+> 5. 如果X和Y是正则表达式，那么XY表示“任何X的匹配后面跟随Y的匹配”，X|Y表示“任何X或Y的匹配”。
+> 6. 可以将量词运用到表达式X：X+（1个或多个）、X*（0个或多个）与X?（0个或1个）。
+> 7. 默认情况下，量词要匹配能够使整个匹配成功的最大可能的重复次数。
+> 8. 我们使用群组来定义子表达式，其中群组用括号()括起来。
+
+### 2.7.2 匹配字符串
+- 正则表达式最简单的用法就是测试某个特定的字符串是否与它匹配。
+
+```java
+/** 首先用表示正则表达式的字符串构建一个Pattern对象。
+  * 然后从这个模式中获得一个Matcher，
+  * 并调用它的mathes方法。
+  */
+Pattern pattern = Pattern.compile(patternString);
+Matcher matcher = pattern.matcher(input);
+if (matcher.matchers()) ...
+```
+
+- 在编译这个模式时，可以设置一个或多个标志：
+
+```java
+Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
+// 或者可以在模式中指定它们
+String regex = "(?iU:expression)";
+```
+
+- 各个标志：
+
+> 1. Pattern.CASE_INSENSITIVE或i：匹配字符时忽略字母的大小写，默认情况下，这个标志只考虑US ASCII字符。
+> 2. Pattern.UNICODE_CASE或u：当与CASE_INSENSITIVE组合使用时，用Unicode字母的大小写来匹配。
+> 3. Pattern.UNICODE_CHARACTER_CLASS或U：选择Unicode字符类代替POSIX，其中蕴含了UNICODE_CASE。
+> 4. Pattern.MULTILINE或m：^和$匹配行的开头和结尾，而不是整个输入的开头和结尾。
+> 5. Pattern.UNIX_LINES或d：在多行模式中匹配^和$时，只有'\n'被识别成行终止符。
+> 6. Pattern.DOTALL或s：当使用这个标志时，.符号匹配所有字符，包括行终止符。
+> 7. Pattern.COMMENTS或x：空白字符和注释（从#到行末尾）将被忽略。
+> 8. Pattern.LITERAL：该模式将被逐字地采纳，必须精确匹配，因字母大小写而造成的差异除外。
+> 9. Pattern.CANON_EQ：考虑Unicode字符规范的等价性，例如，e后面跟随..（分音符号）匹配ë。
+
+- 在集合或流中匹配元素，可以将模式转换为谓词：
+
+```java
+Stream<String> strings = ...;
+Stream<String> result = strings.filtter(pattern.asPredicate());
+```
+
+### 2.7.3 找出多个匹配
+- 通常，不希望使用正则表达式来匹配全部输入，而只是想找出输入中一个或多个匹配的子字符串。
+
+```java
+/** 使用Matcher类的find方法来查找匹配内容，
+  * 如果返回true，
+  * 再使用start和end方法来查找匹配内容，
+  * 或使用不带引元的group方法来获取匹配的字符串。
+  */
+while(matcher.find()) {
+    int start = matcher.start();
+    int end = matcher.end();
+    String match = input.group();
+    ...
+}
+```
+
+### 2.7.4 用分隔符来分割
+- 将输入按照匹配的分隔符断开，而其他部分保持不变。
+
+```java
+/** Pattern.split方法可以自动完成这项任务。
+  * 调用此方法后可以获得一个剔除分隔符之后的字符串数组：
+  */
+String input = ...;
+Pattern commas = Pattern.compile("\\s*,\\s*");
+String[] tokens = commas.split(input)
+    // "1, 2, 3" turns into ["1", "2", "3"]
+    
+// 若有多个标记，那么可以惰性地获取它们：
+Stream<String> tokens = commas.splitAsStream(input);
+
+// 若不关心预编译模式和惰性获取，那么可以使用String.split方法：
+String[] tokens = input.split("\\s*,\\s*");
+
+// 若输入数据在文件中，那么要使用扫描器：
+var in = new Scanner(path, StandardCharsets.UTF_8);
+in.useDelimiter("\\s*,\\s*");
+Stream<String> tokens = in.tokens();
+```
+
+### 2.7.5 替换匹配
+- Matcher类的replaceAll方法将正则表达式出现的所有地方都用替换字符串来替换。
+
+```java
+/** 例如，
+  * 将所有的数字序列都替换成#字符
+  */
+Pattern pattern = Pattern.compile("[0-9]+");
+Matcher matcher = pattern.matcher(input);
+String output = matcher.replaceAll("#");
+```
