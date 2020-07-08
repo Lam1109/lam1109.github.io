@@ -603,7 +603,6 @@ class Solution {
         return dp[row - 1][col - 1];
     }
 }
-
 ```
 
 ## 2020.07.07
@@ -615,7 +614,7 @@ class Solution {
 > 说明：
 
 - 链接：<a href="https://leetcode-cn.com/problems/path-sum">https://leetcode-cn.com/problems/path-sum</a>
-- 说明: 叶子节点是指没有子节点的节点。
+- 叶子节点是指没有子节点的节点。
 - 示例：
 
 ```java
@@ -655,3 +654,47 @@ class Solution {
     }
 }
 ```
+
+## 2020.07.08
+### Problem
+- 你正在使用一堆木板建造跳水板。有两种类型的木板，其中长度较短的木板长度为shorter，长度较长的木板长度为longer。你必须正好使用k块木板。编写一个方法，生成跳水板所有可能的长度。
+
+
+> 说明：
+
+- 链接：<a href="https://leetcode-cn.com/problems/diving-board-lcci">https://leetcode-cn.com/problems/diving-board-lcci</a>
+- 返回的长度需要从小到大排列。
+- 示例：
+
+```java
+输入：
+shorter = 1
+longer = 2
+k = 3
+输出： {3,4,5,6}
+```
+
+### Solution
+
+```java
+class Solution {
+    public int[] divingBoard(int shorter, int longer, int k) {
+        if(k == 0) {
+            return new int[]{}; // 表示返回集合 {} 空集
+    }
+        if (longer == shorter) {
+            return new int[]{k * longer}; // 表示返回集合 {value} value为k*longer的值
+    }
+        int n = longer - shorter;
+        int[] ans = new int[k + 1];
+        for(int i = 0;i <= k;i++) {
+            ans[i] = shorter * k + i * n;
+        }
+        return ans;
+    }
+}
+```
+
+### Get
+- return new int[]{}; // 表示返回集合 {} ，空集。
+- return new int[]{k * longer}; // 表示返回集合 {value} ，value为k * longer的值。
