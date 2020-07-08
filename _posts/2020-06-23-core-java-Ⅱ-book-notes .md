@@ -1006,4 +1006,313 @@ Files.delete(path); // 文件不存在会报错
 boolean deleted = Files.deleteIfExists(path);
 ```
 
+- 用于文件操作的标准选项
 
+<table>
+  <thead>
+    <tr>
+      <th>选项</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>StandardOpenOption</td>
+      <td>与newBufferedWriter、newInputStream、newOutputStream、write一起使用</td>
+    </tr>
+    <tr>
+      <td>READ</td>
+      <td>用于读取而打开</td>
+    </tr>
+    <tr>
+      <td>WRITE</td>
+      <td>用于写入而打开</td>
+    </tr>
+    <tr>
+      <td>APPEND</td>
+      <td>如果用于写入而打开，那么在文件末尾追加</td>
+    </tr>
+    <tr>
+      <td>TRUNCATE_EXISTING</td>
+      <td>如果用于写入而打开，那么移除已有内容</td>
+    </tr>
+    <tr>
+      <td>CREATE_NEW</td>
+      <td>创建新文件并且在文件已存在的情况下会创建失败</td>
+    </tr>
+    <tr>
+      <td>CREAT</td>
+      <td>自动在文件不存在的情况下创建新文件</td>
+    </tr>
+    <tr>
+      <td>DELETE_ON_CLOSE</td>
+      <td>当文件被关闭时，尽“可能”地删除该文件</td>
+    </tr>
+    <tr>
+      <td>SPARSE</td>
+      <td>给文件系统一个提示，表示该文件是稀疏的</td>
+    </tr>
+    <tr>
+      <td>DSYNC或SYNC</td>
+      <td>要求对文件数据|数据和元数据的每次更新都必须同步地写入到存储设备中</td>
+    </tr>
+    <tr>
+      <td>StandardCopyOption</td>
+      <td>与copy和move一起使用</td>
+    </tr>
+    <tr>
+      <td>ATOMIC_MOVE</td>
+      <td>原子性地移动文件</td>
+    </tr>
+    <tr>
+      <td>COPY_ATTRIBUTES</td>
+      <td>复制文件的属性</td>
+    </tr>
+    <tr>
+      <td>REPLACE_EXISTING</td>
+      <td>如果目标已存在，则替换它</td>
+    </tr>
+    <tr>
+      <td>LinkOption</td>
+      <td>与上面所有方法以及exists、isDirectory、isRegularFile等一起使用</td>
+    </tr>
+    <tr>
+      <td>NOFOLLOW_LINKS</td>
+      <td>不要跟踪符号链接</td>
+    </tr>
+    <tr>
+      <td>FileVisitOption</td>
+      <td>与find、walk、walkFileTree一起使用</td>
+    </tr>
+    <tr>
+      <td>FOLLOW_LINKS</td>
+      <td>跟踪符号链接</td>
+    </tr>
+  </tbody>
+</table>
+
+### 2.4.5 获取文件信息
+
+```java
+/** 1.
+  * 以下静态方法都将返回一个boolean值，
+  * 表示检查路径的某个属性的结果。
+  */
+exists
+isHidden
+isReadablle，isWritable，isExecutable
+isRegularFile，isDirectory，isSymbolicLink
+
+/** 2. size方法
+  * 返回文件的字节数。
+  */
+long fileSize = Files.size(path);
+
+/** 3. getOwner方法
+  * 将文件拥有者作为java.nio.file.attribute.UserPrincipal的一个实例返回。
+  */
+```
+
+- 基本文件属性包括：
+
+> 1. 创建文件、最后一次访问以及最后一次修改文件的时间，这些时间都表示成java.nio.file.attribute.FileTime。
+> 2. 文件是常规文件、目录还是符号链接，抑或这三者都不是。
+> 3. 文件尺寸。
+> 4. 文件主键，这是某种类的对象，具体所属类与文件系统相关，有可能是文件的唯一标识符，也可能不是。
+
+```java
+// 获取这些属性，可以调用
+BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+// 若文件系统兼容POSIX，那么可以获得一个PosixFileAttributes实例
+PosixFileAttributes attributes = Files.readAttributes(path, PosixFileAttributes.class);
+```
+
+### 2.4.6 访问目录中的项
+
+```java
+/** 静态的Files.list方法
+  * 返回一个可以读取目录中各个项的Stream<Path>对象
+  */
+try (Stream<Path> entries = Files.list(pathToDirectory)) {
+    ...
+}
+
+// list方法不会进入子目录。
+
+/** Files.walk方法
+  * 处理目录中的所有子目录
+  */
+try (Stream<Path> entries = Files.walk(pathToRoot)) {
+    // Contains all descendants, visited in depth-first order
+}
+
+```
+
+### 2.4.7 使用目录流
+- 使用Files.newDirectoryStream对象，实现对遍历过程更加细粒度的控制。
+
+```java
+try (DirectoryStream<Path> entries = Files.newDirectorySystem(dir)) {
+    for (Path entry : entries)
+        Process entries
+}
+
+// 可以用glob模式来过滤文件
+try (DirectoryStream<Path> entries = Files.newDirectorySystem(dir, "*.java"))
+```
+
+- 所有glob模式
+
+<table>
+  <thead>
+    <tr>
+      <th>模式</th>
+      <th>描述</th>
+      <th>示例</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>*</td>
+      <td>匹配路径组成部分中0个或多个字符</td>
+      <td>*.java匹配当前目录中所有Java文件</td>
+    </tr>
+    <tr>
+      <td>**</td>
+      <td>匹配跨目录边界的0个或多个字符</td>
+      <td>**.java匹配在所有子目录中的Java文件</td>
+    </tr>
+    <tr>
+      <td>?</td>
+      <td>匹配一个字符</td>
+      <td>????.java匹配所有四个字符的Java文件</td>
+    </tr>
+    <tr>
+      <td>[...]</td>
+      <td>匹配一个字符集合，可以使用连线符[0-9]和取反符[!0-9]</td>
+      <td>Test[0-9A-F]匹配Testx.java，其中x是一个十六进制数字</td>
+    </tr>
+    <tr>
+      <td>{...}</td>
+      <td>匹配由都好隔开的多个可选项之一</td>
+      <td>*.{java,class}匹配所有的Java文件和Class文件</td>
+    </tr>
+    <tr>
+      <td>\</td>
+      <td>转义上述任意模式中的字符以及\字符</td>
+      <td>*\**匹配所有文件名中包含*的文件</td>
+    </tr>
+  </tbody>
+</table>
+
+### 2.4.8 ZIP文件系统
+
+```java
+FileSystem fs = FileSystems.newFileSystem(Paths.get(zipname), null);
+/** 以上调用将建立一个文件系统，
+  * 它包含ZIP文档中的所有文件。
+  * 其中zipname是某个ZIP文件的名字。
+  */
+```
+
+```java
+// 已知文件名，从ZIP文档中复制出这个文件
+Files.copy(fs.getPath(sourceName), targetPath);
+// 其中的fs.getPath对于任意文件系统来说都与Paths.get类似
+```
+
+## 2.5 内存映射文件
+- 大多数操作系统都可以利用**虚拟内存**来实现将一个文件或者文件的一部分“映射”到内存中。然后，该文件就可以被当作内存数组一样地访问，这比传统的文件操作要快得多。
+
+### 2.5.1 内存映射文件的性能
+
+```java
+/** 首先，从文件中获得一个通道（channel），
+  * 通道是用于磁盘文件的一种抽象，
+  * 可以访问诸如内存映射、文件加锁机制以及文件间快速数据传递等操作系统特性。
+  */
+FileChannel channel = FileChannel.open(path, options);
+
+/** 然后，通过调用FileChannel类的map方法从这个通道中获得一个ByteBuffer。
+  * 可以指定映射的文件区域和映射模式，
+  * 支持的模式有三种：
+  * 1. FileChannel.MapMode.READ_ONLY：所产生的缓冲区是只读的，任何对该缓冲区写入的尝试都会导致ReadOnlyBufferException异常。
+  * 2. FileChannel.MapMode.READ_WRITE：所产生的缓冲区是可写的，任何修改都会在某个时段写回到文件中。
+  * 3. FileChannel.MapMode.PRIVATE：所产生的缓冲区是可写的，但是任何修改对这个缓冲区来说都是私有的，不会传播到文件中。
+  * 一旦有了缓冲区，就可以使用ByteBuffer类和Buffer超类的方法读写数据了。
+  */
+```
+
+- 缓冲区支持顺序和随机数据访问，它有一个可以通过get和put操作来移动的位置。
+
+```java
+// 顺序遍历缓冲区中的所有字节
+while (buffer.hasRemaining()) {
+    byte b = buffer.get();
+    ...
+}
+
+// 随机访问
+for (int i = 0; i < buffer.limit(); i++) {
+    byte b = buffer.get(i);
+    ...
+}
+```
+
+### 2.5.2 缓冲区数据结构
+- **缓冲区**是由具有相同类型的数值构成的数组，**Buffer**类是一个抽象类，它有众多的具体子类，包括**ByteBuffer**、**CharBuffer**、**DoubleBuffer**、**IntBuffer**、**LongBuffer**和**ShortBuffer**。
+- 在实践中最常用的将是ByteBuffer和CharBuffer。如图所示，每个缓冲区都具有：
+
+> 1. 一个容量，它永远不能改变。
+> 2. 一个读写位置，下一个值将在此进行读写。
+> 3. 一个界限，超过它进行读写是没有意义的。
+> 4. 一个可选的标记，用于重复一个读入或写出操作。  
+> 这些值满足：0 ≤ 标记 ≤ 读写位置 ≤ 界限 ≤ 容量
+
+![image](/assets/img/post_img/buffer.png)
+
+## 2.6 文件加锁机制
+
+> 假设一个应用程序将用户的偏好存储在一个配置文件中，当用户调用这个应用的两个实例时，这两个实例就有可能会同时希望写配置文件。在这种情况下，第一个实例应该锁定文件，当第二个实例发现文件被锁定时，它必须决策是等待直至文件解锁，还是直接跳过这个写操作过程。
+
+```java
+/** 1. 锁定文件
+  * 可以调用FileChannel类的lock或tryLock方法
+  */
+// A. 阻塞直至可获得锁
+FileChannel = FileChannel.open(path);
+FileLock lock = channel.lock();
+
+// B. 立即返回  要么返回锁 要么在锁不可获得的情况下返回null
+FileLock lock = channel.lock();
+
+/** 2. 锁定文件的一部分
+  */
+FileLock lock(long start, long size, boolean shared);
+// or 
+FileLock trylock(long start, long size, boolean shared);
+/** 如果shared标志为false，
+  * 则锁定文件的目的是读写。
+  * 而如果为true，
+  * 则这是一个共享锁，
+  * 允许多个进程从文件中读入，
+  * 并阻止任何进程获得独占的锁。
+  */
+```
+
+- 文件加锁机制是依赖于操作系统的，需要注意：
+
+> 1. 在某些系统中，文件加锁仅仅是建议性的，如果一个应用未能得到锁，它仍旧可以向被另一个应用并发锁定的文件执行写操作。
+> 2. 在某些系统中，不能在锁定一个文件的同时将其映射到内存中。
+> 3. 文件锁是由整个Java虚拟机持有的。如果有两个程序是由同一个虚拟机启动的，那么它们不可能每一个都获得一个在同一个文件上的锁。当调用lock和trylock方法时，如果虚拟机已经在同一个文件上持有了另一个重叠的锁，那么这两个方法将抛出OverlappingFileLockException。
+> 4. 在一些系统中，关闭一个通道会释放由Java虚拟机持有的底层文件上的所有锁。因此，在同一个锁定文件上应避免使用多个通道。
+> 5. 在网络文件系统上锁定文件是高度依赖于系统的，因此应该尽量避免。
+
+## 2.7 正则表达式
+- **正则表达式**（regular expression）用于指定字符串的模式，可以在任何需要定位匹配某种特定模式的字符串的情况下使用正则表达式。
+
+### 2.7.1 正则表达式语法
+
+> 1. 字符类是一个括在括号中的可选择的字符集。例如，[Jj]、[0-9]、[A-Za-z]或[^0-9]。这里“-”表示是一个范围，而“^”表示补集。
+> 2. 如果字符类中包含“-”，那么它必须是第一项或是最后一项；如果要包含“[”，那么它必须是第一项；如果要包含“^”，那么它可以是除开始位置之外的任何位置。其中，只需要转义“[”和“\”。
+> 3. 有许多预定义的字符类，例如\d（数字）和\p{Sc}（Unicode货币符号）。
