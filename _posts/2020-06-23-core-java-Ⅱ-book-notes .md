@@ -1420,3 +1420,452 @@ Pattern pattern = Pattern.compile("[0-9]+");
 Matcher matcher = pattern.matcher(input);
 String output = matcher.replaceAll("#");
 ```
+
+# 第3章 XML
+> XML概述  
+  使用命名空间  
+  XML文档的结构  
+  流机制解析器  
+  解析XML文档  
+  生成XML文档  
+  验证XML文档  
+  XSL转换  
+  使用XPath来定位信息
+  
+## 3.1 XML概述
+- 尽管HTML和XML同宗同源，但是两者之间存在着重要的区别：
+
+> 1. 与HTML不同，XML是大小写敏感的。
+> 2. 在HTML中，如果上下文可以分清哪里是段落或列表项的结尾，那么结束标签就可以省略，而在XML中结束标签绝对不能省略。
+> 3. 在XML中，只有单个标签而没有相对应的结束标签的元素必须以 / 结尾。
+> 4. 在XML中，属性值必须用引号括起来。在HTML中，引号是可有可无的。
+> 5. 在HTML中，属性名可以没有值。
+
+## 3.2 XML文件的结构
+- XML文档应当以一个文件头开始，例如：
+
+```xml
+<?xml version="1.0"?>
+<!- 或者 -->
+<?xml version="1.0" encoding="UTF-8"?>
+```
+
+- 文档头之后通常是文档类型定义（Document Type Definition, DTD），例如：
+
+```xml
+<!DOCTYPE web-app PUBLIC
+    "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+```
+
+
+- 元素可以有**子元素**(child element)、**文本**或两者皆有。
+- 元素和文本是XML文档“主要的支撑要素”，还有一些其他的要素：
+
+> 1. 字符引用（character reference）的形式是 &#十进制; 或 &#x十六进制; 。
+> 2. 实体引用（entity reference）的形式是 &name; 。
+> 3. CDATA部分（CDATA Section）用<![CDATA[ 和 ]]>来限定其界限。它们是字符数据的一种特殊形式。可以使用它们来囊括那些含有<、>、&之类字符的字符串，而不必将它们解释为标记，例如：<![CDATA[< & > are my favorite delimities]> 。
+> 4. 处理指令（processing instruction）是那些专门在处理XML文档的应用程序中使用的指令，它们由<?和?>来限定其界限。
+> 5. 注释（comment）用<!- 和 -->限定其界限，例如： <!-- This is a comment. --> 。注释中不应该含有字符串--。
+
+## 3.3 解析XML文档
+- 要处理XML文档，就要先解析（parse）它。Java提供了两种XML解析器：
+
+> 1. 像文档对象模型（Document Object Model, DOM）解析器这样的树型解析器（tree parse），它们将读入的XML文档转换成树结构。
+> 2. 像XML简单API（Simple API for XML, SAX）解析器这样的流机制解析器（streaming parser），它们在读入XML文档时生成相应的事件。
+
+- 要读入一个XML文档，首先需要一个DocumentBuilder对象，可以从DocumentBuilder Factory中得到这个对象，例如：
+
+
+```java
+DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+DocumentBuilder builder = factory.newDocumentBuilder();
+
+// 现在，可以从文件中读入某个文档：
+File f = ...;
+Document doc = builder.parse(f);
+
+// 或者，可以用一个URL：
+URL u = ...;
+Document doc = builder.parse(u);
+
+// 甚至可以指定任意的输入流：
+InputStream in = ...;
+Document doc = builder.parse(in);
+```
+
+## 3.4 验证XML文档
+- 文档类型定义（DTD）或XML Schema定义包含了用于解释文档应如何构成的规则，这些规则指定了每个元素的合法子元素和属性。
+
+### 3.4.1 文档类型定义
+
+```xml
+<!DOCTYPE config SYSTEM "config.dtd">
+<!- 或者 -->
+<!DOCTYPE config SYSTEM "http://myserver.com/config.dtd"
+```
+
+### 3.4.2 XML Schema
+
+```xml
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="config.xsd";
+ ...
+</config>
+```
+
+## 3.5 使用XPath来定位信息
+- 使用XPath执行下列操作比普通的DOM方式要简单得多：
+
+> 1. 获得文档根节点。
+> 2. 获取第一个子节点，并将其转型为一个Element对象。
+> 3. 在其所有子节点中定位title元素。
+> 4. 获取其第一个子元素，并将其转型为一个CharacterData节点。
+> 5. 获得其数据。
+
+## 3.6 使用命名空间
+- Java语言使用包来避免名字冲突。程序员可以为不同的类使用相同的名字，只要它们不在同一个包中即可。XML也有类似的**命名空间**（namaspace）机制，可以用于元素名和属性名。
+
+# 第4章 网络
+> 连接到服务器  
+  HTTP客户端  
+  实现服务器  
+  发送E-mail  
+  获取Web数据
+  
+## 4.1 连接到服务器
+### 4.1.1 使用telnet
+- telnet是一种用于网络编程的非常强大的调试工具，可以在命令shell中输入telnet来启动它。
+
+> 在Windows中，需要激活telnet。要激活它，需要到“控制面板”，选择“程序”，点击“打开/关闭Windows特性”，然后选择“Telnet客户端”复选框。
+
+### 4.1.2 用Java连接到服务器
+
+```java
+import java.io.IOException;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+
+public class SocketTest {
+    public static void main(String[] args) throws IOException {
+        try (var s = new Socket("time-a.nist.gov", 13);
+                var in = new Scanner(s.getInputStream(), StandardCharsets.UTF_8))
+        {
+            while(in.hasNextLine()) {
+                String line = in.nextLine();
+                System.out.println(line);
+            }
+        }
+    }
+}
+```
+
+- 关键代码：
+
+```
+var s = new Socket("time-a.nist.gov", 13);
+InputStream inStream = s.getInputStream();
+/** 第一行代码用于打开一个套接字，
+  * 它是网络软件中的一个抽象概念，
+  * 负责启动该程序内部和外部之间的通信。
+  */
+```
+
+### 4.1.3 套接字超时
+- 在套接字读取信息时，在有数据可供访问之前，读操作将会被阻塞，并且因为受底层操作系统的限制而最终会导致超时。
+- 对于不同的应用，应该确定合理的超时值。然后调用**setSoTimeout**方法设置这个超时值（单位：毫秒）。
+
+```java
+var s = new Socket(...);
+s.setSoTimeout(10000); // time out after 10 seconds
+```
+
+### 4.1.4 因特网地址
+- 一个因特网地址由4个字节组成(IPv4，在IPv6中是16个字节)。
+
+```java
+/** 1. 静态的getByName方法
+  * 将返回一个InetAdress对象，
+  * 该对象封装了一个4字节的序列：14.215.177.38
+  * （14.215.177.38为百度的IP地址）
+  */
+InetAddress address = InetAddress.getByNmae("www.baidu.com");
+
+/** 2. getAddress方法
+  * 访问这些字节。
+  */
+byte[] addressBytes = address.getAddress();
+
+/** 3. 一些访问量较大的主机名通常会对应多个因特网地址，
+  * 以实现负载均衡。
+  * 当访问主机时，
+  * 会随机选取几种的一个。
+  * getAllByName方法
+  * 获得所有主机。
+InetAddress[] addresses = InetAddress.getAllByName(host);
+
+/** 4. 静态的getLocalHost方法
+  * 得到本地主机的地址。
+  */
+InetAddress address = InetAddress.getLocalHost();
+```
+
+## 4.2 实现服务器
+### 4.2.1 服务器套接字
+- 一旦启动了服务器程序，他便会等待某个客户端连接到它的端口。
+
+```java
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+
+public class EchoServer {
+    public static void main(String[] args) throws IOException {
+        // establish server socket
+        try (var s = new ServerSocket(8189)) {
+            // wait for client connection
+            try (Socket incoming = s.accept()) {
+                InputStream inStream = incoming.getInputStream();
+                OutputStream outStream = incoming.getOutputStream();
+
+                try (var in = new Scanner(inStream, StandardCharsets.UTF_8)) {
+                    var out = new PrintWriter(new OutputStreamWriter(outStream, StandardCharsets.UTF_8), true);
+
+                    out.println("Hello! Enter BYE to exit");
+
+                    // echo client input
+                    var done = false;
+                    while (!done&&in.hasNextLine()){
+                        String line = in.nextLine();
+                        out.println("Echo: " + line);
+                        if (line.trim().equals("BYE"))
+                            done = true;
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### 4.2.2 为多个客户端服务
+- 使用多线程。
+
+```java
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+
+public class ThreadedEchoServer {
+    public static void main(String[] args) throws IOException {
+        try (var s = new ServerSocket(8189)) {
+            int i = 1;
+
+            while (true) {
+                Socket incoming = s.accept();
+                System.out.println("Spawning " + i);
+                Runnable r = new ThreadedEchoHandler(incoming);
+                var t = new Thread(r);
+                t.start();
+                i++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class ThreadedEchoHandler implements Runnable {
+    private Socket incoming;
+
+    public ThreadedEchoHandler(Socket incoming) {
+        this.incoming = incoming;
+    }
+
+    @Override
+    public void run() {
+        try (InputStream inStream = incoming.getInputStream();
+             OutputStream outStream = incoming.getOutputStream();
+             var in = new Scanner(inStream, StandardCharsets.UTF_8);
+             var out = new PrintWriter(new OutputStreamWriter(outStream, StandardCharsets.UTF_8), true)) {
+            out.println("Hello! Enter BYE to exit.");
+
+            // echo client input
+            var done = false;
+            while (!done && in.hasNextLine()) {
+                String line = in.nextLine();
+                out.println("Echo: " + line);
+                if (line.trim().equals("BYE"))
+                    done = true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### 4.2.3 半关闭
+- **半关闭**（half-close）提供了这样一种能力：套接字连接的一端可以终止其输出，同时仍旧可以接收来自另一端的数据。
+
+```java
+try (var socket = new Socket(host, port)) {
+    var in = new Scanner(socket.getInputStream(), StandardCharsets.UTF_8);
+    var writer = new PrintWriter(socket.getOutputStream());
+    // send request data
+    writer.print(...);
+    writer.flush();
+    socket.shutdownOutput();
+    // now socket is half-closed
+    // read response data
+    while (in.hasNextLine() != null) {
+        String line = in.nextLine();
+        ...
+    }
+}
+```
+
+### 4.2.4 可中断套接字
+- 为了中断套接字操作，可以使用java.nio包提供的一个特性——**SocketChannel**类。
+
+```java
+SocketChannel channel = SocketChannel.open(new InetSocketAddress(host, port);
+
+/** 若不想处理缓冲区，可以使用Scanner类从SocketChannel中读取信息，
+  * 因为Scanner有一个带ReadableByteChannel参数的构造器：
+  */
+var in = new Scanner(channel, StandardCharsets.UTF_8);
+
+/** 通过调用静态方法Channels.newOutputStream，
+  * 可以将通道转换成输出流。
+  */
+OutputStream outStream = Channels.newOutputStream(channel);
+```
+
+## 4.3 获取Web数据
+### 4.3.1 URL和URI
+- **URL**和**URLConnection**类封装了大量复杂的实现细节，这些细节设计如何从远程站点获取信息。
+
+```java
+/** 自字符串构建一个URL对象：
+  */
+var url = new URL(urlString);
+
+/** URL类中的openStream方法
+  * 该方法产生一个InputStream对象，
+  * 如可以用它构建一个Scanner对象。
+  */
+InputStream inStream = url.openStream();
+var in = new Scanner(inStream, StandardCharsets.UTF_8);
+```
+
+- java.net包对**统一资源定位符**（Uniform Resource Locator, URL）和**统一资源标识符**（Uniform Resource Identifier, URI）进行了非常有用的区分。
+
+> URI是个纯粹的语法结构，包含用来指定Web资源的字符串的各种组成部分。URL是URI的一个特例，它包含了用于定位Web资源的足够信息。
+
+### 4.3.2 使用URLConnection获取信息
+- 当操作一个URLConnection对象时，必须小心地安排操作步骤：
+
+```java
+/** 1. 调用URL类中的openConnection方法获得URLConnection对象：
+  */
+URLConnection connection = url.openConnection();
+
+/** 2. 使用以下方法来设置任意的请求属性：
+  */
+setDoInput
+setDoOutput
+setIfModifiedSince
+setUseCaches
+setAllowUserInteraction
+setRequestProperty
+setConnectTimeout
+setReadTimeout
+
+/** 3. 调用connect方法连接远程资源：
+  * 除了与服务器建立套接字连接外，
+  * 该方法还可用于向服务器查询头信息（header information）。
+  */
+connection.connect();
+
+/** 4. 与服务器建立连接后，
+  * 可以查询头信息。
+  * getHeaderFiledKey和getHeaderField这两个方法枚举了消息头的所有字段。
+  */
+getContentType
+getContentLength
+getContentEncoding
+getDate
+getExpiration
+getLastModified
+
+/** 5. 最后，访问资源数据。
+  */
+```
+
+### 4.3.3 提交表单数据
+- 有许多技术可以让Web服务器实现对程序的调用。其中最广为人知的是**Java Servlet**、**JavaServer Face**、**微软的ASP**（Active Server Pages，动态服务器主页）以及**CGI**（Common Gateway Interface，通用网管接口）脚本。
+
+- 执行服务器端脚本过程中的数据流
+
+![image](/assets/img/post_img/formStream.png)
+
+- 详细的过程：
+
+```java
+/** 1. 在提交数据给服务器端程序之前，首先需要创建一个URLConnection对象。
+  */
+var url = new URL("http://host/path");
+URLConnection connection = url.openConnection();
+
+/** 2. 然后调用setDoOutput方法建立一个用于输出的连接。
+  */
+connection.setDoOutput(true);
+
+/** 3. 接着调用getOutputStream方法获得一个流，
+  * 可以通过这个流向服务器发送数据。
+  * 如果要向服务器发送文本信息，
+  * 那么可以非常方便地将流包装在PrintWriter对象中。
+  */
+var out = new PrintWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
+
+/** 4. 现在，可以向服务器发送数据了。
+out.print(name1 + "=" + URLEncoder.encode(value1, StandardCharsets.UTF_8) + "&");
+out.print(name2 + "=" + URLEncoder.encode(value2, StandardCharsets.UTF_8);
+
+/** 5. 之后关闭输出流。
+  */
+out.close();
+
+/** 6. 最后，调用getInputStream方法读取服务器的响应。
+  */
+```
+
+## 4.4 HTTP客户端
+- 与URLConnection类相比，HTTP客户端API从设计初始就提供了一种更简单的连接到Web服务器的机制。
+
+```java
+/** HttpClient对象可以发出请求并接收响应。
+  * 可以通过下面的调用获取客户端：
+  */
+HttpClient client = HttpClient.newHttpClient();
+
+/** 或者，如果需要配置客户端，
+  * 可以使用像下面这样的构建器API：
+  */
+HttpClient client = HttpClient.newBuilder()
+            .followRedirects(HttpClient.Redirect.ALWAYS)
+            .build();
+```
+
+- URI是指“统一资源标识符”，在使用HTTP时，它与URL相同。
+
+## 4.5 发送E-mail
+- 使用**JavaMail API**。
+
