@@ -1869,3 +1869,470 @@ HttpClient client = HttpClient.newBuilder()
 ## 4.5 发送E-mail
 - 使用**JavaMail API**。
 
+# 第5章 数据库编程
+> JDBC的设计 
+  可滚动和可更新的结果集  
+  结构化查询语言  
+  行集  
+  JDBC配置  
+  元数据  
+  使用JDBC语句  
+  事务  
+  执行查询操作  
+  Web和企业应用中的连接管理  
+
+## 5.1 JDBC的设计
+- **JDBC**和**ODBC**都基于同一个思想：根据API编写的程序都可以与驱动管理器进行通信，而驱动管理器则通过驱动程序与实际的数据库进行通信。
+
+### 5.1.1 JDBC驱动程序类型
+- **JDBC**规范将驱动程序归结为以下几类：
+
+> 1. 第1类驱动程序将JDBC翻译成ODBC，然后使用ODBC驱动程序与数据库进行通信。
+> 2. 第2类驱动程序是由部分Java程序和部分本地代码组成的，用于与数据库的客户端API进行通信。 
+> 3. 第3类驱动程序是纯Java客户端类库，它使用一种与具体数据库无关的协议将数据库请求发送给服务器构件，然后该构件再将数据库请求翻译成数据库相关的协议。
+> 4. 第4类驱动程序是纯Java类库，它将JDBC请求直接翻译成数据库相关的协议。
+
+- **JDBC**最终是为了实现以下目标：
+
+> 1. 通过使用标准的SQL语句，甚至是专门的SQL拓展，程序员就可以利用Java语言开发访问数据库的应用，同时还依旧遵守Java语言的相关规定。
+> 2. 数据库供应商和数据库工具开发商可以提供底层的驱动程序。因此，他们可以优化各自数据库产品的驱动程序。
+
+### 5.1.2 JDBC的典型用法
+- 三层模式的优点：它将**可视化表示**（位于客户端）从**业务逻辑**（位于中间层）和**原始数据**（位于数据库）中分离出来。
+
+![image](/assets/img/post_img/JDBCUse.png)
+
+## 5.2 结构化查询语言
+- 按照惯例，SQL关键字全部使用大写字母。如：SELECT, WHERE等。
+- 与Java编程语言不同，SQL使用=和<>而非==和!=来进行相等性比较。
+
+- **WHERE**子句也可以使用**LIKE**操作符来实现模式匹配，使用“ % ”表示**0或多个字符**，用“ _ ”表示**单个字符**。
+
+> 这条语句将排除所有书名中包含UNIX或者Linux的图书：
+
+```sql
+SELECT ISBN, Price, Title
+FROM Books
+WHERE Title NOT LIKE '%n_x%'
+```
+
+- 字符串都是用**单引号**括起来的，而非双引号。字符串中的单引号则需要用一对单引号代替。
+
+> 这条语句会返回所有包含单引号的书名：
+
+```sql
+SELECT Title
+FROM Books
+WHERE Title LIKE '%''%'
+```
+
+- 常见的SQL数据类型：
+
+<table>
+  <thead>
+    <tr>
+      <th>数据类型</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>INTEGER或INT</td>
+      <td>通常为32位的整数</td>
+    </tr>
+    <tr>
+      <td>SMALLINT</td>
+      <td>通常位16位的整数</td>
+    </tr>
+    <tr>
+      <td>NUMERIC(m,n), DECIMAL(m,n)或DEC(m,n)</td>
+      <td>m位长的定点十进制数，其中小数点后为n位</td>
+    </tr>
+    <tr>
+      <td>FLOAT(n)</td>
+      <td>运算精度为n位二进制数的浮点数</td>
+    </tr>
+    <tr>
+      <td>REAL</td>
+      <td>通常为32位浮点数</td>
+    </tr>
+    <tr>
+      <td>DOUBLE</td>
+      <td>通常为64位浮点数</td>
+    </tr>
+    <tr>
+      <td>CHARACTER(n)或CHAR(n)</td>
+      <td>固定长度为n的字符串</td>
+    </tr>
+    <tr>
+      <td>VARCHAR(n)</td>
+      <td>最大长度为n的可变长字符串</td>
+    </tr>
+    <tr>
+      <td>BOOLEAN</td>
+      <td>布尔值</td>
+    </tr>
+    <tr>
+      <td>DATE</td>
+      <td>日历日期（与具体的实现相关）</td>
+    </tr>
+    <tr>
+      <td>TIME</td>
+      <td>当前时间（与具体的实现相关）</td>
+    </tr>
+    <tr>
+      <td>TIMESTAMP</td>
+      <td>当前日期和时间（与具体的实现相关）</td>
+    </tr>
+    <tr>
+      <td>BLOB</td>
+      <td>二进制大对象</td>
+    </tr>
+    <tr>
+      <td>CLOB</td>
+      <td>字符大对象</td>
+    </tr>
+  </tbody>
+</table>
+
+## 5.3 使用JDBC语句
+### 5.3.1 执行SQL语句
+
+```java
+// 将要执行的SQL语句放入字符串中
+String command = "UPDATE Books" 
+    + " SET Price = Price - 5.00 "
+    + " WHERE Title NOT LIKE '%Introduction%'";
+    
+// 调用Statement接口中的executeUpdate方法
+stat.executeUpdate(conmmand);
+```
+
+- **executeUpdate**方法：既可以执行诸如INSERT、UPDATE和DELETE之类的操作，也可以执行诸如CREATE TABLE和DROP TABLE之类的数据定义语句。
+- **executeQuery**方法：执行SELECT查询。
+- **execute**方法：可以执行任意的SQL语句，此方法只用于由用户提供的交互式查询。
+
+```java
+/** executeQuery方法会返回一个ResultSet类型的对象，
+  * 可以通过它来每次一行地迭代遍历所有查询结果。
+  */
+ResultSet rs = stat.executeQuery("SELECT * FROM Books");
+
+/** 分析结果集时，
+  * 通常可以使用类似如下的循环语句代码：
+  */
+while (rs.next()) {
+    look at a row of the result set
+}
+
+/** 结果集中行的顺序是任意排列的。
+  * 可以使用ORDER BY子句指定行的顺序。
+  */
+  
+/** 查看每一行时，
+  * 可能希望知道每一列的内容，
+  * 可以使用访问器。
+  */
+String isbn = rs.getString(1);
+double price = rs.getDouble("Price");
+// 与数组的索引不同，数据库的序列号是从1开始计算的。
+```
+
+### 5.3.2 管理连接、语句和结果集
+- 每个Connection对象都可以创建一个或多个Statement对象。同一个Statement对象可以用于多个不相关的命令和查询。但是，一个Statement对象最多只能有一个打开的结果集。如果需要执行多个查询操作，且需要同时分析查询结果，那么必须创建多个Statement对象。
+
+## 5.4 执行查询操作
+### 5.4.1 预备语句
+- 在预备查询语句中，每个宿主变量都用“ ? ”来表示。
+
+```java
+String publisherQuery
+    = "SELECT Books.Price, Books"
+    + "FROM Books, Publishers"
+    + "WHERE Books.Publisher_Id = Publishers.Publisher_Id AND Publisher.Name = ?";
+PreparedStatement stat = conn.prepareStatement(publisherQuery);
+
+/** 在执行预备语句之前，
+  * 必须使用set方法将变量绑定到实际的值上。
+  * 第一个参数指的是需要设置的宿主变量的位置，
+  * 位置1表示第一个“ ? ”，
+  * 第二个参数指的是赋予宿主变量的值。
+  */
+stat.setString(1, publisher);
+```
+
+### 5.4.2 读写LOB
+- 在SQL中，二进制大对象称为BLOB，字符型大对象称为CLOB。
+- 要读取LOB，需要执行SELECT语句，然后再ResultSet上调用**getBlob**或**getClob**方法，这样就可以获得Blob或Clob类型的对象。要从Blob中获取二进制数据，可以调用**getBytes**或**getBinaryStream**。
+
+```java
+/** 例如，有一张保存图书封面图像的表，
+  * 那么，就可以像下面这样获取一种图像。
+  */
+PreparedStatement stat = conn.prepareStatement("SELECT Cover FROM BookCovers WHERE ISBN=?");
+...
+stat.set(1, isbn);
+try (ResultSet result = stat.executeQuery()) {
+    if (result.next()) {
+        Blob coverBlob = result.getBlob(1);
+        Image coverImage = ImageIO.read(coverBlob.getBinaryStream());
+    }
+}
+```
+
+- 要将LOB置于数据库中，需要在Connection对象上调用**createBlob**或**createClob**方法，然后获取一个用于该LOB的输出流或写出器，写出数据，并将该对象存储到数据库中。
+
+```java
+/** 例如，存入一张图像。
+  */
+Blob coverBlob = connection.createBlob();
+int offset = 0;
+OutputStream out = coverBlob.setBinaryStream(offset);
+ImageIO.write(coverImage, "PNG", out);
+PreparedStatement stat = conn.prepareStatement("INSERT INTO Cover VALUES (?,?)");
+stat.set(1, isbn);
+stat.set(2, coverBlob);
+stat.executeUpdate();
+```
+
+### 5.4.3 SQL转义
+- “转义”语法是各种数据库普遍支持的特性，但是数据库使用的是与数据库相关的语法变体，因此，将转义语法转译为特定数据库的语法是JDBC驱动程序的任务之一。
+- 转义主要用于下列场景：
+
+> 日期和时间字面常量  
+  调用标量函数  
+  调用存储过程  
+  外连接  
+  在LIKE子句中的转义字符  
+
+- **日期和时间字面常量**随数据库数据库的不同而变化很大。要嵌入日期或时间字面常量，需要按照ISO 8601格式（ http://www.cl.cam.ac.uk/~mgk25/iso-time.html ）指定它的值，之后驱动程序会将其转义为本地格式。应该使用d、t、ts来表示DATE、TIME和TIMESTAMP值：
+
+```sql
+{d '2008-01-24'}
+{t '23:59:59'}
+{ts '2008-01-24 23:59:59.999'}
+```
+
+- **标量函数**（scalar function）是指仅返回单个值的函数。嵌入标准的函数名和参数：
+
+```sql
+{fn left(?, 20)}
+{fn user()}
+```
+
+- **存储过程**（stored procedure）是在数据库中执行的用数据库相关的语言编写的过程。要调用存储过程，需要使用call转义命令，在存储过程没有任何参数时，可以不用加上括号。另外，应该用“=”来捕获存储过程的返回值：
+
+```sql
+{call PR0C1(?,?)}
+{call PR0C2}
+{call ? = PR0C3(?)}
+```
+
+- 两个表的**外连接**（outer join）并不要求每个表的所有行都要根据连接条件进行匹配。
+
+- _和%字符在LIKE子句中具有特殊含义，用来匹配一个字符或一个字符序列。如将“!”定义为**转义字符**，则“! _” 组合表示字面常量下划线。
+
+```sql
+...WHERE ? LIKE %!_% {escape '!'}
+```
+
+### 5.4.4 多结果集
+- 在执行存储过程，或者在使用允许在单个查询中提交多个SELECT语句的数据库时，一个查询有可能会返回多个结果集。下面是获取所有结果集的步骤：
+
+> 1. 使用execute方法来执行SQL语句。
+> 2. 获取第一个结果集或更新计数。
+> 3. 重复调用getMoreResults方法以移动到下一个结果集。
+> 4. 当不存在更多的结果集或更新计数时，完成操作。
+
+```jave
+boolean isResult = stat.execute(command);
+boolean done = false;
+while (!done) {
+    if (isResult) {
+        ResultSet result = stat.getResultSet();
+        do something with result
+    }
+    else {
+    int updateCount = stat.getUpdateCount();
+    if (updateCount >= 0)
+        do something with updateCount
+    else
+        done = true;
+    }
+    if (!done) isResult = stat.getMoreResults();
+}
+```
+
+### 5.4.5 获取自动生成的键
+- 当向数据表中插入一个新行，且其键自动生成时，可以用下面的代码来获取这个键：
+
+```java
+stat.executeUpdate(insertStatement, Statement.RETURN_GENERATED_KEYS);
+ResultSet rs = stat.getGeneratedKeys();
+if (rs.next()) {
+    int key = rs.getInt(1);
+    ...
+}
+```
+
+## 5.5 事务
+- 可以将一组语句构建成一个**事务**（transaction）。当所有语句都顺利执行之后，事务可以被提交。否则，如果其中某个语句遇到错误，那么事务将被回滚，就好像没有任何语句被执行过一样。以此来确保**数据库完整性**（database integrity）。
+
+### 5.5.1 用JDBC对事务编程
+- 默认情况下，数据库连接处于**自动提交模式**（autocommit mode），即每个SQL语句一旦被执行便提交给数据库。一旦命令被提交，就无法对它进行回滚操作。在使用事务时，需要关闭这个默认值：
+
+```java
+conn.setAutoCommit(false);
+
+/** 按照通常的方式创建一个语句对象：
+  */
+Statement stat = conn.createStatement();
+
+/** 然后任意多次地调用executeUpdate方法：
+  */
+stat.executeUpdate(command1);
+stat.executeUpdate(command2);
+stat.executeUpdate(command3);
+...
+
+/** 如果执行了所有命令之后没有出错，
+  * 则调用commit方法：
+  */
+conn.commit();
+
+/** 如果出现错误，则调用：
+  */
+conn.rollback();
+```
+
+### 5.5.2 保存点
+- 在使用某些驱动程序时，使用**保存点**（save point）可以更细粒度地控制回滚操作。创建一个保存点意味着稍后只需要返回到这个点，而非放弃整个事务。
+
+```java
+Statement stat = conn.createStatement(); // start transaction; rollback() goes here
+stat.executeUpdate(command1);
+SavePoint svpt = conn.setSavepoint(); // set savepoint; rollback() goes here
+stat.executeUpdate(command2);
+
+if (...) conn.rollback(svpt); // undo effect of command2
+...
+conn.commit();
+
+// 当不再需要保存点时，应该释放它：
+conn.releaseSavepoint(svpt);
+```
+
+### 5.5.3 批量更新
+- 假设有一个程序需要执行许多INSERT语句，以便将数据填入数据库表中，此时可以使用**批量更新**的方法来提高程序性能。
+
+```java
+/** 为了执行批量处理，
+  * 首先必须使用通常的办法创建一个Statement对象：
+  */
+Statement stat = conn.createStatement();
+
+/** 现在，应该调用addBatch方法，
+  * 而非executeUpdate方法：
+  */
+String command = "CREATE TABLE ..."
+stat.addBatch(command);
+
+while (...) {
+    command = "INSERT INTO ... VALUES (" + ... + ")";
+    stat.addBatch(command);
+}
+
+/** 最后，提交整个批量更新语句：
+  */ 
+int[] counts = stat.executeBatch();
+```
+
+### 5.5.4 高级SQL类型
+- SQL数据类型及其对应的Java类型。
+
+<table>
+  <thead>
+    <tr>
+      <th>SQL数据类型</th>
+      <th>Java数据类型</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>INTEGER或INT</td>
+      <td>int</td>
+    </tr>
+    <tr>
+      <td>SMALLINT</td>
+      <td>short</td>
+    </tr>
+    <tr>
+      <td>NUMERIC(m,n), DECIMAL(m,n)或DEC(m,n)</td>
+      <td>java.math.BigDecimal</td>
+    </tr>
+    <tr>
+      <td>FLOAT(n)</td>
+      <td>double</td>
+    </tr>
+    <tr>
+      <td>REAL</td>
+      <td>float</td>
+    </tr>
+    <tr>
+      <td>DOUBLE</td>
+      <td>double</td>
+    </tr>
+    <tr>
+      <td>CHARACTER(n)或CHAR(n)</td>
+      <td>String</td>
+    </tr>
+    <tr>
+      <td>VARCHAR(n)</td>
+      <td>String</td>
+    </tr>
+    <tr>
+      <td>BOOLEAN</td>
+      <td>boolean/td>
+    </tr>
+    <tr>
+      <td>DATE</td>
+      <td>java.sql.Date</td>
+    </tr>
+    <tr>
+      <td>TIME</td>
+      <td>java.sql.time</td>
+    </tr>
+    <tr>
+      <td>TIMESTAMP</td>
+      <td>java.sql.Timestamp</td>
+    </tr>
+    <tr>
+      <td>BLOB</td>
+      <td>java.sql.Blob</td>
+    </tr>
+    <tr>
+      <td>CLOB</td>
+      <td>java.sql.Clob</td>
+    </tr>
+    <tr>
+      <td>ARRAY</td>
+      <td>java.sql.Array</td>
+    </tr>
+    <tr>
+      <td>ROWID</td>
+      <td>java.sql.RowId</td>
+    </tr>
+    <tr>
+      <td>NCHAR(n), NVARCHAR(n), LONG NVARCHAR</td>
+      <td>String</td>
+    </tr>
+    <tr>
+      <td>NCLOB</td>
+      <td>java.sql.NClob</td>
+    </tr>
+    <tr>
+      <td>SQLXML</td>
+      <td>java.sql.SQLXML</td>
+    </tr>
+  </tbody>
+</table>
