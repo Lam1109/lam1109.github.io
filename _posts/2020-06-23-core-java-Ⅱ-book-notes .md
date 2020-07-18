@@ -2334,3 +2334,7 @@ int[] counts = stat.executeBatch();
       <td>SQLXML</td>
       <td>java.sql.SQLXML</td>
     </tr>
+  </tbody>
+</table>
+
+# 第6章
