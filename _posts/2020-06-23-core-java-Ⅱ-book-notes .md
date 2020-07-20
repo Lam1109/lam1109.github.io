@@ -2411,3 +2411,119 @@ LocalDate alonzosBirthday = LocalDate.of(1903, 6, 14);
 alonzosBirthday = LocalDate.of(1903, Month.JUNE, 14);
     // Uses the Month enumeration
 ```
+
+- 两个Instant之间的时长是Duration，而用于本地日期的等价物是Period，它表示的是流逝的年、月或日的数量。
+
+```java
+birthday.plus(Period.ofYears(1)); // 获得下一年的生日
+birthday.plusYears(1); // 获得下一年的生日
+
+birthday.plus(Duration.ofDay(365)); // 在闰年不会产生正确的结果
+```
+
+```java
+/** until方法会产生两个本地日期之间的时长。
+  */
+  
+LocalDate independenceDay = LocalDate.of(2020, 07, 20);
+LocalDate christmas = LocalDate.of(2020, 12, 25);
+
+independenceDay.until(christmas); // 会产生5个月5天的一段时长
+
+independenceDay.unitl(christmas, ChronoUnit.DAYS) // 158 days
+```
+
+> LocalDate API中有些方法可能会创造出并不存在的日期。这些方法并不会抛出异常，而是会返回该月有效的最后一天。
+例如，  
+  LocalDate.of(2016, 1, 31).plusMonths(1);  
+和  
+  LocalDate.of(2016, 3, 31).minusMonths(1);  
+都将产生2016年2月29日。
+
+- getDayOfWeek会产生星期日期，即DayOfWeek枚举的某个值。DayOfWeek.MONDAY的枚举值为1，而DayOfWeek.SUNDAY的枚举值为7。
+- DayOfWeek枚举具有便捷方法plus和minus，以7为模计算星期日期。例如，DayOfWeek.SATURDAY.plus(3)会产生DayOfWeek.TUESDAY。
+
+> 周末实际上在每周的末尾。这与java.util.Calendar有所差异，在后者中，星期日的值为1，而星期6的值为7。
+
+- Java 9添加了两个游泳的datesUntil方法，它们会产生LocalDate对象流。
+
+```java
+LocalDate start = LocalDate.of(2020, 1, 1);
+LocalDate endExclusive = LocalDate.now();
+Stream<LocalDate> allDays = start.datesUntil(endExclusive);
+Stream<LocalDate> firstDaysInMonth = start.datesUntil(endExclusive, Perod.ofMonths(1));
+```
+
+## 6.3 日期调整器
+- 对于日常安排，经常需要计算诸如“每个月的第一个星期二”这样的日期。**TemporalAdjusters**类提供了大量用于常见调整的静态方法。
+
+```java
+/** 可以将调整方法的结构传递给with方法。
+  * 例如，
+  * 某个月的第一个星期二：
+  */
+LocalDate firstTuesday = LocalDate.of(year, month, 1).with(
+    TemporalAdjusters.nextOrSame(DaysOfWeek.TUESDAY));
+```
+
+- 可以通关实现TemporalAdjuster接口来创建自己的调整器。例如，计算下一个工作日的调整器。
+
+```java
+TemporalAdjuster NEXT_WORKDAY = w -> {
+    var result = (LocalDate) w;
+    do {
+        result = result.plusDays(1);
+    } while (result.getDayOfWeek().getValue() >= 6);
+    return result;
+};
+
+LocalDate backToWork = today.with(NEXT_WORKDAY);
+
+/** lambda表达式的参数类型为Temporal，
+  * 它必须被强制转型为LocalDate。
+  */
+```
+
+- 使用**ofDateAdjuster**方法可以避免这种强制转型，该方法期望得到的参数类型为UnaryOperator<LocalDate>的lambda表达。
+
+```java
+TemporalAdjuster NEXT_WORKDAY = TemporalAdjusters.ofDateAdjuster(w -> 
+ {
+     LocalDate result = w; // No cast
+     do {
+         result = result.plusDays(1);
+     } while (result.getDayOfWeek().getValue >= 6);
+     return result;
+ });
+```
+
+## 6.4 本地时间
+- **LocalTime**表示当日时刻。可以用now或of方法创建其实例：
+
+```java
+LocalTime rightNow = LocalTime.now();
+LocalTime bedtime = LocalTime.of(22, 30); // or LocalTime.of(22, 30, 0);
+
+/** plus和minus操作是按照一天24小时循环操作的。
+  */
+LocalTime wakeup = bedtime.plusHours(8); // wakeup is 6:30:00
+```
+
+## 6.5 时区时间
+- **互联网编码分配管理机构**（Internet Assigned Numbers Authority, IANA）保存着一个数据库，里面存储着世界上所有已知的时区（www.iana.org/time-zones），它每年会更新数次，而批量更新会处理夏令时的变更规则。Java使用了IANA数据库。
+
+```java
+/** 给定一个时区ID，
+  * 1. 静态方法ZoneId.of(id)可以产生一个ZoneId对象。
+  * 2. 调用local.atZone(zoneId)将LocalDateTime对象转换为ZonedDateTime对象，
+  * 3. 调用静态方法
+  * ZonedDateTime.of(year, month, day, hour, minute, second, nano, zoneId)
+  * 来构造一个ZonedDateTime对象。
+  */
+  
+```
+
+
+
+
+
