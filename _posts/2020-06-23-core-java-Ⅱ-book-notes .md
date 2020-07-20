@@ -2335,8 +2335,6 @@ int[] counts = stat.executeBatch();
       <td>SQLXML</td>
       <td>java.sql.SQLXML</td>
     </tr>
-</table>
-
 
 # 第6章 日期和时间API
 > 时间线  
