@@ -2520,10 +2520,199 @@ LocalTime wakeup = bedtime.plusHours(8); // wakeup is 6:30:00
   * ZonedDateTime.of(year, month, day, hour, minute, second, nano, zoneId)
   * 来构造一个ZonedDateTime对象。
   */
-  
+ZonedDateTime apollo11lauch = ZonedDateTime.of(1969, 7, 16, 9, 32, 0, 0,
+    ZoneId.of(America/New_York));
+    // 1969-07-16T09:32-04:00[America/New_York]
+
+/** 这是一个具体的时刻，
+  * 调用apollo11lauch.toInstant可以获得对于的Instant对象。
+  * 反过来
+  * 若有一个时刻对象，
+  * 调用instant.atZone(ZoneId.of("UTC"))可以获得格林尼治皇家天文台的ZonedDateTime对象。
+  */
+```
+
+> UTC代表“协调世界时”，这是英文“Coordinated Universal Time”和法文“Temps Universal Coordiné"首字母缩写的折中。UTC是不考虑夏令时的格林尼治皇家天文台时间。
+
+- 夏令时带来的复杂性：
+
+```java
+/** 当夏令时开始时，
+  * 时钟要向前拨快一小时。
+  * 例如，
+  * 在2013年，中欧地区在3月31日2:00切换到夏令时，
+  * 若视图构建的时间是不存在的3月31日 2:30，
+  * 那么实际上得到的是3:30。
+  */
+ZonedDateTime skipped = ZonedDateTime.of(
+    LocalDate.of(2013, 3, 31),
+    LocalTime.of(2, 30),
+    ZonedId.of("Europe/Berlin"));
+    // Constructs March 31 3:30
+
+/** 返过来，
+  * 当夏令时结束时，
+  * 时钟要向回拨慢一小时，
+  * 同一个本地时间就会出现两次。
+  * 当构建位于这个时间段内的时间对象时，
+  * 就会得到这个两个时刻中较早的一个。
+  */
+ZonedDateTime ambiguous = ZonedDateTime.of(
+    LocalDate.of(2013, 10, 27), // End of daylight savings time
+    LocalTime.of(2, 30),
+    ZoneId.of("Europe/Berlin"));
+    // 2013-10-27T02:30+02:00[Europe/Berlin]
+ZonedDateTime anHourLater = ambiguous.plusHours(1);
+    // 2013-10-27T02:30+01:00[Europe/Berlin]
+
+/** 在调整跨越夏令时边界的日期时需要特别注意。
+  * 例如，
+  * 如果将会议设置在下个星期，
+  * 不要直接加上一个7天的Duration：
+  */
+ZonedDateTime nextMeeting = meeting.plus(Duration.ofDays(7));
+    // Caution! Won't work with daylight savings time
+    
+/** 而应该使用Period类
+  */
+ZonedDateTime nextMeeting = meeting.plus(Period.ofDays(7)); // OK
+```
+ 
+## 6.6 格式化和解析
+- DateTimeFormatter类提供了三种用于打印日期/时间值的格式器：
+
+> 1. 预定义的格式器
+> 2. locale相关的格式器
+> 3. 带有定制模式的格式器
+
+- 预定义的格式器：
+
+<table>
+  <thead>
+    <tr>
+      <th>格式器</th>
+      <th>描述</th>
+      <th>示例</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>BASIC_ISO_DATA</td>
+      <td>年、月、日、时区偏移量，中间没有分隔符</td>
+      <td>19690716-0500</td>
+    </tr>
+    <tr>
+      <td>ISO_LOCAL_DATE, <br>ISO_LOCAL_TIME, <br>ISO_LOCAL_DATE_TIME</td>
+      <td>分隔符为-、:、T</td>
+      <td>1969-07-16, 09:32:00 <br>1969-07-16T09:32:00</td>
+    </tr>
+    <tr>
+      <td>ISO_OFFSET_DATE, <br>ISO_OFFSET_TIME, <br>ISO_OFFSET_DATE_TIME</td>
+      <td>类似ISO_LOCAL_XXX，但是有时区偏移量</td>
+      <td>1969-07-16-05:00, <br>09:32:00-05:00, <br>1969-07-16T09:32:00-05:00</td>
+    </tr>
+    <tr>
+      <td>ISO_ZONED_DATE_TIME</td>
+      <td>有时区偏移量和时区ID</td>
+      <td>1969-07-16T09:32:00-05:00[Americal/New York]</td>
+    </tr>
+    <tr>
+      <td>ISO_INSTANT</td>
+      <td>在UTC中，用Z时区ID来表示</td>
+      <td>1969-07-16T14:32:00Z</td>
+    </tr>
+    <tr>
+      <td>ISO_DATE, <br>ISO_TIME, <br>ISO_DATE_TIME</td>
+      <td>类似ISO_OFFSET_DATE、<br>ISO_OFFSET_TIME<br>和ISO_ZONED_DATE_TIME，<br>但是时区信息是可选的</td>
+      <td>1969-07-16-05:00, <br>09:32:00-05:00, <br>1969-07-16T09:32:00-05:00[Americal/New York]</td>
+    </tr>
+    <tr>
+      <td>ISO_ORDINAL_DATE</td>
+      <td>LocalDate的年和年日期</td>
+      <td>1969-197</td>
+    </tr>
+    <tr>
+      <td>ISO_WEEK_DATE</td>
+      <td>LocalDate的年、星期和星期日期</td>
+      <td>1969-W29-3</td>
+    </tr>
+    <tr>
+      <td>RFC_1123_DATE_TIME</td>
+      <td>用于邮件时间戳的标准，编纂于RFC822，<br>并在RFC1123中将年份更新到4位</td>
+      <td>Wed, 16 Jul 1969 09:32:00 -0500</td>
+    </tr>
+  </tbody>
+</table>
+
+```java
+/** 要使用标准的格式器，
+  * 可以直接调用其format方法：
+  */
+String formatted = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(appllo11lauch);
+    // 1969-07-16T09:32:00-04:00
 ```
 
 
 
 
 
+- locale相关的格式化风格：
+
+<table>
+  <thead>
+    <tr>
+      <th>风格</th>
+      <th>日期</th>
+      <th>时间</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>SHORT</td>
+      <td>7/16/69</td>
+      <td>9:32 AM</td>
+    </tr>
+    <tr>
+      <td>MEDIUM</td>
+      <td>Jul 16, 1969</td>
+      <td>9:32:00 AM</td>
+    </tr>
+    <tr>
+      <td>LONG</td>
+      <td>July 16, 1969</td>
+      <td>9:32:00 AM EDT</td>
+    </tr>
+    <tr>
+      <td>FULL</td>
+      <td>Wednesday, July 16, 1969</td>
+      <td>9:32:00 AM EDT</td>
+    </tr>
+  </tbody>
+</table>
+
+```java
+/** 静态方法ofLocalizedDate、ofLocalizedTime和ofLocalizedDateTime可以创建这种格式器。
+  */
+DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG);
+String fromatted = formatter.format(appllo11lauch);
+    // July 16, 1969 9:32:00 AM EDT
+
+/** 这些方法使用了默认的locale。
+  * 为了切换到不同的locale，
+  * 可以直接使用withLocale方法。
+formatted = formatter.withLocale(Locale.FRENCH).format(apollo11lauch);
+    // 16 juillet 1969 09:32:00 EDT
+    
+/** DayOfWeek和Month枚举都有getDisplayName方法，
+  * 可以按照不同的locale和格式给出星期日期和月份的名字。
+  */
+for (DayOfWeek w : DayOfWeek.values())
+    System.out.print(w.getDisplayName(TextStyle.SHORT, Locale.ENGLISH) + " ");
+    // Prints Mon Tue Wed Thu Fri Sat Sun
+```
+
+- 定制模式的日期格式：
+
+```java
+formatter = DateTimeFormatter.ofPattern("E yyyy-MM-dd HH:mm");
+```
