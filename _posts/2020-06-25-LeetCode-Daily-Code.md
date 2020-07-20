@@ -14,15 +14,6 @@ author: Lam
 paginate: true
 ---
 
-* [2020\.06\.25](#20200625)
-  * [Problem](#problem)
-  * [Solution](#solution)
-  * [Get](#get)
-* [2020\.06\.26](#20200626)
-  * [Problem](#problem-1)
-  * [Solution](#solution-1)
-  * [Get](#get-1)
- 
 ## 2020.06.25
 ### Problem
 - 给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定s 是否可以被空格拆分为一个或多个在字典中出现的单词。
@@ -698,3 +689,89 @@ class Solution {
 ### Get
 - return new int[]{}; // 表示返回集合 {} ，空集。
 - return new int[]{k * longer}; // 表示返回集合 {value} ，value为k * longer的值。
+
+## 2020.07.12
+### Problem
+- 一些恶魔抓住了公主（P）并将她关在了地下城的右下角。地下城是由M x N 个房间组成的二维网格。
+- 英勇的骑士（K）最初被安置在左上角的房间里，他必须穿过地下城并通过对抗恶魔来拯救公主。
+- 骑士的初始健康点数为一个正整数。如果他的健康点数在某一时刻降至 0 或以下，他会立即死亡。
+- 有些房间由恶魔守卫，因此骑士在进入这些房间时会失去健康点数（若房间里的值为负整数，则表示骑士将损失健康点数）；其他房间要么是空的（房间里的值为 0），要么包含增加骑士健康点数的魔法球（若房间里的值为正整数，则表示骑士将增加健康点数）。
+- 为了尽快到达公主，骑士决定每次只向右或向下移动一步。
+- 编写一个函数来计算确保骑士能够拯救到公主所需的最低初始健康点数。
+
+> 说明：
+
+- 链接：<a href="https://leetcode-cn.com/problems/dungeon-game">https://leetcode-cn.com/problems/dungeon-game</a>
+- 示例：
+
+```java
+例如，考虑到如下布局的地下城，如果骑士遵循最佳路径 右 -> 右 -> 下 -> 下，则骑士的初始健康点数至少为 7。
+-2(K)	-3	    3
+-5	    -10	    1
+10	    30	   -5(P)
+ 
+```
+
+### Solution
+
+```java
+class Solution {
+    public int calculateMinimumHP(int[][] dungeon) {
+        int row = dungeon.length;
+        int col = dungeon[0].length;
+        int[][] dp = new int[row][col];
+        for(int i = row - 1; i >= 0; i--){
+            for(int j = col - 1; j >= 0; j--){
+                if(i==row-1&&j==col-1){ //终点的情况
+        			dp[i][j]=Math.max(1, 1-dungeon[i][j]);
+        		}else if(i==row-1){ //最后一行的情况
+        			dp[i][j]=Math.max(1, dp[i][j+1]-dungeon[i][j]);
+        		}else if(j==col-1){ //最后一列的情况
+        			dp[i][j]=Math.max(1, dp[i+1][j]-dungeon[i][j]);
+        		}else{	
+        			dp[i][j]=Math.max(1, Math.min(dp[i+1][j],dp[i][j+1])-dungeon[i][j]);
+        		}
+            }
+        }
+        return dp[0][0];
+    }
+}
+```
+
+
+## 2020.07.20
+### Problem
+- 给定一个已按照升序排列的有序数组，找到两个数使得它们相加之和等于目标数。函数应该返回这两个下标值 index1 和 index2，其中 index1必须小于index2。
+
+> 说明：
+
+- 链接：<a href="https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted">https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted</a>
+- 示例：
+
+```java
+输入: numbers = [2, 7, 11, 15], target = 9
+输出: [1,2]
+解释: 2 与 7 之和等于目标数 9 。因此 index1 = 1, index2 = 2 。
+```
+
+### Solution
+
+```java
+class Solution {
+    public int[] twoSum(int[] numbers, int target){
+        int len = numbers.length;
+        int left = 0, right = len - 1;
+        while(left < right){
+            int sum = numbers[left] + numbers[right];
+            if(sum == target){
+                return new int[]{left + 1, right + 1};
+            }else if(sum > target){
+                right--;
+            }else {
+                left++;
+            }
+        }
+        return new int[2];
+    }
+}
+```
