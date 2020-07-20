@@ -2144,7 +2144,7 @@ stat.executeUpdate();
 > 3. 重复调用getMoreResults方法以移动到下一个结果集。
 > 4. 当不存在更多的结果集或更新计数时，完成操作。
 
-```jave
+```java
 boolean isResult = stat.execute(command);
 boolean done = false;
 while (!done) {
@@ -2248,7 +2248,8 @@ int[] counts = stat.executeBatch();
 ```
 
 ### 5.5.4 高级SQL类型
-- SQL数据类型及其对应的Java类型。
+
+- SQL数据类型及其对应的Java类型：
 
 <table>
   <thead>
@@ -2314,8 +2315,29 @@ int[] counts = stat.executeBatch();
       <td>CLOB</td>
       <td>java.sql.Clob</td>
     </tr>
+    <tr>
+      <td>ARRAY</td>
+      <td>java.sql.Array</td>
+    </tr>
+    <tr>
+      <td>ROWID</td>
+      <td>java.sql.RowId</td>
+    </tr>
+    <tr>
+      <td>NCHAR(n), NVARCHAR(n), LONG NVARCHAR</td>
+      <td>String</td>
+    </tr>
+    <tr>
+      <td>NCLOB</td>
+      <td>java.sql.NClob</td>
+    </tr>
+    <tr>
+      <td>SQLXML</td>
+      <td>java.sql.SQLXML</td>
+    </tr>
   </tbody>
 </table>
+
 
 # 第6章 日期和时间API
 > 时间线  
