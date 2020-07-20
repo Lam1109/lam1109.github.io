@@ -2254,87 +2254,69 @@ int[] counts = stat.executeBatch();
 <table>
   <thead>
     <tr>
-      <th>SQL数据类型</th>
-      <th>Java数据类型</th>
+      <th>数据类型</th>
+      <th>说明</th>
     </tr>
   </thead>
     <tbody>
     <tr>
       <td>INTEGER或INT</td>
-      <td>int</td>
+      <td>通常为32位的整数</td>
     </tr>
     <tr>
       <td>SMALLINT</td>
-      <td>short</td>
+      <td>通常位16位的整数</td>
     </tr>
     <tr>
       <td>NUMERIC(m,n), DECIMAL(m,n)或DEC(m,n)</td>
-      <td>java.math.BigDecimal</td>
+      <td>m位长的定点十进制数，其中小数点后为n位</td>
     </tr>
     <tr>
       <td>FLOAT(n)</td>
-      <td>double</td>
+      <td>运算精度为n位二进制数的浮点数</td>
     </tr>
     <tr>
       <td>REAL</td>
-      <td>float</td>
+      <td>通常为32位浮点数</td>
     </tr>
     <tr>
       <td>DOUBLE</td>
-      <td>double</td>
+      <td>通常为64位浮点数</td>
     </tr>
     <tr>
       <td>CHARACTER(n)或CHAR(n)</td>
-      <td>String</td>
+      <td>固定长度为n的字符串</td>
     </tr>
     <tr>
       <td>VARCHAR(n)</td>
-      <td>String</td>
+      <td>最大长度为n的可变长字符串</td>
     </tr>
     <tr>
       <td>BOOLEAN</td>
-      <td>boolean/td>
+      <td>布尔值</td>
     </tr>
     <tr>
       <td>DATE</td>
-      <td>java.sql.Date</td>
+      <td>日历日期（与具体的实现相关）</td>
     </tr>
     <tr>
       <td>TIME</td>
-      <td>java.sql.time</td>
+      <td>当前时间（与具体的实现相关）</td>
     </tr>
     <tr>
       <td>TIMESTAMP</td>
-      <td>java.sql.Timestamp</td>
+      <td>当前日期和时间（与具体的实现相关）</td>
     </tr>
     <tr>
       <td>BLOB</td>
-      <td>java.sql.Blob</td>
+      <td>二进制大对象</td>
     </tr>
     <tr>
       <td>CLOB</td>
-      <td>java.sql.Clob</td>
+      <td>字符大对象</td>
     </tr>
-    <tr>
-      <td>ARRAY</td>
-      <td>java.sql.Array</td>
-    </tr>
-    <tr>
-      <td>ROWID</td>
-      <td>java.sql.RowId</td>
-    </tr>
-    <tr>
-      <td>NCHAR(n), NVARCHAR(n), LONG NVARCHAR</td>
-      <td>String</td>
-    </tr>
-    <tr>
-      <td>NCLOB</td>
-      <td>java.sql.NClob</td>
-    </tr>
-    <tr>
-      <td>SQLXML</td>
-      <td>java.sql.SQLXML</td>
-    </tr>
+  </tbody>
+</table>
 
 # 第6章 日期和时间API
 > 时间线  
