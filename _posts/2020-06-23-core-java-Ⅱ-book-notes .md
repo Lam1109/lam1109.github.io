@@ -2337,4 +2337,56 @@ int[] counts = stat.executeBatch();
   </tbody>
 </table>
 
+
 # 第6章 日期和时间API
+> 时间线  
+  时区时间  
+  本地日期  
+  格式化和解析  
+  日期调整器  
+  与遗留代码的互操作  
+  本地时间  
+
+## 6.1 时间线
+
+- Java的**Date**和**Time API**规范要求Java使用的时间尺度为：
+
+> 1. 每天86 400秒
+> 2. 每天正午与官方时间精确匹配
+> 3. 在其他时间点上，以精确定义的方式与官方时间接近匹配
+
+- 在Java中，**Instant**表示时间线上的某个点。**Instant**的值往回可追溯10亿年（Instant.MIN）。最大的值Instant.MAX是公元1 000 000 000年的12月31日。
+
+```java
+/** 静态方法调用Instant.now()会给出当前的时刻。
+  * 为了得到两个时刻之间的时间差，
+  * 可以使用静态方法Duration.between。
+  * 例如，以下代码可以度量算法运行的时间：
+  */
+Instant start = Instant.now();
+runAlgorithm();
+Instant end = Instant.now();
+Duration timeElapsed = Duration.between(start, end);
+long millis = timeElapsed.toMillis();
+
+/** Duration是两个时刻之间的时间量。
+  * 可以调用toNanos、toMillis、getSeconds、toMinutes、toHour和toDay
+  * 来获得Duration按照传统单位度量的时间长度。
+  * tips： 在Java 8中，必须调用getSeconds而不是toSeconds。
+  */
+```
+
+```java
+/** Duration接口包含了大量的用于执行算术运算的方法。 
+  * 例如，
+  * 检测某个算法是否至少比另一个算法快10倍。
+  */
+Duration timeElapsed2 = Duration.between(start2, end2);
+boolean overTenTimesFaster
+    = timeElapsed.multipliedBy(10).minus(timeElapsed2).isNegative();
+
+/** 以上代码仅为展示语法。
+  * 实际上可以直接调用：
+  */
+boolean overTenTimesFaster = timeElapsed.toNanos() * 10 < timeElapsed2.toNanos();
+```
