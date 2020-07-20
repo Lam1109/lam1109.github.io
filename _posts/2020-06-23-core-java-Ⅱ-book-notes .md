@@ -2316,6 +2316,26 @@ int[] counts = stat.executeBatch();
       <td>CLOB</td>
       <td>java.sql.Clob</td>
     </tr>
+    <tr>
+      <td>ARRAY</td>
+      <td>java.sql.Array</td>
+    </tr>
+    <tr>
+      <td>ROWID</td>
+      <td>java.sql.RowId</td>
+    </tr>
+    <tr>
+      <td>NCHAR(n), NVARCHAR(n), LONG NVARCHAR</td>
+      <td>String</td>
+    </tr>
+    <tr>
+      <td>NCLOB</td>
+      <td>java.sql.NClob</td>
+    </tr>
+    <tr>
+      <td>SQLXML</td>
+      <td>java.sql.SQLXML</td>
+    </tr>
   </tbody>
 </table>
 
@@ -2386,6 +2406,7 @@ boolean overTenTimesFaster = timeElapsed.toNanos() * 10 < timeElapsed2.toNanos()
 
 ```java
 LocalDate today = LocalDate.now(); // Today's date
+
 LocalDate alonzosBirthday = LocalDate.of(1903, 6, 14);
 alonzosBirthday = LocalDate.of(1903, Month.JUNE, 14);
     // Uses the Month enumeration
