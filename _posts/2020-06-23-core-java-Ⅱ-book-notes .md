@@ -2254,66 +2254,66 @@ int[] counts = stat.executeBatch();
 <table>
   <thead>
     <tr>
-      <th>数据类型</th>
-      <th>说明</th>
+      <th>SQL数据类型</th>
+      <th>Java数据类型</th>
     </tr>
   </thead>
     <tbody>
     <tr>
       <td>INTEGER或INT</td>
-      <td>通常为32位的整数</td>
+      <td>int</td>
     </tr>
     <tr>
       <td>SMALLINT</td>
-      <td>通常位16位的整数</td>
+      <td>short</td>
     </tr>
     <tr>
       <td>NUMERIC(m,n), DECIMAL(m,n)或DEC(m,n)</td>
-      <td>m位长的定点十进制数，其中小数点后为n位</td>
+      <td>java.math.BigDecimal</td>
     </tr>
     <tr>
       <td>FLOAT(n)</td>
-      <td>运算精度为n位二进制数的浮点数</td>
+      <td>double</td>
     </tr>
     <tr>
       <td>REAL</td>
-      <td>通常为32位浮点数</td>
+      <td>float</td>
     </tr>
     <tr>
       <td>DOUBLE</td>
-      <td>通常为64位浮点数</td>
+      <td>double</td>
     </tr>
     <tr>
       <td>CHARACTER(n)或CHAR(n)</td>
-      <td>固定长度为n的字符串</td>
+      <td>String</td>
     </tr>
     <tr>
       <td>VARCHAR(n)</td>
-      <td>最大长度为n的可变长字符串</td>
+      <td>String</td>
     </tr>
     <tr>
       <td>BOOLEAN</td>
-      <td>布尔值</td>
+      <td>boolean/td>
     </tr>
     <tr>
       <td>DATE</td>
-      <td>日历日期（与具体的实现相关）</td>
+      <td>java.sql.Date</td>
     </tr>
     <tr>
       <td>TIME</td>
-      <td>当前时间（与具体的实现相关）</td>
+      <td>java.sql.time</td>
     </tr>
     <tr>
       <td>TIMESTAMP</td>
-      <td>当前日期和时间（与具体的实现相关）</td>
+      <td>java.sql.Timestamp</td>
     </tr>
     <tr>
       <td>BLOB</td>
-      <td>二进制大对象</td>
+      <td>java.sql.Blob</td>
     </tr>
     <tr>
       <td>CLOB</td>
-      <td>字符大对象</td>
+      <td>java.sql.Clob</td>
     </tr>
     <tr>
       <td>ARRAY</td>
