@@ -2315,6 +2315,26 @@ int[] counts = stat.executeBatch();
       <td>CLOB</td>
       <td>字符大对象</td>
     </tr>
+    <tr>
+      <td>ARRAY</td>
+      <td>java.sql.Array</td>
+    </tr>
+    <tr>
+      <td>ROWID</td>
+      <td>java.sql.RowId</td>
+    </tr>
+    <tr>
+      <td>NCHAR(n), NVARCHAR(n), LONG NVARCHAR</td>
+      <td>String</td>
+    </tr>
+    <tr>
+      <td>NCLOB</td>
+      <td>java.sql.NClob</td>
+    </tr>
+    <tr>
+      <td>SQLXML</td>
+      <td>java.sql.SQLXML</td>
+    </tr>
   </tbody>
 </table>
 
