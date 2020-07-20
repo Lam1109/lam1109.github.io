@@ -2251,6 +2251,7 @@ int[] counts = stat.executeBatch();
 
 - SQL数据类型及其对应的Java类型：
 
+
 <table>
   <thead>
     <tr>
@@ -2293,7 +2294,7 @@ int[] counts = stat.executeBatch();
     </tr>
     <tr>
       <td>BOOLEAN</td>
-      <td>boolean/td>
+      <td>boolean</td>
     </tr>
     <tr>
       <td>DATE</td>
@@ -2301,7 +2302,7 @@ int[] counts = stat.executeBatch();
     </tr>
     <tr>
       <td>TIME</td>
-      <td>java.sql.time</td>
+      <td>java.sql.Time</td>
     </tr>
     <tr>
       <td>TIMESTAMP</td>
@@ -2315,28 +2316,12 @@ int[] counts = stat.executeBatch();
       <td>CLOB</td>
       <td>java.sql.Clob</td>
     </tr>
-    <tr>
-      <td>ARRAY</td>
-      <td>java.sql.Array</td>
-    </tr>
-    <tr>
-      <td>ROWID</td>
-      <td>java.sql.RowId</td>
-    </tr>
-    <tr>
-      <td>NCHAR(n), NVARCHAR(n), LONG NVARCHAR</td>
-      <td>String</td>
-    </tr>
-    <tr>
-      <td>NCLOB</td>
-      <td>java.sql.NClob</td>
-    </tr>
-    <tr>
-      <td>SQLXML</td>
-      <td>java.sql.SQLXML</td>
-    </tr>
   </tbody>
 </table>
+
+
+
+
 
 # 第6章 日期和时间API
 > 时间线  
@@ -2389,4 +2374,19 @@ boolean overTenTimesFaster
   * 实际上可以直接调用：
   */
 boolean overTenTimesFaster = timeElapsed.toNanos() * 10 < timeElapsed2.toNanos();
+```
+
+## 6.2 本地日期
+- 在Java API中有两种人类时间，本地日期/时间和时区时间。
+
+> 1903年6月14日是一个本地日期的示例（lambda演算的发明者Alonzo Church在这一天诞生）。  
+  1969年7月16日 09:32:00 EDT（阿波罗11号发射的时刻）是一个时区日期/时间，表示的是时间线上的一个精确的时刻。
+
+- LocalDate是带有年、月、日的日期。为了构建LocalDate对象，可以使用now或of静态方法：
+
+```java
+LocalDate today = LocalDate.now(); // Today's date
+LocalDate alonzosBirthday = LocalDate.of(1903, 6, 14);
+alonzosBirthday = LocalDate.of(1903, Month.JUNE, 14);
+    // Uses the Month enumeration
 ```
