@@ -2445,7 +2445,7 @@ independenceDay.unitl(christmas, ChronoUnit.DAYS) // 158 days
 
 > 周末实际上在每周的末尾。这与java.util.Calendar有所差异，在后者中，星期日的值为1，而星期6的值为7。
 
-- Java 9添加了两个游泳的datesUntil方法，它们会产生LocalDate对象流。
+- Java 9添加了两个有用的**datesUntil**方法，它们会产生LocalDate对象流。
 
 ```java
 LocalDate start = LocalDate.of(2020, 1, 1);
@@ -2716,3 +2716,394 @@ for (DayOfWeek w : DayOfWeek.values())
 ```java
 formatter = DateTimeFormatter.ofPattern("E yyyy-MM-dd HH:mm");
 ```
+
+## 6.7 与遗留代码的互操作
+- 作为全新的创造，**Java Date**和**Time API**必须能够与已有类之间进行互操作，特别是无处不在的**java.util.Date**、**java.util.GregorianCalendar**和**java.sql.Date/Time/Timestamp**。
+
+- java.time类与遗留类之间的转换：
+
+<table>
+  <thead>
+    <tr>
+      <th>类</th>
+      <th>转换到遗留类</th>
+      <th>转换自遗留类</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>Instant ⇋ java.util.Date</td>
+      <td>Date.from(instant)</td>
+      <td>date.toInstant()</td>
+    </tr>
+    <tr>
+      <td>ZonedDateTime ⇋ java.util.GregorianCalendar</td>
+      <td>GregorianCalendar.from(zonedDateTime)</td>
+      <td>cal.toZonedDateTime()</td>
+    </tr>
+    <tr>
+      <td>Instant ⇋ java.sql.Timestamp</td>
+      <td>TimeStamp.from(instant)</td>
+      <td>timestamp.toInstant()</td>
+    </tr>
+    <tr>
+      <td>LocalDateTime ⇋ java.sql.Timestamp</td>
+      <td>Timestamp.valueOf(localDateTime)</td>
+      <td>timeStamp.toLocalDateTime()</td>
+    </tr>
+    <tr>
+      <td>LocalDate ⇋ java.sql.Date</td>
+      <td>Date.valueOf(localDate)</td>
+      <td>date.toLocalDate()</td>
+    </tr>
+    <tr>
+      <td>LocalTime ⇋ java.sql.Time</td>
+      <td>Time.valueOf(localTime)</td>
+      <td>time.toLocalTime()</td>
+    </tr>
+    <tr>
+      <td>DateTimeFormatter ⇋ java.text.DateFormat</td>
+      <td>formatter.toFormat()</td>
+      <td>无</td>
+    </tr>
+    <tr>
+      <td>java.util.TimeZone ⇋ ZoneId</td>
+      <td>Timezone.getTimeZone(id)</td>
+      <td>timeZone.toZoneId()</td>
+    </tr>
+    <tr>
+      <td>java.nio.file.attribute.FileTime ⇋ Instant</td>
+      <td>FileTime.from(instant)</td>
+      <td>fileTime.toInstant()</td>
+    </tr>
+  </tbody>
+</table>
+
+# 第7章 国际化
+> locale  
+  消息格式化  
+  数字格式  
+  文本输入和输出  
+  日期和时间  
+  资源包  
+  排序和规范化  
+
+- 从一开始，Java就具备了进行有效的国际化所必需的一个重要特性：使用**Unicode**来处理所有字符串。由于支持**Unicode**，在Java编程语言中编写程序来操作多种语言的字符串变得异常方便。
+
+## 7.1 locale
+
+### 7.1.1 为什么需要locale
+- 当提供一个程序的国际化版本时，所有程序消息都需要转换为本地语言。当然直接翻译用户界面的文本是不够的。
+
+> 例如，对于德国用户，数字 123,456.78 应该显示为 123.456,78（小数点和十进制数的逗号分隔符的角色是相反的）。  
+又例如，在美国，日期的显示为月/日/年；在德国，日期的显示为日/月/年；而在中国，则使用年/月/日。
+
+### 7.1.2 指定locale
+
+- locale由多达5个部分构成：
+
+> 1. 一种语言，由2个或3个小写字母表示，如en（英语）、de（德语）和zh（中文）。
+> 2. 可选的一段文本，由首字母大写的四个字母表示，例如Latn（拉丁文）、Cyrl（西里尔文）和Hant（繁体中文）。
+> 3. 可选的一个国家或地区，由2个大写字母或3个数字表示，例如US（美国）和CH（瑞士)。
+> 4. 可选的一个变体，用于指定各种杂项特性，例如方言和拼写规则。
+> 5. 可选的一个扩展。扩展描述了日历（如中国农历）和数字（替代西方数字的泰语数字）等内容的本地偏好。
+
+- locale是用标签描述的， 标签是由locale的各个元素通过连字符连接起来的字符串，例如en-US。
+
+> 在德国，你可以使用de-DE。瑞士有4种官方语言（德语、法语、意大利语和里托罗曼斯语）。在瑞士讲德语的人希望使用的locale是de-CH。这个locale会使用德语的规则，但是货币值会表示成瑞士法郎而不是欧元。
+
+```java
+// 用标签字符串来构建Locale对象
+Locale usEnglish = Locale.forLanguageTag("en-US");
+
+// toLanguageTag方法可以生成给定locale的语言标签
+Local.US.toLanguageTag();  // 生成字符串"en-US"
+```
+
+### 7.1.3 默认locale
+- Locale类的静态getDefault方法可以获得作为本地操作系统的一部分而存放的默认locale。
+- 有些操作系统允许用户为显示消息和格式化指定不同的loclae。
+
+```java
+// 获取这些偏好，可以调用
+Locale displayLocale = Locale.getDefault(Locale.Category.DISPLAY);
+Locale formatLocale = Locale.getDefault(Locale.Category.FORMAT);
+```
+
+## 7.2 数字格式
+- Java类库提供了一个**格式器**（formatter）对象的集合，它可以对java.text包中的数字值进行格式化和解析。
+
+### 7.2.1 格式化数字值
+- 可以通过下面的步骤对特定locale的数字进行格式化：
+
+> 1. 得到Locale对象。
+> 2. 使用一个“工厂方法”得到一个格式器对象。
+> 3. 使用这个格式器对象来完成格式化和解析工作。
+
+```java
+/** 工厂方法是NumberFormat类的静态方法，
+  * 它们接受一个Locale类型的参数。
+  * 总共有3个工厂方法getNumberInstance、
+  * getCurrencyInstance和getPercentInstance，
+  * 这些方法返回的对象可以分别对
+  * 数字、货币量和百分比进行格式化和解析。
+  */
+Locale loc = Locale.GERMAN;
+NumberFormat currFmt = NumberFormat.getCurrencyInstance(loc);
+double amt = 123456.78;
+String result = currFmt.format(amt);
+// 结果是 123.456,78 €
+```
+
+```java
+/** 相反，
+  * 如果想读取一个按照某个locale的惯用法而输入或存储的数字，
+  * 那么就需要使用parse方法。
+  */
+TextField inputField;
+...
+NumberFormat fmt = NumberFormat.getNumberInstance();
+// get the number formatter for default locale
+Number input = fmt.parse(inputField.getText().trim());
+double x = input.doubleValue();
+```
+
+### 7.2.2 货币
+
+```java
+/** 假设为一个美国客户准备了一张货物单，
+  * 货物单中有些货物的金额是用美元表示的，
+  * 有些是用欧元表示的，此时，
+  * 你不能只是使用两种格式器：
+  */
+NumberFormat dollarFormatter = NumberFormat.getCurrencyInstance(Locale.US);
+NumberFormat euroFormatter = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+/** 这会导致发票看起来非常奇怪，
+  * 有些金额的格式像 $ 100，000，
+  * 另一些则像100.000 €（注意：欧元值使用小数点而不是逗号作为分隔符）。
+  */
+
+/** 应当使用Currency类来控制被格式器处理的货币。
+  * 为美国客户设置欧元格式：
+  */
+NumberFormat euroFormatter = NumberFormat.getCurrencyInstance(Locale.US);
+euroFormatter.setCurrency(Currency.getInstance("EUR"));
+```
+
+- 货币标识符：
+
+<table>
+  <thead>
+    <tr>
+      <th>货币值</th>
+      <th>标识符</th>
+      <th>货币代码</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>U.S. Dollar</td>
+      <td>USD</td>
+      <td>840</td>
+    </tr>
+    <tr>
+      <td>Euro</td>
+      <td>EUR</td>
+      <td>978</td>
+    </tr>
+    <tr>
+      <td>British Pound</td>
+      <td>GBP</td>
+      <td>826</td>
+    </tr>
+    <tr>
+      <td>Japanese Yen</td>
+      <td>JPY</td>
+      <td>392</td>
+    </tr>
+    <tr>
+      <td>Chinese Renmingbi(Yuan)</td>
+      <td>CNY</td>
+      <td>156</td>
+    </tr>
+    <tr>
+      <td>Indian Rupee</td>
+      <td>INR</td>
+      <td>356</td>
+    </tr>
+    <tr>
+      <td>Russian Ruble</td>
+      <td>RUB</td>
+      <td>643</td>
+    </tr>
+  </tbody>
+</table>
+
+## 7.3 日期和时间
+- 当格式化日期和时间时，需要考虑4个与locale相关的问题：
+
+> 1. 月份和星期应该用本地语言来表示。
+> 2. 年、月、日的顺序要符合本地习惯。
+> 3. 公历可能不是本地首选的日期表示方法。
+> 4. 必须考虑本地区的时区。
+
+- java.time包中的**DateTimeFormatter**类可以处理这些问题（6.6节）。
+
+```java
+FormatStyle style = ...; // One of FormatStyle.SHORT, FormatStyle.MEDIUM, ...
+DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(style);
+DateTimeFormatter timeFormatter = DateTimeFormatter.ofLocalizedTime(style);
+
+DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(style);
+    // or DateTimeFormatter.ofLocalizedDateTime(style1, style2)
+    
+/** 以上格式器都会使用当前的locale。
+  * 为了使用不同的locale，
+  * 需要使用withLocale方法：
+  */
+DateTimeFormatter dateFormatter =
+    DateTimeFormatter.ofLocalizedDate(style).withLocale(locale);
+```
+
+## 7.4 排序和规范化
+
+```java
+/** 获得locale敏感的比较器，
+  * 可以调用静态的Collator.getInstance方法：
+  */
+Collator coll = Collator.getInstance(locale);
+words.sort(coll); // Collator implements Comparator<Object>
+```
+
+## 7.5 消息格式化
+- Java类库中有一个用来对包含变量部分的文本进行格式化的**MessageFormat**类，它的格式化方式与用printf方法进行格式化很类似，但是它支持locale，并且可以对数字和日期进行格式化。
+
+### 7.5.1 格式化数字和日期
+- 一个典型的消息格式化字符串：
+
+> "On {2}, a {0} destroyed {1} houses and caused {3} of damage."
+
+```java
+/** 括号中的数字是占位符，
+  * 可以用实际的名字和值来替换它们。
+  * 使用静态方法MessageFormat.format
+  * 可以用实际的值来替换这些占位符。
+  */
+String msg =
+    MessageFormat.format("On {2}, a {0} destroyed {1} houses and caused {3} of damage.",
+        "hurricane", 99, new GregorianCalendar(1999, 0, 1).getTime(), 10.0E8);
+/** 结果是下面的字符串：
+  * On 1/1/99 12:00 AM, a hurricane destroyed 99 houses and caused 100,000,000 of damage.
+  */
+  
+  
+/** 还可以为占位符提供可选的格式。
+  */
+String msg =
+    MessageFormat.format("On {2,date,long}, a {0} destroyed {1} houses and caused {3,number,currency} of damage.", 
+        "hurricane", 99, new GregorianCalendar(1999, 0, 1).getTime(), 10.0E8);
+/** 结果是下面的字符串：
+  * On January 1, 1999 12:00 AM, a hurricane destroyed 99 houses and caused $100,000,000 of damage.
+  */
+```
+
+> 一般来说，占位符索引后面可以跟一个**类型**（type）和一个**风格**（style），它们之间用逗号隔开。  
+类型可以是：  
+number  
+time  
+date  
+choice  
+如果类型是number，那么风格可以是：  
+integer  
+currency  
+percent  
+如果类型是time或date，那么风格可以是：  
+short  
+medium  
+long  
+full  
+
+### 7.5.2 选择格式
+- 一个选择格式是由一个序列对构成的，每一个对包括：
+
+> 一个下限（lower limit）。  
+  一个格式字符串（format string）。
+  
+## 7.6 文本输入和输出
+### 7.6.1 文本文件
+
+```java
+/** 若知道遗留文件所希望使用的字符编码机制，
+  * 可在读写文本文件时指定它：
+  */
+var out = new PrintWriter(filename, "Windows-1252");
+
+/** 获得可用的最佳编码机制，
+  * 可以通过下面的调用来获得“平台的编码机制”：
+  */
+Charset platformEncoding = Charset.defaultCharset();
+```
+
+### 7.6.2 行结束符
+- 这不是locale的问题，而是平台的问题。在Windows中，文本文件希望在每行末尾使用\r\n，而基于UNIX的系统只需要一个\n字符。
+
+```java
+/** 与在字符串中使用\n不同，
+  * 可以使用printf和%n格式说明符来产生平台相关的行结束符。
+  */
+out.printf("Hello%nWorld%n");
+
+/** 在Windows上产生
+  * Hello\r\nWorld\r\n
+  * ***
+  * 在其他所有平台上产生
+  * Hello\nWorld\n
+  */
+```
+
+### 7.6.3 控制台
+- 若程序是通过System.in/System.out或System.console()与用户交互的，那么就不得不面对控制台使用的字符编码机制与Charset.defaultCharset()报告的平台编码机制有差异的可能性。
+
+### 7.6.4 日志文件
+- 当来自java.util.logging库的日志消息被发送到控制台时，它们会用控制台的编码机制来书写。
+
+## 7.7 资源包
+- 当本地化一个应用时，可能会有大量的消息字符串、按钮标签和其他的东西需要被翻译。为了灵活地完成这项任务，一般在外部定义消息字符串，这些消息字符串通常被称为**资源**（resource）。
+
+### 7.7.1 定位资源包
+- 一般来说，使用 *baseName_language_country* 来命名所有和国家相关的资源，使用 *baseName_language* 来命名所有和语言相关的资源。
+
+```java
+// 加载一个包：
+ResourceBundle currentResources = ReourceBundle.getBundle(baseName, currentLocale);
+```
+
+### 7.7.2 属性文件
+- 对字符串进行国际化是很直接的，可以把所有的字符串放到一个属性文件中，比如 *MyProgramStrings.properties*，这是一个每行存放一个键-值对的文本文件。
+
+> computeButton=Rechnen  
+  colorName=black  
+  defaultPaperSize=210*297
+
+```java
+/** 可以像上一节描述的那样命名属性文件，
+  * 例如，
+  * MyProgramStrings.properties
+  * MyProgramStrings_en.properties
+  * MyProgramStrings_de_DE.properties
+  */
+ResourceBundle currentResources = ReourceBundle.getBundle("MyProgramStrings", locale);
+
+/** 要查找一个集体的字符串，
+  * 可以调用
+  */
+String computeButtonLabel = bundle.getString("computeButton");
+```
+
+### 7.7.3 包类
+- 为了提供字符串以外的资源，需要定义类，它必须扩展自ResourceBundle类。应该使用标准命名规则来命名类，比如：
+
+> MyProgramStrings.java  
+  MyProgramStrings_en.java  
+  MyProgramStrings_de_DE.java
+  
