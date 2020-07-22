@@ -3107,3 +3107,438 @@ String computeButtonLabel = bundle.getString("computeButton");
   MyProgramStrings_en.java  
   MyProgramStrings_de_DE.java
   
+# 第8章 脚本、编译与注解处理
+
+> Java平台的脚本机制  
+  标准注解  
+  编译器API  
+  源码级注解处理  
+  使用注解  
+  字节码工程  
+  注解语法  
+
+## 8.1 Java平台的脚本机制
+- **脚本语言**是一种通过在运行时解释程序文本，从而避免使用通常的编辑/编译/链接/运行循环的语言。
+- 脚本语言有许多优势：
+
+> 1. 便于快速变更，鼓励不断实验。
+> 2. 可以修改运行着的程序的行为。
+> 3. 支持程序用户的定制化。
+
+### 8.1.1 获取脚本引擎
+- **脚本引擎**是一个可以执行用某种特定语言编写的脚本的类库。
+- 脚本引擎工厂的属性：
+
+<table>
+  <thead>
+    <tr>
+      <th>引擎</th>
+      <th>名字</th>
+      <th>MIME类型</th>
+      <th>文件扩展</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>Nashorn（包含在JDK中）</td>
+      <td>nashorn, Nashorn,<br> js, JS, JavaScript, javascript, <br>ECMAScript, ecmascript</td>
+      <td>application/javascript, <br>application/ecmascript, <br>text/javascript, <br>text/ecmascript</td>
+      <td>js</td>
+    </tr>
+    <tr>
+      <td>Groovy</td>
+      <td>groovy</td>
+      <td>无</td>
+      <td>groovy</td>
+    </tr>
+    <tr>
+      <td>Renjin</td>
+      <td>Renjin</td>
+      <td>text/x-R</td>
+      <td>R, r, S, s</td>
+    </tr>
+  </tbody>
+</table>
+
+```java
+/** 知道所需要的引擎，
+  * 可以直接通过名字、MIME类型或文件扩展来请求它：
+  */
+ScriptEngine engine = manager.getEngineByName("nashorn");
+```
+
+### 8.1.2 脚本计算与绑定
+
+```java
+/** 一旦拥有了引擎，
+  * 就可以通过下面的调用来直接调用脚本：
+  */
+Object result = engine.eval(scriptString);
+
+/** 如果脚本存储在文件中，
+  * 那么需要先打开一个Reader，
+  * 然后调用：
+  */
+Object result = engine.eval(reader);
+
+/** 可以在同一个引擎上调用多个脚本。
+  * 如果一个脚本定义了变量、函数或类，
+  * 那么大多数引擎都会保留这些定义，
+  * 以供将来使用。
+  */
+engine.eval("n = 1728");
+Object result = engine.eval("n + 1"); // 将返回 1729
+```
+
+> 要想知道在多个线程中并发执行脚本是否安全，可以调用  
+Object param = factory.getParameter("THREADING");  
+其返回值是下列值之一：  
+null：并发执行不安全  
+"MULTITHREADED"：并发执行安全。一个线程的执行效果对另外的线程有可能是可视的。  
+"THREAD-ISOLATED"：除了 "MULTITHREADED"，还会为每个线程维护不同的变量绑定。  
+"STATELESS"：除了 "THREAD-ISOLATED"，脚本还不会改变变量绑定。
+
+### 8.1.3 重定向输入和输出
+- 可以通过调用脚本上下文的**setReader**和**setWriter**方法来重定向脚本的标准输入和输出。
+
+```java
+/** 任何用JavaScript的print和println函数产生的输出都会被发送到writer。
+  */
+var writer = new StringWriter();
+engine.getContext().setWriter(new PrintWriter(writer, true));
+
+/** setReader和setWriter方法只会影响脚本引擎的标准输入和输出源。
+  * 执行下面的JavaScript代码，
+  * 只有第一个输出会被重定向。
+  */
+println("Hello");
+java.lang.System.out.println("World");
+```
+
+### 8.1.4 调用脚本的函数和方法
+
+```java
+/** 要调用一个函数，
+  * 需要用函数名来调用invokeFunction方法，
+  * 函数名后面是函数的参数：
+  */
+// Define greet function in JavaScript
+engine.eval("functionn greet(how, whom) { return how + ', ' + whom + '!' }");
+
+// Call the function with arguments "Hello", "World"
+result = ((Invocable) engine).invokeFunction("greet", "Hello", "World");
+
+/** 如果脚本语言是面向对象的，
+  * 那就可以调用invokeMethod：
+  */
+// Define Greeter class in JavaScript
+engine.eval("function Greeter(how) { this.how = how }");
+engine.eval("Greeter.prototype.welcome = "
+    + " function(whom) { return this.how + ', ' + whom + '!'}");
+    
+// Construct an instance
+Object yo = engine.eval("new Greeter('Yo')");
+
+// Call the welcome method on the instance
+result = ((Invocable) engine).invokeMethod(yo, "welcome", "World");
+```
+
+- 使用脚本实现一个Java接口，然后就可以用Java方法调用的语法来调用脚本函数。
+
+```java
+// 接口
+public interface Greeter {
+    String welcome(String whom);
+}
+
+/** 如果在Nashorn中定义了具有相同名字的函数，
+  * 那么可通过这个接口来调用它：
+  */
+// Define welcome function in JavaScript
+engine.eval("function welcome(whom) { return 'Hello, ' + whom + '!'}");
+
+// Get a Java object and call a Java method
+Greeter g = ((Invocable) engine).getInterface(Greeter.class);
+result = g.welcome("World");
+
+/** 在面对对象的脚本语言中，
+  * 可以通过相匹配的Java接口来访问一个脚本类。
+  * 例如，
+  * 使用Java的语法来调用JavaScript的SimpleGreeter类：
+  */
+Greeter g = ((Invocable) engine).getInterface(yo, Greeter.class);
+result = g.welcome("World");
+```
+
+### 8.1.5 编译脚本
+- 某些脚本引擎处于对执行效率的考虑，可以将脚本代码编译为某种中间格式。
+
+```java
+/** 编译和计算包含在脚本文件中的代码：
+  */
+var reader = new FileReader("myscript.js");
+CompiledScript script = null;
+if (engine implements Compilable)
+    script = ((Compilable) engine).compile(reader);
+    
+/** 下面的代码会在编译成功的情况下执行编译后的脚本，
+  * 如果引擎不支持编译，
+  * 则执行原始的脚本。
+  */
+if (script != null)
+    script.eval();
+else
+    engine.eval(reader);
+```
+
+## 8.2 编译器API
+### 8.2.1 调用编译器
+
+```java
+/** 调用编译器非常简单，
+  * 下面是一个示范调用：
+  */
+JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+OutputStream outStream = ...;
+OutputStream errStream = ...;
+int result = compiler.run(null, outStream, errStream, 
+    "-sourcepath", "src", "Test.java");
+// 返回值为0表示编译成功
+```
+
+### 8.2.2 发起编译任务
+- 可以通过使用**CompilationTask**对象来对编译过程进行更多的控制。
+
+```java
+/** 要想获取CompilationTask对象，
+  * 需要以前一节中描述的compiler对象开始，
+  * 然后按照下面的方式调用：
+  */
+JavaCompiler.CompilationTask task = compiler.getTask(
+    errorWriter, // Uses System.err if null
+    fileManager, // Uses the standard file manager if null
+    diagnostics, // Uses System.err if null
+    options, // null if no options
+    classes, // For annotation processing; null if none
+    sources);
+
+/** 最后三个参数是Iterable的实例。
+  * 例如，选定序列可以像下面这样指定：
+  */
+Iterable<String> options = List.of("-d", "bin");
+
+/** sources参数是JavaFileObject实例的Iterable。
+  * 如果想要编译磁盘文件，
+  * 需要获取一个StandardJavaFileManager对象，
+  * 并调用其getJavaFileObject方法：
+  */
+StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+Iterable<JavaFileObject> sources
+    = fileManager.getJavaFileObjectsFromStrings(List.of("File1.java", "File2.java"));
+JavaCompiler.CompilationTask task = compiler.getTask(
+    null, null, null, options, null, sources);
+```
+
+### 8.2.3 捕获诊断消息
+- 为了监听错误消息，需要安装一个**DiagnosticListener**。这个监听器在编译器报告警告或错误消息时会收到一个**Diagnostic**对象。
+
+```java
+/** DiagnosticCollector类实现了这个接口，
+  * 它将收集所有的诊断信息，
+  * 可以在编译完成之后遍历这些信息。
+  */
+DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
+compiler.getTask(null, fileManager, collector, null, null, sources).call();
+for (Diagnostic<? extends JavaFileObject> d : collector.getDiagnostics()) {
+    System.out.printl(d);
+}
+
+/** 还可以在标准的文件管理器上安装一个DiagnosticListener对象，
+  * 这样就可以捕获到有关文件缺失的消息：
+  */
+StandardJavaFileManager fileManager
+    = compiler.getStandardFileManager(diagnostics, null, null);
+```
+
+### 8.2.4 从内存中读取源文件
+
+```java
+/** 若动态地生成了源代码，
+  * 那么就可以从内存中获取它来进行编译，
+  * 而无须在磁盘上保存文件。
+  */
+public class StringSource extends SimpleJavaFileObject {
+    private String code;
+    
+    StringSource(String name, String code) {
+        super(URI.create("string:///" + name.repalce('.','/') + ".java", Kind.SOURCE);
+        this.code = code;
+    }
+    
+    public CharSequence getCharContent(boolean ignoreEncodingErrors) {
+        return code;
+    }
+}
+
+/** 然后，生成类的代码，
+  * 并提交给编译器一个StringSource对象的列表：
+  */
+List<StringSource> sources = List.of(
+    new StringSource(className1, class1CodeString), ...);
+task = compiler.getTask(null, fileManager, diagnostics, null, null, sources);
+```
+
+### 8.2.5 将字节码写出到内存中
+- 如果动态地编译类，那么就无须将类文件写出到硬盘上。可以将它们存储在内存中，并立即加载它们。
+
+## 8.3 使用注解
+- **注解**是那些插入到源代码中使用其他工具可以对其进行处理的标签。
+- 注解可能的用法：
+
+> 附属文件的自动生成，例如部署描述符或者bean信息类。  
+  测试、日志、事务语义等代码的自动生成。
+
+### 8.3.1 注解简介
+- 在Java中，注解是当作一个修饰符来使用的，它被置于被注解项之前，中间没有分号。
+
+```java
+// 例如：
+public class MyClass {
+    ...
+    @Test public void checkRandomInsertions()
+}
+```
+
+## 8.4 注解语法
+### 8.4.1 注解接口
+- 注解是由注解接口来定义的：
+
+```java
+modifiers @interface AnnotationName {
+    elementDeclaration1
+    elementDeclaration2
+    ...
+}
+
+/** 每个元素声明都具有下面这种形式：
+  */
+type elementName(); // or type elementName() default value;
+
+/** 例如，下面这个注解具有两个元素：
+  * assignedTo和severity。
+  */
+public @interface BugReport {
+    String assignedTo() default "[none]";
+    int severity();
+}
+```
+
+- 注解元素的类型为下列之一：
+
+> 基本类型（int、short、long、type、char、double、float或者boolean）。  
+  String。  
+  Class（具有一个可选的类型参数，例如Class<? extends MyClass）。  
+  enum类型。  
+  注解类型。  
+  由以上所述类型组成的数组（由数组组成的数组不是合法的元素类型）。
+
+### 8.4.2 注解
+
+```java
+/** 每个注解都具有下面这种格式：
+  */
+@AnnotationName(elementName1=value1, elementName2=value2, ...)
+
+/** 例如，
+  */
+@BugReport(assignedTo="Harry", severity=10)
+
+/** 元素的顺序无关紧要，
+  * 下面这个注解与前面那个一样。
+  */
+@BugReport(severity=10, assignedTo="Harry")
+
+/** 如果某个元素的值并未指定，那么就使用声明的默认值。
+  * 例如，下面这个注解中，
+  * assignedTo的值是字符串 "[none]"。
+  */
+@BugReport(severity=10)
+
+/** 如果没有指定元素，
+  * 要么是因为注解中没有任何元素，
+  * 要么是因为所有元素都使用默认值。
+  */
+@BugReport
+// 称为 标记注解，等同于
+@BugReport(assignedTo="[none]", severity=0)
+```
+
+```java
+/** 单值注解
+  * 如果一个元素具有特殊的名字value，
+  * 并且没有指定其他元素，
+  * 那么就可以忽略掉这个元素名以及等号。
+  */
+public @interface ActionListenerFor {
+    String value();
+}
+
+/** 那么，
+  * 可以将注解书写为以下形式：
+  */
+@ActionListenerFor("yellowButton")
+```
+
+### 8.4.3 注解各类说明
+
+```
+/** 1. 对于类和接口，
+  * 需要将注解放置在class和interface关键词的前面：  
+  */
+@Entity public class User {...}
+
+/** 2. 对于变量，
+  * 需要将它们放置在类型的前面：
+  */
+@SuppressWarnings("unchecked") List<User> users = ...;  
+public User getUser(@Param("id") String userId)
+
+/** 3. 对于泛化类或方法中的类型参数： 
+  */
+public class Cache<@Immutable V> {...}
+
+/** 4. 包是在文件package-info.java中注解的，
+  * 该文件只包含以注解先导的包语句。
+  */
+/** 
+    Package-level Javadoc
+  */
+@GPL(version="3")
+package com.horstnann.corejava;
+import org.gnu.GPL
+```
+
+### 8.4.4 注解类型用法
+- 声明注解提供了正在被声明的项的相关信息。
+
+```java
+public User getUser(@NonNull String userId)
+// 断言userId参数不为空
+
+List<@NonNull String>
+// 断言其中所有字符串不为空
+```
+
+- 类型用法注解可以出现在下面的位置：
+
+> 1. 与泛化类型参数一起使用：List<@NonNull String>, Comparator.<@NonNull String> reverseOrder()>。
+> 2. 数组中的任何位置：@NonNull String[][] words（words[i][j]不为null），String @NonNull [][] words（words不为null），String[] @NonNull [] words（words[i]不为null）。
+> 3. 与超类和实现接口一起使用：class Warning extends @Localized Message。
+> 4. 与构造器调用一起使用：new @Localized String(...)。
+> 5. 与强制转型和instanceof检查一起使用：(@Localized String) text, if (text instanceof @Localized String)。
+> 6. 与异常规约一起使用：public String read() throws @Localized IOException。
+> 7. 与通配符和类型边界一起使用：List<@Localized ? extends Message>，List<? extends @Localized Message>。
+> 8. 与方法和构造器引用一起使用：@Localized Message::getText。
+
+### 8.4.5 注解this
+
