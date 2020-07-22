@@ -1,15 +1,15 @@
 ---
-date: 2020-06-25 12:27:40
+date: 2020-07-22 12:27:40
 layout: post
-title: Tips
-subtitle: Tips
-description: Tips.
-image: /assets/img/post_img/tips1.png
-optimized_image: /assets/img/post_img/tips2.png
+title: SpringMVC
+subtitle: SpringMVC
+description: SpringMVC.
+image: /assets/img/post_img/springMVC.png
+optimized_image: /assets/img/post_img/springMVC.png
 category: Java
 tags:
-  - tips
-  - java
+  - mvc
+  - spring
 author: Lam
 paginate: true
 ---
