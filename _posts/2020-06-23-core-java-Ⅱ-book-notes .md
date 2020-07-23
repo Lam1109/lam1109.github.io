@@ -3542,3 +3542,195 @@ List<@NonNull String>
 
 ### 8.4.5 注解this
 
+```java
+/** 假设想要将参数注解为在方法中不会被修改。
+  */
+public class Point {
+    public boolean equals(@ReadOnly Object other) { ... }
+}
+
+/** 处理这个注解的工具在看到下面的调用时，
+  * p.equals(q);
+  * 就会推理出q没有被修改过。
+  * 当该方法被调用时，
+  * this变量是绑定到p的。
+  * 但是this从来都没有被声明过，
+  * 因此无法注解它。
+  */
+  
+/** 实际上，
+  * 可以用一种很少使用的语法变体来声明它，
+  * 这样就可以添加注解了。
+  */
+public class Point {
+    public boolean equals(@ReadOnly Point this, @ReadOnly Object other) { ... }
+}
+// 第一个参数被称为接收器参数，它必须被命名为this，其类型为要构建的类。
+
+/** 传递给内部类构造器的是另一个不同的隐藏参数，
+  * 即对其外围类对象的引用。
+  * 可以让这个参数显示化。
+  * 这个参数的名字必须像引用它时那样，叫做EnclosingClass.this，其类型为外围类
+  */
+public class Sequence {
+    private int from;
+    private int to;
+    
+    class Iterator implements java.util.Iterator<Integer> {
+        private int current;
+        public Iterator(@ReadOnly Sequence Sequence.this) {
+            this.current = Sequence.this.from;
+        }
+        ...
+    }
+    ...
+}
+```
+
+## 8.5 标准注解
+
+<table>
+  <thead>
+    <tr>
+      <th>注解接口</th>
+      <th>应用场合</th>
+      <th>目的</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>@Deprecated</td>
+      <td>全部</td>
+      <td>将项标记为过时的</td>
+    </tr>
+    <tr>
+      <td>@SafeVarargs</td>
+      <td>方法和构造器</td>
+      <td>断言varargs参数可安全使用</td>
+    </tr>
+    <tr>
+      <td>@Override</td>
+      <td>方法</td>
+      <td>检查该方法是否覆盖了某一个超类方法</td>
+    </tr>
+    <tr>
+      <td>@FunctionalInterface</td>
+      <td>接口</td>
+      <td>将接口标记为只有一个抽象方法的函数式接口</td>
+    </tr>
+    <tr>
+      <td>@PostConstruct PreDestroy</td>
+      <td>方法</td>
+      <td>被标记的方法应该在构造之后或移除之前立即被调用</td>
+    </tr>
+    <tr>
+      <td>@Resource</td>
+      <td>类、接口、方法、域</td>
+      <td>在类或接口上：标记为在其他地方要用到的资源。在方法或域上：为“注入”而标记</td>
+    </tr>
+    <tr>
+      <td>@Resources</td>
+      <td>类、接口</td>
+      <td>一个资源数组</td>
+    </tr>
+    <tr>
+      <td>@Generated</td>
+      <td>全部</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>@Target</td>
+      <td>注解</td>
+      <td>指明可以应用这个注解的那些项</td>
+    </tr>
+    <tr>
+      <td>@Retention</td>
+      <td>注解</td>
+      <td>指明这个注解可以保留多久</td>
+    </tr>
+    <tr>
+      <td>@Documented</td>
+      <td>注解</td>
+      <td>指明这个注解应该包含在注解项的文档中</td>
+    </tr>
+    <tr>
+      <td>@Inherited</td>
+      <td>注解</td>
+      <td>指明当这个注解应用于一个类的时候，能够自动被它的子类继承</td>
+    </tr>
+    <tr>
+      <td>@Repeatable</td>
+      <td>注解</td>
+      <td>指明这个注解可以在同一个项上应用多次</td>
+    </tr>
+  </tbody>
+</table>
+
+# 第9章 Java平台模块系统
+> 模块的概念  
+  自动模块  
+  对模块命名  
+  不具名模块  
+  ...
+
+## 9.1 模块的概念
+- 一个Java平台模块包括：
+
+> 1. 一个包集合。
+> 2. 可选地包含资源文件和像本地库这样的其他文件。
+> 3. 一个有关模块中可访问的包的列表。
+> 4. 一个有关这个模块依赖的所有其他模块的列表。
+
+- Java平台模块系统的两个优点：
+
+> 1. 强封装性：可以控制哪些包是可访问的，并且无须操心去维护那些不想开发给公众去访问的代码。
+> 2. 可靠的配置：可以避免诸如类重复或丢失这类常见的类路径问题。
+
+## 9.2 对模块命名
+- 模块名是由字母、数字、下划线和句点构成的。
+- 模块之间没有任何的层次关系。
+
+> 例如，模块com.horstmann 和 模块com.horstmann.corejava，就模块系统而言，它们是无关的。
+
+## 9.3 模块化的“Hello World!”程序
+- 首先将这个类放到一个包中，“不具名的”包是不能包含在模块中的。
+
+```java
+package com.horstmann.hello;
+
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, Modular World!");
+    }
+}
+
+```
+
+- 然后创建包含这个包的v2ch09.hellomod模块，需要添加一个模块声明，可以将其置于名为module-info.java的文件中，该文件位于基目录中（即，与包含com目录的目录相同）。
+
+```java
+module v2ch09.hellomod {
+}
+```
+## 9.4 对模块的需求
+
+```java
+package com.horstmann.hello;
+
+import javax.swing.JOptionPane;
+
+public class HelloWorld {
+    public static void main(String[] args) {
+         JOptionPane.showMessageDialog(null,"Hello, Modular World!");
+    }
+}
+```
+
+- 使用了javax.swing包，其包含在java.desktop模块中。所以需要声明它依赖于这个模块：
+
+```java
+module v2ch09.hellomod {
+     requires java.desktop;
+}
+```
+
