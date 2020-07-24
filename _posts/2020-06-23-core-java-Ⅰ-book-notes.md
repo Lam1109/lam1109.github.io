@@ -230,6 +230,7 @@ author: Lam
     * [12\.8\.1 建立一个进程](#1281-%E5%BB%BA%E7%AB%8B%E4%B8%80%E4%B8%AA%E8%BF%9B%E7%A8%8B)
     * [12\.8\.2 运行一个进程](#1282-%E8%BF%90%E8%A1%8C%E4%B8%80%E4%B8%AA%E8%BF%9B%E7%A8%8B)
     * [12\.8\.3 进程句柄](#1283-%E8%BF%9B%E7%A8%8B%E5%8F%A5%E6%9F%84)
+  * [12\.9 线程补充](#129-%E7%BA%BF%E7%A8%8B%E8%A1%A5%E5%85%85)
   
 ***
 
@@ -2250,4 +2251,237 @@ Optional<ProcessHandle> parent = handle.parent();
 Stream<ProcessHandle> children = handle.children();
 Stream<ProcessHandle> descendants = handle.descedants();
 ```
+
+## 12.9 线程补充
+- 多线程的创建方式：
+
+```java
+/** 方式1 继承于Thread类
+  */ 
+package threads;
+/**
+ *
+ * 创建三个窗口卖票，总票数为100张，使用继承自Thread方式
+ * 用静态变量保证三个线程的数据独一份
+ *
+ * 存在线程的安全问题，有待解决
+ *
+ * */
+
+public class ThreadDemo extends Thread{
+
+    public static void main(String[] args){
+        Window t1 = new Window();
+        Window t2 = new Window();
+        Window t3 = new Window();
+
+        t1.setName("售票口1");
+        t2.setName("售票口2");
+        t3.setName("售票口3");
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+
+}
+
+class Window extends Thread{
+    private static int ticket = 100; //将其加载在类的静态区，所有线程共享该静态变量
+
+    @Override
+    public void run() {
+        while(true){
+            if(ticket>0){
+                //                try {
+                //                    sleep(100);
+                //                } catch (InterruptedException e) {
+                //                    e.printStackTrace();
+                //                }
+                System.out.println(getName()+"当前售出第"+ticket+"张票");
+                ticket--;
+            }else{
+                break;
+            }
+        }
+    }
+}
+```
+
+```
+/** 方式2 实现Runable接口方式
+  */
+package threads;
+
+public class ThreadDemo1 {
+    public static  void main(String[] args){
+        Window1 w = new Window1();
+
+        //虽然有三个线程，但是只有一个窗口类实现的Runnable方法，由于三个线程共用一个window对象，所以自动共用100张票
+
+        Thread t1=new Thread(w);
+        Thread t2=new Thread(w);
+        Thread t3=new Thread(w);
+
+        t1.setName("窗口1");
+        t2.setName("窗口2");
+        t3.setName("窗口3");
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
+
+class Window1 implements Runnable{
+    private int ticket = 100;
+
+    @Override
+    public void run() {
+        while(true){
+            if(ticket>0){
+                //                try {
+                //                    sleep(100);
+                //                } catch (InterruptedException e) {
+                //                    e.printStackTrace();
+                //                }
+                System.out.println(Thread.currentThread().getName()+"当前售出第"+ticket+"张票");
+                ticket--;
+            }else{
+                break;
+            }
+        }
+    }
+}
+```
+
+```java
+/** 方式3 实现callable接口方式
+  */
+package threads;
+
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+/**
+ * 创建线程的方式三：实现callable接口。---JDK 5.0新增
+ * 是否多线程？否，就一个线程
+ *
+ * 比runable多一个FutureTask类，用来接收call方法的返回值。
+ * 适用于需要从线程中接收返回值的形式
+ *
+ * //callable实现新建线程的步骤：
+ * 1.创建一个实现callable的实现类
+ * 2.实现call方法，将此线程需要执行的操作声明在call（）中
+ * 3.创建callable实现类的对象
+ * 4.将callable接口实现类的对象作为传递到FutureTask的构造器中，创建FutureTask的对象
+ * 5.将FutureTask的对象作为参数传递到Thread类的构造器中，创建Thread对象，并调用start方法启动（通过FutureTask的对象调用方法get获取线程中的call的返回值）
+ *
+ * */
+
+//实现callable接口的call方法
+class NumThread implements Callable{
+
+    private int sum=0;//
+
+    //可以抛出异常
+    @Override
+    public Object call() throws Exception {
+        for(int i = 0;i<=100;i++){
+            if(i % 2 == 0){
+                System.out.println(Thread.currentThread().getName()+":"+i);
+                sum += i;
+            }
+        }
+        return sum;
+    }
+}
+
+public class ThreadNew {
+
+    public static void main(String[] args){
+        //new一个实现callable接口的对象
+        NumThread numThread = new NumThread();
+
+        //通过futureTask对象的get方法来接收futureTask的值
+        FutureTask futureTask = new FutureTask(numThread);
+
+        Thread t1 = new Thread(futureTask);
+        t1.setName("线程1");
+        t1.start();
+
+        try {
+            //get返回值即为FutureTask构造器参数callable实现类重写的call的返回值
+            Object sum = futureTask.get();
+            System.out.println(Thread.currentThread().getName()+":"+sum);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```java
+/** 方式4 使用线程池的方式
+  */
+package threads;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+/**
+ * 创建线程的方式四：使用线程池（批量使用线程）
+ *1.需要创建实现runnable或者callable接口方式的对象
+ * 2.创建executorservice线程池
+ * 3.将创建好的实现了runnable接口类的对象放入executorService对象的execute方法中执行。
+ * 4.关闭线程池
+ *
+ * */
+class NumberThread implements Runnable{
+    @Override
+    public void run() {
+        for(int i = 0;i<=100;i++){
+            if (i % 2 ==0 )
+                System.out.println(Thread.currentThread().getName()+":"+i);
+        }
+    }
+}
+
+class NumberThread1 implements Runnable{
+    @Override
+    public void run() {
+        for(int i = 0;i<100; i++){
+            if(i%2==1){
+                System.out.println(Thread.currentThread().getName()+":"+i);
+            }
+        }
+    }
+}
+
+public class ThreadPool {
+
+    public static void main(String[] args){
+
+        //创建固定线程个数为十个的线程池
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+        //new一个Runnable接口的对象
+        NumberThread number = new NumberThread();
+        NumberThread1 number1 = new NumberThread1();
+
+        //执行线程,最多十个
+        executorService.execute(number1);
+        executorService.execute(number);//适合适用于Runnable
+
+        //executorService.submit();//适合使用于Callable
+        //关闭线程池
+        executorService.shutdown();
+    }
+
+}
+```
+
 ***
