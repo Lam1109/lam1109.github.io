@@ -5,7 +5,7 @@ title: Core Java™, Volume I–Fundamentals
 subtitle: (Eleventh Edition) Book Notes
 description: The book notes of Core Java™, Volume I–Fundamentals.
 image: /assets/img/post_img/corejava1.png
-optimized_image: /assets/img/post_img/java1.png
+optimized_image: /assets/img/post_img/java2.png
 category: java
 tags:
   - java
@@ -1673,7 +1673,7 @@ t.setName("Web crawler");
 - 线程的run方法不能抛出任何检查型异常，但是，非检查型异常可能会导致线程终止。在这种情况下，线程会死亡。
 - 在线程死亡之前，异常会传递到一个用于处理**未捕获异常**的处理器。
 - **ThreadGroup**类实现了**Thread.UncaughtExceptionHandler**接口。它的**uncaughtException**方法执行以下操作：
-> 1, 如果该线程组有父线程组，那么调用父线程组的**uncaughtException**方法。
+> 1. 如果该线程组有父线程组，那么调用父线程组的**uncaughtException**方法。
 > 2. 否则，如果**Thread.getDefaultExceptionHandler**方法返回一个非null的处理器，则调用该处理器。
 > 3. 否则，如果**Throwable**是**ThreadDeath**的一个实例，什么都不做。
 > 4. 否则，将**线程的名字**以及**Throwable**的栈轨迹输出到**System.err**。
@@ -1789,7 +1789,7 @@ public class Bank {
     ReentrantLock bankLock = new ReentrantLock();
     ...
     public void transfer(int from, int to, int amount) {
-        banKLock.lock();
+        bankLock.lock();
         try {
             System.out.print(Thread.currentThread());
             accounts[from] -= amount;
