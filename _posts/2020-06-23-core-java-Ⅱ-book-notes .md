@@ -1689,7 +1689,7 @@ Document doc = builder.parse(in);
 ```xml
 <!DOCTYPE config SYSTEM "config.dtd">
 <!- 或者 -->
-<!DOCTYPE config SYSTEM "http://myserver.com/config.dtd"
+<!DOCTYPE config SYSTEM "http://myserver.com/config.dtd">
 ```
 
 ### 3.4.2 XML Schema
@@ -1753,7 +1753,7 @@ public class SocketTest {
 
 - 关键代码：
 
-```
+```java
 var s = new Socket("time-a.nist.gov", 13);
 InputStream inStream = s.getInputStream();
 /** 第一行代码用于打开一个套接字，
