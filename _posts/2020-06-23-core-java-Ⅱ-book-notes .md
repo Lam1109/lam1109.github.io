@@ -844,6 +844,7 @@ try (var in = new BufferedReader(new InputStreamReader(inputStream, charset))) {
 
 ### 2.1.7 以文本格式存储对象
 - 输出
+
 ```java
 public static void writeEmployee(PrintWriter out, Employee e) {
     out.println(e.getName() + "|" + e.getSalary + "|" + e.getHireDay());
