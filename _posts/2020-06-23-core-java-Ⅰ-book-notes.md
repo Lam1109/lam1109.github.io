@@ -2308,7 +2308,7 @@ class Window extends Thread{
 }
 ```
 
-```
+```java
 /** 方式2 实现Runable接口方式
   */
 package threads;
