@@ -181,6 +181,7 @@ public class RegisterController implements Controller {
 - **RegisterController** 控制器处理成功后跳转到 **/WEB-INF/jsp** 下的 **register.jsp** 视图，**LoginController** 同理，因此在应用的 **/WEB-INF/jsp** 目录下应有 **register.jsp** 和 **login.jsp** 页面。
 
 - login.jsp
+
 ```jsp
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
