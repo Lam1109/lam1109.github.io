@@ -3684,7 +3684,7 @@ public @interface ActionListenerFor {
 
 ### 8.4.3 注解各类说明
 
-```
+```java
 /** 1. 对于类和接口，
   * 需要将注解放置在class和interface关键词的前面：  
   */
