@@ -2921,47 +2921,47 @@ formatter = DateTimeFormatter.ofPattern("E yyyy-MM-dd HH:mm");
   </thead>
     <tbody>
     <tr>
-      <td>Instant ⇋ java.util.Date</td>
+      <td>Instant ⇋ <br>java.util.Date</td>
       <td>Date.from(instant)</td>
       <td>date.toInstant()</td>
     </tr>
     <tr>
-      <td>ZonedDateTime ⇋ java.util.GregorianCalendar</td>
-      <td>GregorianCalendar.from(zonedDateTime)</td>
+      <td>ZonedDateTime ⇋ <br>java.util.GregorianCalendar</td>
+      <td>GregorianCalendar.from(<br>zonedDateTime)</td>
       <td>cal.toZonedDateTime()</td>
     </tr>
     <tr>
-      <td>Instant ⇋ java.sql.Timestamp</td>
+      <td>Instant ⇋ <br>java.sql.Timestamp</td>
       <td>TimeStamp.from(instant)</td>
       <td>timestamp.toInstant()</td>
     </tr>
     <tr>
-      <td>LocalDateTime ⇋ java.sql.Timestamp</td>
-      <td>Timestamp.valueOf(localDateTime)</td>
+      <td>LocalDateTime ⇋ <br>java.sql.Timestamp</td>
+      <td>Timestamp.valueOf(<br>localDateTime)</td>
       <td>timeStamp.toLocalDateTime()</td>
     </tr>
     <tr>
-      <td>LocalDate ⇋ java.sql.Date</td>
+      <td>LocalDate ⇋ <br>java.sql.Date</td>
       <td>Date.valueOf(localDate)</td>
       <td>date.toLocalDate()</td>
     </tr>
     <tr>
-      <td>LocalTime ⇋ java.sql.Time</td>
+      <td>LocalTime ⇋ <br>java.sql.Time</td>
       <td>Time.valueOf(localTime)</td>
       <td>time.toLocalTime()</td>
     </tr>
     <tr>
-      <td>DateTimeFormatter ⇋ java.text.DateFormat</td>
+      <td>DateTimeFormatter ⇋ <br>java.text.DateFormat</td>
       <td>formatter.toFormat()</td>
       <td>无</td>
     </tr>
     <tr>
-      <td>java.util.TimeZone ⇋ ZoneId</td>
+      <td>java.util.TimeZone<br> ⇋ ZoneId</td>
       <td>Timezone.getTimeZone(id)</td>
       <td>timeZone.toZoneId()</td>
     </tr>
     <tr>
-      <td>java.nio.file.attribute.FileTime ⇋ Instant</td>
+      <td>java.nio.file.attribute.FileTime<br> ⇋ Instant</td>
       <td>FileTime.from(instant)</td>
       <td>fileTime.toInstant()</td>
     </tr>
