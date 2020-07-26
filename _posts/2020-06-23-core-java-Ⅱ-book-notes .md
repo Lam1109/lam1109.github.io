@@ -2787,7 +2787,7 @@ ZonedDateTime nextMeeting = meeting.plus(Period.ofDays(7)); // OK
     <tbody>
     <tr>
       <td>BASIC_ISO_DATA</td>
-      <td>年、月、日、时区偏移量，中间没有分隔符</td>
+      <td>年、月、日、时区偏移量，<br>中间没有分隔符</td>
       <td>19690716-0500</td>
     </tr>
     <tr>
@@ -2797,23 +2797,23 @@ ZonedDateTime nextMeeting = meeting.plus(Period.ofDays(7)); // OK
     </tr>
     <tr>
       <td>ISO_OFFSET_DATE, <br>ISO_OFFSET_TIME, <br>ISO_OFFSET_DATE_TIME</td>
-      <td>类似ISO_LOCAL_XXX，但是有时区偏移量</td>
+      <td>类似ISO_LOCAL_XXX，<br>但是有时区偏移量</td>
       <td>1969-07-16-05:00, <br>09:32:00-05:00, <br>1969-07-16T09:32:00-05:00</td>
     </tr>
     <tr>
       <td>ISO_ZONED_DATE_TIME</td>
-      <td>有时区偏移量和时区ID</td>
-      <td>1969-07-16T09:32:00-05:00[Americal/New York]</td>
+      <td>有时区偏移量和<br>时区ID</td>
+      <td>1969-07-16T09:32:00-05:00<br>[Americal/New York]</td>
     </tr>
     <tr>
       <td>ISO_INSTANT</td>
-      <td>在UTC中，用Z时区ID来表示</td>
+      <td>在UTC中，<br>用Z时区ID来表示</td>
       <td>1969-07-16T14:32:00Z</td>
     </tr>
     <tr>
       <td>ISO_DATE, <br>ISO_TIME, <br>ISO_DATE_TIME</td>
-      <td>类似ISO_OFFSET_DATE、<br>ISO_OFFSET_TIME<br>和ISO_ZONED_DATE_TIME，<br>但是时区信息是可选的</td>
-      <td>1969-07-16-05:00, <br>09:32:00-05:00, <br>1969-07-16T09:32:00-05:00[Americal/New York]</td>
+      <td>类似<br>ISO_OFFSET_DATE、<br>ISO_OFFSET_TIME<br>和<br>ISO_ZONED_DATE_TIME，<br>但是时区信息是可选的</td>
+      <td>1969-07-16-05:00, <br>09:32:00-05:00, <br>1969-07-16T09:32:00-05:00<br>[Americal/New York]</td>
     </tr>
     <tr>
       <td>ISO_ORDINAL_DATE</td>
@@ -2822,12 +2822,12 @@ ZonedDateTime nextMeeting = meeting.plus(Period.ofDays(7)); // OK
     </tr>
     <tr>
       <td>ISO_WEEK_DATE</td>
-      <td>LocalDate的年、星期和星期日期</td>
+      <td>LocalDate的年、星期和<br>星期日期</td>
       <td>1969-W29-3</td>
     </tr>
     <tr>
       <td>RFC_1123_DATE_TIME</td>
-      <td>用于邮件时间戳的标准，编纂于RFC822，<br>并在RFC1123中将年份更新到4位</td>
+      <td>用于邮件时间戳的标准，<br>编纂于RFC822，<br>并在RFC1123中<br>将年份更新到4位</td>
       <td>Wed, 16 Jul 1969 09:32:00 -0500</td>
     </tr>
   </tbody>
