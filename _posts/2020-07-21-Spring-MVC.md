@@ -1,4 +1,4 @@
----
+    ---
 date: 2020-07-22 12:27:40
 layout: post
 title: SpringMVC
@@ -559,7 +559,7 @@ public class UserController {
 
 - register.jsp
 
-```
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
