@@ -231,7 +231,7 @@ Register
 - 在 Spring MVC 中使用 org.springframework.stereotype.Controller 注解类型声明某类的实例是一个控制器。
 
 **1) 创建项目**
-- 创建一个 Spring MVC 应用 **springMVCDemo02** 来演示相关知识，springMVCDemo01 的 JAR 包、web.xml 与 springMVCDemo02 应用的 JAR 包、web.xml 完全一样。
+- 创建一个 Spring MVC 应用 **springMVCDemo02** 来演示相关知识，springMVCDemo02 的 JAR 包、web.xml 与 springMVCDemo01 应用的 JAR 包、web.xml 完全一样。
 
 **2) 创建控制类**
 - 在 **springMVCDemo02** 应用的 src 目录下创建 **controller** 包，并在该包中创建 Controller 注解的控制器类 **IndexController**，示例代码如下：
@@ -917,4 +917,849 @@ public String register(@ModelAttribute("user") UserForm user) {
 
 ### 6.2.2 注解一个非请求处理方法
 - 被 **@ModelAttribute** 注解的方法将在每次调用该控制器类的请求处理方法前被调用。
-- 
+- 这种特性可以用来控制登录权限，当然控制登录权限的方法有很多，例如拦截器、过滤器等。
+
+# 第7章 Spring MVC数据绑定
+-  在执行程序时，Spring MVC会根据客户端请求参数的不同，将**请求消息中的信息**以一定的方式**转换并绑定到控制器类的方法参数**中。这种将请求消息数据与后台方法参数建立连接的过程就是Spring MVC中的数据绑定。
+-  数据绑定流程图
+
+![image](/assets/img/post_img/DataBinding.png)
+
+- 数据绑定流程：
+
+> 1. Spring MVC将ServletRequest对象传递给DataBinder。
+> 2. 将处理方法的入参对象传递给DataBinder。
+> 3. DataBinder调用ConversionService组件进行数据类型转换、数据格式化等工作，并将ServletRequest对象中的消息填充到参数对象中。
+> 4. 调用Validator组件对已经绑定了请求消息数据的参数对象进行数据合法性校验。
+> 5. 检验完成后会生成数据绑定结果BindingResult对象，Spring MVC会将BindingResult对象中的内容赋给处理方法的相应参数。
+
+- 根据客户端请求参数类型和个数的不同，将Spring MVC中的数据绑定主要分为**简单数据绑定**和**复杂数据绑定**。
+
+## 7.1 简单数据绑定
+- 当前端请求的参数比较简单时，可以在后台方法的形参中直接使用Spring MVC提供的默认参数类型进行数据绑定。
+- 常用默认参数类型
+
+### 7.1.1 绑定默认数据类型
+
+> HttpServletRequest：通过request对象获取请求信息；  
+HttpServletResponse：通过response处理响应信息；  
+HttpSession：通过session对象得到session中存放的对象；  
+Model/ModelMap：Model是一个接口，ModelMap是一个接口实现，作用是将model数据填充到request域。
+
+**1) 创建项目**
+- 创建一个 Spring MVC 应用 **springMVCDemo03** 来演示相关知识，springMVCDemo03 的 JAR 包、web.xml 与 springMVCDemo02 应用的 JAR 包、web.xml 完全一样。
+
+**2) 创建Controller类**
+- 在 **springMVCDemo03** 的 src 目录下创建 **controller** 包，并在该包中创建名为 **UserController**
+的类，代码如下：
+
+```java
+package controller;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import javax.servlet.http.HttpServletRequest;
+
+@Controller
+public class UserController {
+    @RequestMapping("/selectUser")
+    public String selectUser(HttpServletRequest request) {
+        String id = request.getParameter("id");
+        System.out.println("id="+id);
+        return "success";
+    }
+}
+```
+
+**3) 运行项目**
+- 发起请求 http://localhost:8080/SpringMVCDemo03/selectUser?id=1
+- IDEA控制台输出结果：
+
+> id = 1
+
+### 7.1.2 绑定简单数据类型
+- 简单数据类型的绑定，就是指Java中几种基本数据类型的绑定，例如int、String、Double等类型。
+
+#### 7.1.2.1 参数名相同
+**1) 修改Controller类**
+- 将上述案例中控制器类**UserController**中的**selectUser()**方法进行修改：
+
+```java
+package controller;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class UserController {
+    @RequestMapping("/selectUser")
+    public String selectUser(Integer id) {
+        System.out.println("id="+id);
+        return "success";
+    }
+}
+```
+
+**2) 运行项目**
+- 发起请求 http://localhost:8080/SpringMVCDemo03/selectUser?id=1
+- IDEA控制台输出结果：
+
+> id = 1
+
+#### 7.1.2.1 参数名不同
+- 以上两个例子中，前端请求中参数名和后台控制器类方法中的形参名一样（均为id）。如若不同，这就会导致后台无法正确绑定并接收到前端请求的参数。
+- 针对前端请求中参数名和后台控制器类方法中的形参名不一样的情况，可以考虑使用Spring MVC提供的**@RequestParam**注解类型来进行间接数据绑定。
+
+**1) 修改Controller类**
+- 将上述案例中控制器类**UserController**中的**selectUser()**方法进行修改：
+
+```java
+package controller;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+public class UserController {
+    @RequestMapping("/selectUser")
+    public String selectUser(@RequestParam(value="user_id")Integer id) {
+        System.out.println("id="+id);
+        return "success";
+    }
+}
+```
+
+**2) 运行项目**
+- 发起请求 http://localhost:8080/SpringMVCDemo03/selectUser?id=1
+- IDEA控制台输出结果：
+
+> id = 1
+
+### 7.1.3 绑定POJO类型
+- 针对多类型、多参数的请求，可以使用POJO类型进行数据绑定。POJO类型的数据绑定就是将所有关联的请求参数封装在一个POJO中，然后在方法中直接使用该POJO作为形参来完成数据绑定。
+
+**1) 创建实体类**
+- 在 **springMVCDemo03** 的 src 目录下创建 **pojo** 包，并在该包中创建名为 **User**
+的实体类，代码如下：
+
+```java
+package pojo;
+
+public class User {
+    private Integer id;       //用户id
+    private String username; //用户
+    private Integer password;//用户密码
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Integer getPassword() {
+        return password;
+    }
+
+    public void setPassword(Integer password) {
+        this.password = password;
+    }
+}
+```
+
+**2) 修改Controller类**
+- 将上述案例中控制器类**UserController**进行修改：
+
+```java
+package controller;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import pojo.User;
+
+@Controller
+public class UserController {
+    /** 向用户注册页面跳转 */
+    @RequestMapping("/toRegister")
+    public String toRegister( ) {  return "register";    }
+
+    /** 接收用户注册信息 */
+    @RequestMapping("/registerUser")
+    public String registerUser(User user) {
+        String username = user.getUsername();
+        Integer password = user.getPassword();
+        System.out.println("username="+username);
+        System.out.println("password="+password);
+        return "success";
+    }
+
+}
+```
+
+**3) 创建注册界面**
+- 在 **springMVCDemo03** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **register.jsp**，核心代码如下：
+
+```jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>$Title$</title>
+</head>
+<body>
+<form action="${pageContext.request.contextPath }/registerUser"
+      method="post">
+    用户名：<input type="text" name="username" /><br />
+    密&nbsp;&nbsp;&nbsp;码：<input type="text" name="password" /><br />
+    <input type="submit" value="注册"/>
+</form>
+</body>
+</html>
+```
+
+**3) 运行项目**
+- 发起请求 http://localhost:8080/SpringMVCDemo03/toRegister，并在前端表单输入用户名（如lam）和密码（如123），然后点击注册。
+- IDEA控制台输出结果：
+
+> username=lam  
+password=123
+
+### 7.1.4 绑定包装POJO类型
+- 使用包装POJO类型绑定。所谓的包装POJO，就是在一个POJO中包含另一个简单POJO。例如，在订单对象中包含用户对象。这样在使用时，就可以通过订单查询到用户信息。
+
+**1) 创建实体类**
+- 在 **pojo** 包中创建名为 **Orders**的实体类，代码如下：
+
+```java
+package pojo;
+
+public class Orders {
+    private Integer ordersId; // 订单编号
+    private User user;          // 用户POJO，所属用户
+    public Integer getOrdersId() { return ordersId;  }
+    public void setOrdersId(Integer ordersId) { this.ordersId = ordersId;  }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user;  }
+}
+```
+
+**2) 创建Controller类**
+- 在**controller** 包中创建名为 **OrdersController**的控制类，代码如下：
+
+```java
+package controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import pojo.Orders;
+import pojo.User;
+
+@Controller
+public class OrdersController {
+    /** 向查询订单页面跳转 */
+    @RequestMapping("/toOrder")
+    public String toOrder( ) {  return "order";    }
+
+    /** 查询订单和用户信息  */
+    @RequestMapping("/findOrdersWithUser")
+    public String findOrdersWithUser(Orders orders) {
+        Integer orderId = orders.getOrdersId();
+        User user = orders.getUser();
+        String username = user.getUsername();
+        System.out.println("orderId=" + orderId);
+        System.out.println("username=" + username);
+        return "success";
+    }
+}
+```
+
+**3) 创建注册界面**
+- 在 **springMVCDemo03** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **order.jsp**，核心代码如下：
+
+```jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+<form action="${pageContext.request.contextPath }/findOrdersWithUser"
+      method="post">
+    <!-- 参数是包装类基本属性，则直接用属性名 -->
+    订单编号：<input type="text" name="ordersId" /><br />
+    <!-- 参数是包装类中POJO类的子属性，则必须用【对象.属性】 -->
+    所属用户：<input type="text" name="user.username" /><br />
+    <input type="submit" value="查询" />
+</form>
+</body>
+</html>
+```
+
+**4) 运行项目**
+- 发起请求 http://localhost:8080/SpringMVCDemo03/toOrder，并在前端表单输入订单编号（如1）和所属用户（如lam），然后点击查询。
+- IDEA控制台输出结果：
+
+> orderId=1
+username=lam
+
+### 7.1.5 自定义数据绑定
+#### 7.1.5.1 类型转换器
+- Spring MVC 框架的 Converter<S，T> 是一个可以将一种数据类型转换成另一种数据类型的接口，这里 S 表示源类型，T 表示目标类型。开发者在实际应用中使用框架内置的类型转换器基本上就够了，但有时需要编写具有特定功能的类型转换器。
+
+**1) 内置的类型转换器**
+- 在 Spring MVC 框架中，对于常用的数据类型，开发者无须创建自己的类型转换器，因为 Spring MVC 框架有许多内置的类型转换器用于完成常用的类型转换。Spring MVC 框架提供的内置类型转换包括以下几种类型。
+
+*1) 标量转换器*
+
+<table>
+  <thead>
+    <tr>
+      <th>名称</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>StringToBooleanConverter</td>
+      <td>String 到 boolean 类型转换</td>
+    </tr>
+    <tr>
+      <td>ObjectToStringConverter</td>
+      <td>Object 到 String 转换，调用 toString 方法转换</td>
+    </tr>
+    <tr>
+      <td>StringToNumberConverterFactory</td>
+      <td>String 到数字转换（例如 Integer、Long 等）</td>
+    </tr>
+    <tr>
+      <td>NumberToNumberConverterFactory</td>
+      <td>数字子类型（基本类型）到数字类型（包装类型）转换</td>
+    </tr>
+    <tr>
+      <td>StringToCharacterConverter</td>
+      <td>String 到 Character 转换，取字符串中的第一个字符</td>
+    </tr>
+    <tr>
+      <td>NumberToCharacterConverter</td>
+      <td>数字子类型到 Character 转换</td>
+    </tr>
+    <tr>
+      <td>CharacterToNumberFactory</td>
+      <td>Character 到数字类型转换</td>
+    </tr>
+    <tr>
+      <td>StringToEnumConverterFactory</td>
+      <td>String 到枚举类型转换，通过 Enum.valueOf 将字符串转换为需要的枚举类型</td>
+    </tr>
+    <tr>
+      <td>EnumToStringConverter</td>
+      <td>枚举类型到 String 转换，返回枚举对象的 name 值</td>
+    </tr>
+    <tr>
+      <td>StringToLocaleConverter</td>
+      <td>String 到 java.util.Locale 转换</td>
+    </tr>
+    <tr>
+      <td>PropertiesToStringConverter</td>
+      <td>java.util.Properties 到 String 转换，默认通过 ISO-8859-1 解码</td>
+    </tr>
+    <tr>
+      <td>StringToPropertiesConverter</td>
+      <td>String 到 java.util.Properties 转换，默认使用 ISO-8859-1 编码</td>
+    </tr>
+  </tbody>
+</table>
+
+*2) 集合、数组相关转换器*
+
+<table>
+  <thead>
+    <tr>
+      <th>名称</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>ArrayToCollectionConverter</td>
+      <td>任意数组到任意集合（List、Set）转换</td>
+    </tr>
+    <tr>
+      <td>CollectionToArrayConverter</td>
+      <td>任意集合到任意数组转换</td>
+    </tr>
+    <tr>
+      <td>ArrayToArrayConverter</td>
+      <td>任意数组到任意数组转换</td>
+    </tr>
+    <tr>
+      <td>CollectionToCollectionConverter</td>
+      <td>集合之间的类型转换</td>
+    </tr>
+    <tr>
+      <td>MapToMapConverter</td>
+      <td>Map之间的类型转换</td>
+    </tr>
+    <tr>
+      <td>ArrayToStringConverter</td>
+      <td>任意数组到 String 转换</td>
+    </tr>
+    <tr>
+      <td>StringToArrayConverter</td>
+      <td>字符串到数组的转换，默认通过“，”分割，且去除字符串两边的空格（trim）</td>
+    </tr>
+    <tr>
+      <td>ArrayToObjectConverter</td>
+      <td>任意数组到 Object 的转换，如果目标类型和源类型兼容，直接返回源对象；否则返回数组的第一个元素并进行类型转换</td>
+    </tr>
+    <tr>
+      <td>ObjectToArrayConverter</td>
+      <td>Object 到单元素数组转换</td>
+    </tr>
+    <tr>
+      <td>CollectionToStringConverter</td>
+      <td>任意集合（List、Set）到 String 转换</td>
+    </tr>
+    <tr>
+      <td>StringToCollectionConverter</td>
+      <td>String 到集合（List、Set）转换，默认通过“，”分割，且去除字符串两边的空格（trim）</td>
+    </tr>
+    <tr>
+      <td>CollectionToObjectConverter</td>
+      <td>任意集合到任意 Object 的转换，如果目标类型和源类型兼容，直接返回源对象；否则返回集合的第一个元素并进行类型转换</td>
+    </tr>
+    <tr>
+      <td>ObjectToCollectionConverter</td>
+      <td>Object 到单元素集合的类型转换</td>
+    </tr>
+  </tbody>
+</table>
+
+**2) 自定义类型转换器**
+- 当 Spring MVC 框架内置的类型转换器不能满足需求时，开发者可以开发自己的类型转换器。
+
+> 例如有一个应用 springMVCDemo04 希望用户在页面表单中输入信息来创建商品信息。当输入“apple，10.58，200”时表示在程序中自动创建一个 new Goods，并将“apple”值自动赋给 goodsname 属性，将“10.58”值自动赋给 goodsprice 属性，将“200”值自动赋给 goodsnumber 属性。
+
+> 如果想实现上述应用，需要做以下 5 件事：
+> 1. 创建实体类。
+> 2. 创建控制器类。
+> 3. 创建自定义类型转换器类。
+> 4. 注册类型转换器。
+> 5. 创建相关视图。
+
+**1) 创建项目**
+- 创建一个 Spring MVC 应用 **springMVCDemo04** 来演示相关知识，springMVCDemo04 的 JAR 包、web.xml 与 springMVCDemo03 应用的 JAR 包、web.xml 完全一样。
+
+**2) 创建实体类**
+- 在 **springMVCDemo04** 的 src 目录下创建 **pojo** 包，并在该包中创建名为 **GoodsModel**
+的实体类，代码如下：
+
+```java
+package pojo;
+public class GoodsModel {
+    private String goodsname;
+    private double goodsprice;
+    private int goodsnumber;
+
+    public String getGoodsname() {
+        return goodsname;
+    }
+
+    public void setGoodsname(String goodsname) {
+        this.goodsname = goodsname;
+    }
+
+    public double getGoodsprice() {
+        return goodsprice;
+    }
+
+    public void setGoodsprice(double goodsprice) {
+        this.goodsprice = goodsprice;
+    }
+
+    public int getGoodsnumber() {
+        return goodsnumber;
+    }
+
+    public void setGoodsnumber(int goodsnumber) {
+        this.goodsnumber = goodsnumber;
+    }
+}
+```
+
+**3) 创建控制器类**
+- 在 **springMVCDemo04** 的 src 目录下创建 **controller** 包，并在该包中创建名为 **ConverterController** 的控制器类，代码如下：
+
+```java
+package controller;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import pojo.GoodsModel;
+@Controller
+@RequestMapping("/my")
+public class ConverterController {
+    @RequestMapping("/converter")
+    /*
+     * 使用@RequestParam
+     * ("goods")接收请求参数，然后调用自定义类型转换器GoodsConverter将字符串值转换为GoodsModel的对象gm
+     */
+    public String myConverter(@RequestParam("goods") GoodsModel gm, Model model) {
+        model.addAttribute("goods", gm);
+        return "showGoods";
+    }
+}
+```
+
+**4) 创建自定义类型转换器类**
+- 自定义类型转换器类需要实现 **Converter<S,T>** 接口，重写 **convert(S)** 接口方法。
+- convert(S) 方法的功能是将源数据类型 S 转换成目标数据类型 T。
+- 在 **springMVCDemo03** 的 src 目录下创建 **converter** 包，并在该包中创建名为 **GoodsConverter** 的自定义类型转换器类，代码如下：
+
+```java
+package converter;
+import org.springframework.core.convert.converter.Converter;
+import pojo.GoodsModel;
+
+import java.util.Arrays;
+
+public class GoodsConverter implements Converter<String, GoodsModel> {
+    public GoodsModel convert(String source) {
+        // 创建一个Goods实例
+        GoodsModel goods = new GoodsModel();
+        // 以“，”分隔
+        String stringvalues[] = source.split(",");
+        if (stringvalues != null && stringvalues.length == 3) {
+            // 为Goods实例赋值
+            System.out.println(Arrays.toString(stringvalues));
+            goods.setGoodsname(stringvalues[0]);
+            goods.setGoodsprice(Double.parseDouble(stringvalues[1]));
+            goods.setGoodsnumber(Integer.parseInt(stringvalues[2]));
+            return goods;
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "类型转换失败， 需要格式'apple,10.58,200 ',但格式是[% s ] ", source));
+        }
+    }
+}
+```
+
+**5) 注册类型转换器**
+- 在 **springMVCDemo04** 的 WEB-INF 目录下创建配置文件 **springmvc-servlet.xml**，并在配置文件中注册自定义类型转换器，配置文件代码如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!-- 使用扫描机制扫描控制器类，控制器类都在controller包及其子包下 -->
+    <context:component-scan base-package="controller" />
+    <mvc:annotation-driven conversion-service="conversionService"/>
+    <!--注册类型转换器GoodsConverter-->
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <bean class="converter.GoodsConverter"/>
+            </list>
+        </property>
+    </bean>
+    <bean
+            class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+</beans>
+```
+
+**6) 创建相关视图**
+- 在 **springMVCDemo04** 应用的 web 目录下创建信息采集页面 **index.jsp**，核心代码如下：
+
+```jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+  <head>
+    <title>$Title$</title>
+  </head>
+  <body>
+  <form action="${pageContext.request.contextPath}/my/converter" method= "post">
+    请输入商品信息（格式为apple,10.58,200）:
+    <input type="text" name="goods" /><br>
+    <input type="submit" value="提交" />
+  </form>
+  </body>
+</html>
+```
+
+- 在 **springMVCDemo04** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **showGoods.jsp**，核心代码如下：
+
+```jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+您创建的商品信息如下：
+<!-- 使用EL表达式取出model中的goods信息 -->
+商品名称为:${goods.goodsname }
+商品价格为:${goods.goodsprice }
+商品名称为:${goods.goodsnumber }
+</body>
+</html>
+```
+
+#### 7.1.5.2 格式化转换器
+- Spring MVC 框架的 Formatter<T> 与 Converter<S，T> 一样，也是一个可以将一种数据类型转换成另一种数据类型的接口。不同的是，Formatter<T> 的源数据类型必须是 String 类型，而 Converter<S，T> 的源数据类型是任意数据类型。
+- 在 Web 应用中由 HTTP 发送的请求数据到控制器中都是以 String 类型获取，因此在 Web 应用中选择 Formatter<T> 比选择 Converter<S，T> 更加合理。
+
+**1) 内置的格式化转换器**
+
+<table>
+  <thead>
+    <tr>
+      <th>名称</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>NumberFormatter</td>
+      <td>实现 Number 与 String 之间的解析与格式化</td>
+    </tr>
+    <tr>
+      <td>CurrencyFormatter</td>
+      <td>实现 Number 与 String 之间的解析与格式化（带货币符号）</td>
+    </tr>
+    <tr>
+      <td>PercentFormatter</td>
+      <td>实现 Number 与 String 之间的解析与格式化（带百分数符号）</td>
+    </tr>
+    <tr>
+      <td>DateFormatter</td>
+      <td>实现 Date 与 String 之间的解析与格式化</td>
+    </tr>
+  </tbody>
+</table>
+
+**2) 自定义格式化转换器**
+- 自定义格式化转换器就是编写一个实现 org.springframework.format.Formatter 接口的 Java 类。该接口声明如下：
+
+```java
+public interface Formatter<T>
+```
+
+-  T 表示由字符串转换的目标数据类型。该接口有 parse 和 print 两个接口方法，自定义格式化转换器类必须覆盖它们。
+
+```java
+public T parse(String s,java.util.Locale locale)
+public String print(T object,java.util.Locale locale)
+```
+
+> 如果想实现自定义格式化转换器，需要做以下 5 件事：
+> 1. 创建实体类；
+> 2. 创建控制器类；
+> 3. 创建自定义格式化转换器类；
+> 4. 注册格式化转换器；
+> 5. 创建相关视图。
+
+**1) 创建项目**
+- 创建一个 Spring MVC 应用 **springMVCDemo05** 来演示相关知识，springMVCDemo05 的 JAR 包、web.xml 与 springMVCDemo04 应用的 JAR 包、web.xml 完全一样。
+
+**2) 创建实体类**
+- 在 **springMVCDemo05** 的 src 目录下创建 **pojo** 包，并在该包中创建名为 **GoodsModel** 的实体类，代码如下：
+
+```java
+package pojo;
+import java.util.Date;
+public class GoodsModel {
+    private String goodsname;
+    private double goodsprice;
+    private int goodsnumber;
+    private Date goodsdate;
+
+    public String getGoodsname() {
+        return goodsname;
+    }
+
+    public void setGoodsname(String goodsname) {
+        this.goodsname = goodsname;
+    }
+
+    public double getGoodsprice() {
+        return goodsprice;
+    }
+
+    public void setGoodsprice(double goodsprice) {
+        this.goodsprice = goodsprice;
+    }
+
+    public int getGoodsnumber() {
+        return goodsnumber;
+    }
+
+    public void setGoodsnumber(int goodsnumber) {
+        this.goodsnumber = goodsnumber;
+    }
+
+    public Date getGoodsdate() {
+        return goodsdate;
+    }
+
+    public void setGoodsdate(Date goodsdate) {
+        this.goodsdate = goodsdate;
+    }
+}
+```
+
+**3) 创建控制器类**
+- 在 **springMVCDemo05** 的 src 目录下创建 **controller** 包，并在该包中创建名为 **FormatterController** 的控制器类，代码如下：
+
+```java
+package controller;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import pojo.GoodsModel;
+@Controller
+@RequestMapping("/my")
+public class FormatterController {
+        @RequestMapping("/formatter")
+    public String myConverter(GoodsModel gm, Model model) {
+        model.addAttribute("goods", gm);
+        return "showGoods";
+    }
+}
+```
+
+**4) 创建自定义格式化转换器类**
+- 在 **springMVCDemo05** 的 src 目录下创建 **formatter** 包，并在该包中创建名为 **MyFormatter** 的自定义格式化转换器类，代码如下：
+
+```java
+package formatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import org.springframework.format.Formatter;
+public class MyFormatter implements Formatter<Date> {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public String print(Date object, Locale arg1) {
+        return dateFormat.format(object);
+    }
+    public Date parse(String source, Locale arg1) throws ParseException {
+        return dateFormat.parse(source); // Formatter只能对字符串转换
+    }
+}
+```
+
+**5) 注册格式化转换器**
+- 在 **springMVCDemo05**  的 WEB-INF 目录下创建配置文件 **springmvc-servlet.xml**，并在配置文件中注册格式化转换器，具体代码如下：
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!-- 使用扫描机制扫描controller包 -->
+    <context:component-scan base-package="controller" />
+    <mvc:annotation-driven conversion-service="conversionService"/>
+    <!--注册MyFormatter-->
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <list>
+                <bean class="formatter.MyFormatter"/>
+            </list>
+        </property>
+    </bean>
+    <mvc:annotation-driven conversion-service="conversionService"/>
+    <bean
+            class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+</beans>
+```
+
+**6) 创建相关视图**
+- 在 **springMVCDemo05**  应用的 web 目录下创建信息输入页面 **index.jsp**，核心代码如下：
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>添加商品信息</title>
+</head>
+<body>
+<form action="${pageContext.request.contextPath}/my/formatter" method= "post">
+  <table border=1 bgcolor="lightblue" align="center">
+    <tr>
+      <td>商品名称：</td>
+      <td><input class="textSize" type="text" name="goodsname" /></td>
+    </tr>
+    <tr>
+      <td>商品价格：</td>
+      <td><input class="textSize" type="text" name="goodsprice" /></td>
+    </tr>
+    <tr>
+      <td>商品数量：</td>
+      <td><input class="textSize" type="text" name="goodsnumber" /></td>
+    </tr>
+    <tr>
+      <td>商品日期：</td>
+      <td><input class="textSize" type="text" name="goodsdate" />（yyyy-MM-dd）</td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+        <input type="submit" value="提交" />
+      </td>
+    </tr>
+    </tab1e>
+</form>
+</body>
+</html>
+```
+
+- 在 **springMVCDemo05** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **showGoods.jsp**，核心代码如下：
+
+```jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+您创建的商品信息如下：<br/>
+<!-- 使用EL表达式取出Action类的属性goods的值 -->
+商品名称为：${goods.goodsname }<br/>
+商品价格为：${goods.goodsprice }<br/>
+商品名称为：${goods.goodsnumber }<br/>
+商品日期为：${goods.goodsdate}
+</body>
+</html>
+```
+
+
+
