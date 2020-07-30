@@ -233,7 +233,7 @@ Register
 **1) 创建项目**
 - 创建一个 Spring MVC 应用 **springMVCDemo02** 来演示相关知识，springMVCDemo02 的 JAR 包、web.xml 与 springMVCDemo01 应用的 JAR 包、web.xml 完全一样。
 
-**2) 创建控制类**
+**2) 创建 Controller 类**
 - 在 **springMVCDemo02** 应用的 src 目录下创建 **controller** 包，并在该包中创建 Controller 注解的控制器类 **IndexController**，示例代码如下：
 
 ```java
@@ -481,7 +481,7 @@ public class UserForm {
 }
 ```
 
-**4) 创建控制器类**
+**4) 创建 Controller 类**
 - 在 **springMVCDemo02** 应用的 **controller** 包中创建控制器类 **IndexController** 和 **UserController**。
 - IndexController.java
 
@@ -791,7 +791,7 @@ public class IndexController {
 - 下面将第4章《Spring MVC 获取参数》中“登录”和“注册”的业务逻辑处理分离出来，使用 Service 层实现。
 
 ## 6.1 依赖注入详细步骤
-**1) 创建service包**
+**1) 创建 service 包**
 - 首先创建 **service** 包，在该包中创建 **UserService** 接口和 **UserServiceImpl** 实现类。
 - UserService.java
 
@@ -949,7 +949,7 @@ Model/ModelMap：Model是一个接口，ModelMap是一个接口实现，作用�
 **1) 创建项目**
 - 创建一个 Spring MVC 应用 **springMVCDemo03** 来演示相关知识，springMVCDemo03 的 JAR 包、web.xml 与 springMVCDemo02 应用的 JAR 包、web.xml 完全一样。
 
-**2) 创建Controller类**
+**2) 创建 Controller 类**
 - 在 **springMVCDemo03** 的 src 目录下创建 **controller** 包，并在该包中创建名为 **UserController**
 的类，代码如下：
 
@@ -1008,7 +1008,7 @@ public class UserController {
 - 以上两个例子中，前端请求中参数名和后台控制器类方法中的形参名一样（均为id）。如若不同，这就会导致后台无法正确绑定并接收到前端请求的参数。
 - 针对前端请求中参数名和后台控制器类方法中的形参名不一样的情况，可以考虑使用Spring MVC提供的**@RequestParam**注解类型来进行间接数据绑定。
 
-**1) 修改Controller类**
+**1) 修改 Controller 类**
 - 将上述案例中控制器类**UserController**中的**selectUser()**方法进行修改：
 
 ```java
@@ -1074,7 +1074,7 @@ public class User {
 }
 ```
 
-**2) 修改Controller类**
+**2) 修改 Controller 类**
 - 将上述案例中控制器类**UserController**进行修改：
 
 ```java
@@ -1148,7 +1148,7 @@ public class Orders {
 }
 ```
 
-**2) 创建Controller类**
+**2) 创建 Controller 类**
 - 在**controller** 包中创建名为 **OrdersController**的控制类，代码如下：
 
 ```java
@@ -1207,11 +1207,11 @@ public class OrdersController {
 > orderId=1
 username=lam
 
-### 7.1.5 自定义数据绑定
+### 7.1.5 绑定自定义数据
 #### 7.1.5.1 类型转换器
 - Spring MVC 框架的 Converter<S，T> 是一个可以将一种数据类型转换成另一种数据类型的接口，这里 S 表示源类型，T 表示目标类型。开发者在实际应用中使用框架内置的类型转换器基本上就够了，但有时需要编写具有特定功能的类型转换器。
 
-**1) 内置的类型转换器**
+##### 7.1.5.1.1 内置的类型转换器
 - 在 Spring MVC 框架中，对于常用的数据类型，开发者无须创建自己的类型转换器，因为 Spring MVC 框架有许多内置的类型转换器用于完成常用的类型转换。Spring MVC 框架提供的内置类型转换包括以下几种类型。
 
 *1) 标量转换器*
@@ -1340,10 +1340,10 @@ username=lam
   </tbody>
 </table>
 
-**2) 自定义类型转换器**
+##### 7.1.5.1.2 自定义类型转换器
 - 当 Spring MVC 框架内置的类型转换器不能满足需求时，开发者可以开发自己的类型转换器。
 
-> 例如有一个应用 springMVCDemo04 希望用户在页面表单中输入信息来创建商品信息。当输入“apple，10.58，200”时表示在程序中自动创建一个 new Goods，并将“apple”值自动赋给 goodsname 属性，将“10.58”值自动赋给 goodsprice 属性，将“200”值自动赋给 goodsnumber 属性。
+> 例如有一个应用 springMVCDemo03_1 希望用户在页面表单中输入信息来创建商品信息。当输入“apple，10.58，200”时表示在程序中自动创建一个 new Goods，并将“apple”值自动赋给 goodsname 属性，将“10.58”值自动赋给 goodsprice 属性，将“200”值自动赋给 goodsnumber 属性。
 
 > 如果想实现上述应用，需要做以下 5 件事：
 > 1. 创建实体类。
@@ -1353,10 +1353,10 @@ username=lam
 > 5. 创建相关视图。
 
 **1) 创建项目**
-- 创建一个 Spring MVC 应用 **springMVCDemo04** 来演示相关知识，springMVCDemo04 的 JAR 包、web.xml 与 springMVCDemo03 应用的 JAR 包、web.xml 完全一样。
+- 创建一个 Spring MVC 应用 **springMVCDemo03_1** 来演示相关知识，springMVCDemo04 的 JAR 包、web.xml 与 springMVCDemo03 应用的 JAR 包、web.xml 完全一样。
 
 **2) 创建实体类**
-- 在 **springMVCDemo04** 的 src 目录下创建 **pojo** 包，并在该包中创建名为 **GoodsModel**
+- 在 **springMVCDemo03_1** 的 src 目录下创建 **pojo** 包，并在该包中创建名为 **GoodsModel**
 的实体类，代码如下：
 
 ```java
@@ -1392,8 +1392,8 @@ public class GoodsModel {
 }
 ```
 
-**3) 创建控制器类**
-- 在 **springMVCDemo04** 的 src 目录下创建 **controller** 包，并在该包中创建名为 **ConverterController** 的控制器类，代码如下：
+**3) 创建 Controller 类**
+- 在 **springMVCDemo03_1** 的 src 目录下创建 **controller** 包，并在该包中创建名为 **ConverterController** 的控制器类，代码如下：
 
 ```java
 package controller;
@@ -1420,7 +1420,7 @@ public class ConverterController {
 **4) 创建自定义类型转换器类**
 - 自定义类型转换器类需要实现 **Converter<S,T>** 接口，重写 **convert(S)** 接口方法。
 - convert(S) 方法的功能是将源数据类型 S 转换成目标数据类型 T。
-- 在 **springMVCDemo03** 的 src 目录下创建 **converter** 包，并在该包中创建名为 **GoodsConverter** 的自定义类型转换器类，代码如下：
+- 在 **springMVCDemo03_1** 的 src 目录下创建 **converter** 包，并在该包中创建名为 **GoodsConverter** 的自定义类型转换器类，代码如下：
 
 ```java
 package converter;
@@ -1451,7 +1451,7 @@ public class GoodsConverter implements Converter<String, GoodsModel> {
 ```
 
 **5) 注册类型转换器**
-- 在 **springMVCDemo04** 的 WEB-INF 目录下创建配置文件 **springmvc-servlet.xml**，并在配置文件中注册自定义类型转换器，配置文件代码如下：
+- 在 **springMVCDemo03_1** 的 WEB-INF 目录下创建配置文件 **springmvc-servlet.xml**，并在配置文件中注册自定义类型转换器，配置文件代码如下：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1485,7 +1485,7 @@ public class GoodsConverter implements Converter<String, GoodsModel> {
 ```
 
 **6) 创建相关视图**
-- 在 **springMVCDemo04** 应用的 web 目录下创建信息采集页面 **index.jsp**，核心代码如下：
+- 在 **springMVCDemo03_1** 应用的 web 目录下创建信息采集页面 **index.jsp**，核心代码如下：
 
 ```jsp
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -1503,7 +1503,7 @@ public class GoodsConverter implements Converter<String, GoodsModel> {
 </html>
 ```
 
-- 在 **springMVCDemo04** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **showGoods.jsp**，核心代码如下：
+- 在 **springMVCDemo03_1** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **showGoods.jsp**，核心代码如下：
 
 ```jsp
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -1525,7 +1525,7 @@ public class GoodsConverter implements Converter<String, GoodsModel> {
 - Spring MVC 框架的 Formatter<T> 与 Converter<S，T> 一样，也是一个可以将一种数据类型转换成另一种数据类型的接口。不同的是，Formatter<T> 的源数据类型必须是 String 类型，而 Converter<S，T> 的源数据类型是任意数据类型。
 - 在 Web 应用中由 HTTP 发送的请求数据到控制器中都是以 String 类型获取，因此在 Web 应用中选择 Formatter<T> 比选择 Converter<S，T> 更加合理。
 
-**1) 内置的格式化转换器**
+##### 7.1.5.2.1 内置的格式化转换器
 
 <table>
   <thead>
@@ -1554,7 +1554,7 @@ public class GoodsConverter implements Converter<String, GoodsModel> {
   </tbody>
 </table>
 
-**2) 自定义格式化转换器**
+##### 7.1.5.2.2 自定义格式化转换器
 - 自定义格式化转换器就是编写一个实现 org.springframework.format.Formatter 接口的 Java 类。该接口声明如下：
 
 ```java
@@ -1576,10 +1576,10 @@ public String print(T object,java.util.Locale locale)
 > 5. 创建相关视图。
 
 **1) 创建项目**
-- 创建一个 Spring MVC 应用 **springMVCDemo05** 来演示相关知识，springMVCDemo05 的 JAR 包、web.xml 与 springMVCDemo04 应用的 JAR 包、web.xml 完全一样。
+- 创建一个 Spring MVC 应用 **springMVCDemo03_2** 来演示相关知识，springMVCDemo05 的 JAR 包、web.xml 与 springMVCDemo04 应用的 JAR 包、web.xml 完全一样。
 
 **2) 创建实体类**
-- 在 **springMVCDemo05** 的 src 目录下创建 **pojo** 包，并在该包中创建名为 **GoodsModel** 的实体类，代码如下：
+- 在 **springMVCDemo03_2** 的 src 目录下创建 **pojo** 包，并在该包中创建名为 **GoodsModel** 的实体类，代码如下：
 
 ```java
 package pojo;
@@ -1624,8 +1624,8 @@ public class GoodsModel {
 }
 ```
 
-**3) 创建控制器类**
-- 在 **springMVCDemo05** 的 src 目录下创建 **controller** 包，并在该包中创建名为 **FormatterController** 的控制器类，代码如下：
+**3) 创建 Controller 类**
+- 在 **springMVCDemo03_2** 的 src 目录下创建 **controller** 包，并在该包中创建名为 **FormatterController** 的控制器类，代码如下：
 
 ```java
 package controller;
@@ -1645,7 +1645,7 @@ public class FormatterController {
 ```
 
 **4) 创建自定义格式化转换器类**
-- 在 **springMVCDemo05** 的 src 目录下创建 **formatter** 包，并在该包中创建名为 **MyFormatter** 的自定义格式化转换器类，代码如下：
+- 在 **springMVCDemo03_2** 的 src 目录下创建 **formatter** 包，并在该包中创建名为 **MyFormatter** 的自定义格式化转换器类，代码如下：
 
 ```java
 package formatter;
@@ -1666,7 +1666,7 @@ public class MyFormatter implements Formatter<Date> {
 ```
 
 **5) 注册格式化转换器**
-- 在 **springMVCDemo05**  的 WEB-INF 目录下创建配置文件 **springmvc-servlet.xml**，并在配置文件中注册格式化转换器，具体代码如下：
+- 在 **springMVCDemo03_2**  的 WEB-INF 目录下创建配置文件 **springmvc-servlet.xml**，并在配置文件中注册格式化转换器，具体代码如下：
 
 ```java
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1701,7 +1701,7 @@ public class MyFormatter implements Formatter<Date> {
 ```
 
 **6) 创建相关视图**
-- 在 **springMVCDemo05**  应用的 web 目录下创建信息输入页面 **index.jsp**，核心代码如下：
+- 在 **springMVCDemo03_2**  应用的 web 目录下创建信息输入页面 **index.jsp**，核心代码如下：
 
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -1742,7 +1742,7 @@ public class MyFormatter implements Formatter<Date> {
 </html>
 ```
 
-- 在 **springMVCDemo05** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **showGoods.jsp**，核心代码如下：
+- 在 **springMVCDemo03_2** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **showGoods.jsp**，核心代码如下：
 
 ```jsp
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -1761,5 +1761,158 @@ public class MyFormatter implements Formatter<Date> {
 </html>
 ```
 
+## 7.2 复杂数据绑定
+### 7.2.1 绑定数组
+- 在实际开发时，可能会遇到前端请求需要传递到后台一个或多个相同名称参数的情况（如批量删除），此种情况采用前面讲解的简单数据绑定的方式显然是不合适的。
+- 针对上述这种情况，如果将所有同种类型的请求参数封装到一个数组中，后台就可以进行绑定接收了。
 
+**1) 修改UserController**
+- 修改 **springMVCDemo03** 的 src 目录下的**UserController**，具体代码如下：
 
+```java
+package controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import pojo.Orders;
+import pojo.User;
+
+@Controller
+public class OrdersController {
+    /** 向用户页面跳转 */
+    @RequestMapping("/toUser")
+    public String toUser( ) {  return "user";    }
+
+    /** 查询订单和用户信息  */
+    @RequestMapping("/findOrdersWithUser")
+    public String findOrdersWithUser(Orders orders) {
+        Integer orderId = orders.getOrdersId();
+        User user = orders.getUser();
+        String username = user.getUsername();
+        System.out.println("orderId=" + orderId);
+        System.out.println("username=" + username);
+        return "success";
+    }
+}
+```
+
+**2) 创建user.jsp**
+- 在 **springMVCDemo03** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **user.jsp**，核心代码如下：
+
+```jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+<form action="${pageContext.request.contextPath }/deleteUsers" method="post">
+    <table width="20%" border=1>
+        <tr> <td>选择</td> <td>用户名</td> </tr>
+        <tr> <td><input name="ids" value="1" type="checkbox"></td> <td>tom</td> </tr>
+        <tr> <td><input name="ids" value="2" type="checkbox"></td> <td>jack</td> </tr>
+        <tr> <td><input name="ids" value="3" type="checkbox"></td> <td>lucy</td> </tr>
+    </table>
+    <input type="submit" value="删除"/>
+</form>
+</body>
+</html>
+```
+
+**3) 运行项目**
+- 发起请求 http://localhost:8080/SpringMVCDemo03/toUser，并在前端表单勾选所有用户，然后点击删除。
+- IDEA控制台输出结果：
+
+> 删除了id为1的用户！  
+删除了id为2的用户！  
+删除了id为3的用户！  
+
+### 7.2.2 绑定集合
+- 如果是批量修改用户操作的话，前端请求传递过来的数据可能就会批量包含各种类型的数据，如Integer，String等。
+- 针对上述这种情况，就可以使用集合数据绑定。即在包装类中定义一个包含用户信息类的集合，然后在接收方法中将参数类型定义为该包装类的集合。
+
+**1) 创建视图模型（vm或vo）**
+- 修改 **springMVCDemo03** 的 src 目录下的 **pojo** 包中创建的 **UserVO** 类，具体代码如下：
+
+```java
+package pojo;
+
+import java.util.List;
+
+public class UserVO {
+    private List<User> users;
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+}
+```
+
+**2) 修改UserController**
+- 修改 **springMVCDemo03** 的 src 目录下的**UserController**，具体代码如下：
+
+```java
+package controller;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import pojo.User;
+import pojo.UserVO;
+
+import java.util.List;
+
+@Controller
+public class UserController {
+    /** 向用户注册页面跳转 */
+    @RequestMapping("/toUserEdit")
+    public String toUserEdit( ) {  return "user_edit";    }
+
+    /** 接收批量修改用户的方法 */
+    @RequestMapping("/editUsers")
+    public String editUsers(UserVO userList) {
+        // 将所有用户数据封装到集合中
+        List<User> users = userList.getUsers();
+        // 循环输出所有用户信息
+        for (User user : users) {
+            // 如果接收的用户id不为空，则表示对该用户进行了修改
+            if(user.getId() !=null){
+                System.out.println("修改了id为"+user.getId() + "的用户名为："+user.getUsername());
+            }
+        }
+        return "success";    }
+}
+```
+
+**3) 创建user_edit.jsp**
+- 在 **springMVCDemo03** 应用的 /WEB-INF/jsp 目录下创建信息显示页面 **user_edit.jsp**，核心代码如下：
+
+```jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+<form action="${pageContext.request.contextPath }/editUsers" method="post" id='formid'>
+    <table width="30%" border=1>
+        <tr> <td>选择</td> <td>用户名</td> </tr>
+        <tr> <td> <input name="users[0].id" value="1" type="checkbox" /> </td> <td> <input name="users[0].username" value="tome" type="text" /> </td> </tr>
+        <tr> <td> <input name="users[1].id" value="2" type="checkbox" /> </td> <td> <input name="users[1].username" value="jack" type="text" /> </td> </tr>
+    </table>
+    <input type="submit" value="修改" />
+</form>
+</body>
+</html>
+```
+
+**4) 运行项目**
+- 发起请求 http://localhost:8080/SpringMVCDemo03/toUserEdit，并在前端表单勾选所有用户，然后点击修改。
+- IDEA控制台输出结果：
+
+> 修改了id为1的用户名为：tome  
+修改了id为2的用户名为：jack  
+
+# 第8章 JSON与RESTful
