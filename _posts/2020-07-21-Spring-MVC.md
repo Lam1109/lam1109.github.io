@@ -23,7 +23,7 @@ paginate: true
   * [2\.2 视图解析器](#22-%E8%A7%86%E5%9B%BE%E8%A7%A3%E6%9E%90%E5%99%A8)
 * [第3章 核心类与常用注解](#%E7%AC%AC3%E7%AB%A0-%E6%A0%B8%E5%BF%83%E7%B1%BB%E4%B8%8E%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3)
   * [3\.1 一个示例](#31-%E4%B8%80%E4%B8%AA%E7%A4%BA%E4%BE%8B)
-  * [3\.1\.1 Controller 注解类型](#311-controller-%E6%B3%A8%E8%A7%A3%E7%B1%BB%E5%9E%8B)
+    * [3\.1\.1 Controller 注解类型](#311-controller-%E6%B3%A8%E8%A7%A3%E7%B1%BB%E5%9E%8B)
     * [3\.1\.2 RequestMapping 注解类型](#312-requestmapping-%E6%B3%A8%E8%A7%A3%E7%B1%BB%E5%9E%8B)
       * [3\.1\.2\.1 方法级别注解](#3121-%E6%96%B9%E6%B3%95%E7%BA%A7%E5%88%AB%E6%B3%A8%E8%A7%A3)
       * [3\.1\.2\.2 类级别注解](#3122-%E7%B1%BB%E7%BA%A7%E5%88%AB%E6%B3%A8%E8%A7%A3)
@@ -75,7 +75,7 @@ paginate: true
   * [9\.3 拦截器的执行流程](#93-%E6%8B%A6%E6%88%AA%E5%99%A8%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B)
     * [9\.3\.1 单个拦截器的执行流程](#931-%E5%8D%95%E4%B8%AA%E6%8B%A6%E6%88%AA%E5%99%A8%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B)
     * [9\.3\.2 多个拦截器的执行流程](#932-%E5%A4%9A%E4%B8%AA%E6%8B%A6%E6%88%AA%E5%99%A8%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B)
-  * [8\.4 拦截器实现用户登录权限验证案例](#84-%E6%8B%A6%E6%88%AA%E5%99%A8%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E6%9D%83%E9%99%90%E9%AA%8C%E8%AF%81%E6%A1%88%E4%BE%8B)
+  * [9\.4 拦截器实现用户登录权限验证案例](#84-%E6%8B%A6%E6%88%AA%E5%99%A8%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E6%9D%83%E9%99%90%E9%AA%8C%E8%AF%81%E6%A1%88%E4%BE%8B)
 * [第10章 文件的上传与下载](#%E7%AC%AC10%E7%AB%A0-%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%8A%E4%BC%A0%E4%B8%8E%E4%B8%8B%E8%BD%BD)
   * [10\.1 文件上传](#101-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0)
     * [10\.1\.1 单文件上传](#1011-%E5%8D%95%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0)
@@ -301,7 +301,7 @@ Register
 
 # 第3章 核心类与常用注解
 ## 3.1 一个示例
-## 3.1.1 Controller 注解类型
+### 3.1.1 Controller 注解类型
 - 在 Spring MVC 中使用 org.springframework.stereotype.Controller 注解类型声明某类的实例是一个控制器。
 
 **1) 创建项目**
@@ -2402,7 +2402,7 @@ Interceptor1 postHandle 方法执行
 Interceptor2 afterCompletion 方法执行  
 Interceptor1 afterCompletion 方法执行  
 
-## 8.4 拦截器实现用户登录权限验证案例
+## 9.4 拦截器实现用户登录权限验证案例
 
 ![image](/assets/img/post_img/LoginExample.png)
 
