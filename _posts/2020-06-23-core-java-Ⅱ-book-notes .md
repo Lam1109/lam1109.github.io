@@ -9,7 +9,7 @@ optimized_image: /assets/img/post_img/java2.png
 category: java
 tags:
   - java
-  - dvanced features
+  - advanced features
 author: Lam
 ---
 
