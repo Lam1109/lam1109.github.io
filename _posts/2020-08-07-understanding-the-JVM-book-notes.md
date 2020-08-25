@@ -1537,3 +1537,125 @@ Constant pool:
 ![image](/assets/img/post_img/ClassWinHex6.png)
 
 > 如图，第一个u2类型的数据（即计数器容量）的值为0x0002，代表集合中有两个方法，这两个方法为编译器添加的实例构造器&lt;init&gt;和源码中定义的方法inc()。第一个方法的访问标志值为0x0001，也就是只有ACC_PUBLIC标志为真，名称索引值为0x0005，对应常量池中“&lt;init&gt;”，描述索引值为0x0006，对应常量池中“()V”，属性表计数器attributes_count的值为0x0001，表示此方法的属性表集合有1项属性，属性名称的索引值为0x000D（十进制的13），对应常量池中“Code”，说明此属性是方法的字节码描述。
+
+- 如果父类方法在子类中没有被重写（Override），方法表集合中就不会出现来自父类的方法信息。但同样地，有可能会出现由编译器自动添加的方法，最常见的便是类构造器“&lt;clinit&gt;()”方法和实例构造器“&lt;init&gt;()”方法。
+
+### 6.3.7 属性表集合
+- **属性表**（attribute_info）在前面的讲解之中已经出现过数次，Class文件、字段表、方法表都可以携带自己的属性表集合，以描述某些场景专有的信息。
+- 属性表结构：
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>名称</th>
+      <th>数量</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>u2</td>
+      <td>attribute_name_index</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>u4</td>
+      <td>attribute_length</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>u1</td>
+      <td>info</td>
+      <td>attribute_length</td>
+    </tr>
+</table>
+
+## 6.4 字节码指令简介
+- Java虚拟机的指令由一个字节长度的、代表着某种特定操作含义的数字（称为**操作码**，Opcode）以及跟随其后的零至多个代表此操作所需的参数（称为**操作数**，Operand）构成。
+- 字节码指令集是一个具有鲜明特点、优势和劣势均很突出的指令集架构，由于限制了Java虚拟机操作码的长度为一个字节（即0~255），这意味着指令集的操作码总数不能够超过256条。
+
+### 6.4.1 字节码与数据类型
+- 在Java虚拟机的指令集中，大多数指令都包含其操作所对应的数据类型信息。
+
+> 举个例子，iload指令用于从局部变量表中加载int型的数据到操作数栈中，而fload指令加载的则是float类型的数据。
+
+### 6.4.2 加载和存储指令
+- 加载和存储指令用于将数据在栈帧中的**局部变量表**和**操作数栈**之间来会传输：
+
+> 1. 将一个局部变量加载到操作栈：iload、iload_&lt;n&gt;、lload、lload_&lt;n&gt;、fload、fload_&lt;n&gt;、dload、dload_&lt;n&gt;、aload、aload_&lt;n&gt;  
+> 2. 将一个数值从操作数栈存储到局部变量表：istore、istore_&lt;n&gt;...
+> 3. 将一个常量加载到操作数栈：bipush、sipush、ldc、ldc_w、ldc2_w、aconst_null、iconst_ml、iconst__&lt;i&gt;、lconst__&lt;l&gt;、fconst__&lt;f&gt;、dconst_&lt;d&gt;
+> 4. 扩充局部变量表的访问索引的指令：wide
+>> 尖括号结尾的指令代表一组指令（例如iload_&lt;n&gt;，代表iload_0、iload_1、iload_2和iload_3这几条指令）。
+
+### 6.4.3 运算指令
+- 算术指令用于对**操作数栈**上的两个值进行某种特定运算，并把结果重新存入到操作数栈顶。
+- 大体上运算指令可以分为两种：对整型数据进行运算的指令和对浮点型数据进行运算的指令。
+
+> 1. 加法指令：iadd、ladd、fadd、dadd
+> 2. 减法指令：isub...
+> 3. 乘法指令：imul...
+> 4. 除法指令：idiv...
+> 5. 求余指令：irem...
+> 6. 取反指令：ineg...
+> 7. 位移指令：ishl、ishr、iushr、lshl、lshr、lushr
+> 8. 按位或指令：ior、lor
+> 9. 按位与指令：iand、land
+> 10. 按位异或指令：ixor、lxor
+> 11. 局部变量自增指令：iinc
+> 12. 比较指令：dcmpg、dcmpl、fcmpg、fcmpl、lcmp
+
+### 6.4.4 类型转换指令
+- 类型转换指令可以将两种不同的数值类型相互转换，这些转换操作一般用于实现用户代码中的显示类型转换操作。
+- Java虚拟机直接支持以下数值类型的宽化类型转换：
+
+> 1. int类型到long、float或者double类型
+> 2. long类型到float、double类型
+> 3. float类型到double类型
+
+### 6.4.5 对象创建与访问指令
+- 对象创建后，就可以通过对象访问指令获取对象实例或者数组实例中的字段或者数组元素：
+
+> 1. 创建类实例的指令：new
+> 2. 创建数组的指令：nwearray、anewarray、multianewarray
+> 3. 访问类字段（static字段，或者称为类变量）和实例字段（非static字段，或者称为实例变量）的指令：getfield、putfield、getstatic、putstatic
+> 4. 把一个数组元素加载到操作数栈的指令：baload、caload、saload、iaload、laload、faload、daload、aaload
+> 5. 将一个操作数栈的值储存到数组元素中的指令：bastore、castore、sastore、iastore、fastore、dastore、aastore
+> 6. 取数组长度的指令：arraylength 
+> 7. 检查类实例类型的指令：instanceof、checkcast
+
+### 6.4.6 操作数栈管理指令
+- Java虚拟机提供了一些用于直接操作操作数栈的指令：
+
+> 1. 将操作数栈的栈顶一个或两个元素出栈：pop、pop2
+> 2. 复制栈顶一个或两个数值并将复制值或双份的复制值重新压入栈顶：dup、dup2、dup_x1、dup2_x1、dup_x2、dup2_x2
+> 3. 将栈最顶端的两个数值互换：swap
+
+### 6.4.7 控制转移指令
+- 控制转移指令可以让Java虚拟机有条件或无条件地从指定位置指令的下一条指令继续执行程序，从概念模型上理解，可以认为控制指令就是在有条件或无条件地修改PC寄存器的值。
+
+> 1. 条件分支：ifeq、iflt、ifle、ifne、ifgt、ifge、ifnull、ifnonnull、if_icmpeq、if_icmpne、if_icmplt、if_icmpgt、if_icmple、if_icmpge、if_acmpeq和if_acmpne
+> 2. 复合条件分支：tableswith、lookupswitch
+> 3. 无条件分支：goto、goto_w、jsr、jsr_w、ret
+
+### 6.4.8 方法调用和返回指令
+- 方法调用指令：
+
+> 1. invokevirtual指令：用于调用对象的实例方法，根据对象的实际类型进行分派（虚方法分派），这也是Java语言中最常见的方法分派方式。
+> 2. invokeinterface指令：用于调用接口方法，它会在运行时搜索一个实现了这个接口方法的对象，找出适合的方法进行调用。
+> 3. invokespecial指令：用于调用一些需要特殊处理的实例方法，包括实例初始化方法、私有方法和父类方法。
+> 4. invokestatic指令：用于调用类方法（static方法）。
+> 5. invokedynamic指令：用于在运行时动态解析出调用点限定符所引用的方法。并执行该方法。  
+>> 前4条指令的分派逻辑都固化在Java虚拟机内部，用户无法改变，而第5条指令的分派逻辑是由用户所设定的引导方法决定的。
+
+- 返回指令：
+
+> 方法返回指令是根据返回值的类型区分的，包括ireturn（当返回值是boolean、byte、char、short和int类型时使用）、lreturn、freturn、dreturn和areturn，另外还有一条return指令供声明为void的方法、实例初始化方法、类和接口的类初始化方法使用。
+
+### 6.4.9 异常处理指令
+- 在Java程序中显示抛出异常的操作（throw语句）都由athrow指令来实现，除了用throw语句显示抛出异常的情况之外，《Java虚拟机规范》还规定了许多运行时异常会在其他Java虚拟机指令检测到异常状况时自动抛出。
+- 在Java虚拟机中，处理异常（catch语句）不是由字节码指令来实现的（很久之前用jsr和ret指令，现在不用了），而是采用异常表来完成。
+
+### 6.4.10 同步指令
+- Java虚拟机可以支持方法级的同步和方法内部一段指令序列的同步，这两种同步结构都是使用**管程**（Monitor，更常见的是直接将它称为“锁”）来实现的。
+
