@@ -983,5 +983,557 @@ private static final int _1MB = 1024 * 1024;
 - 每个Class文件的头4个字节被称为**魔数**（Magic Number），它的唯一作用是确定这个文件是否为一个能被虚拟机接受的Class文件。
 - Class文件的魔术取得很有“浪漫气息”，值为**0xCAFEBABE**。
 - 紧接着魔数的4个字节存储的是Class文件的**版本号**：第5和第6个字节是**次版本号**（Minor Version），第7和第8个字节是**主版本号**（Major Version）。
+- Java的版本号是从**45**开始的，JDK 1.1之后的每个JDK大版本发布主版本号向上加1，如JDK 13对应57.0。
+- 具体例子
 
-==111== 222 
+```java
+// TestClass.java
+package org.fenixsoft.clazz;
+
+public class 
+{
+
+	private int m;
+	
+	public int inc() {
+		return m + 5;
+	}
+}
+```
+
+> 编译上述TestClass.java文件生成TestClass.class，并使用十六进制编辑器WinHex打开Class文件。
+
+![image](/assets/img/post_img/ClassWinHex1.png)
+
+> 如图，开头4个字节的十六进制表示是0xCAFEBABE，代表次版本号的第5个和第6个字节值为0x0000，而主版本号的值为0x0039，也即是十进制的57，代表该JDK版本号是13。
+
+### 6.3.2 常量池
+- 紧接着主、次版本号之后的是**常量池入口**，常量池可以比喻为Class文件里的资源仓库，它是Class文件结构中与其他项目关联最多的数据，通常也是占用Class文件空间最大的数据项目之一，另外，它还是在Class文件中第一个出现的表类型数据项目。
+- 由于常量池中常量的数量是不固定的，所以在常量池入口需要放置一项u2类型的数据，代表**常量池容量计数值**（constant_pool_count）。**这个容量计数是从1而不是从0开始的**。
+
+![image](/assets/img/post_img/ClassWinHex2.png)
+
+> 如图，常量池容量为0x0013，即十进制的19，这就代表常量池中有18项常量，索引值范围为1~18。
+
+- 常量池中主要存放两大类常量：**字面量**（Literal）和**符号引用**（Symbolic References）。字面量比较接近于Java语言层面的常量概念，如文本字符串、被声明为final的常量值等。而符号引用则属于编译原理方面的概念，主要包括以下几类常量：
+
+> 1. 被模块到处或者开放的包
+> 2. 类和接口的全限定名
+> 3. 字段的名称和描述符
+> 4. 方法的名称和描述符
+> 5. 方法句柄和方法类型
+> 6. 动态调用点和动态常量
+
+- Java代码在进行Javac编译的时候，并不像C和C++那样有“连接”这一步骤，而是在虚拟机加载Class文件的时候进行动态连接。也就是说，在Class文件中不会保存各个方法、字段最终在内存中的布局信息，这些字段、方法的符号引用不经过虚拟机在运行期转换的话是无法得到真正的内存入口地址，也就无法直接被虚拟机使用的。
+- 常量池中每一项常量都有一个表，截至JDK 13，常量表中有有17中不同的常量。
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>标志</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>CONSTANT_Utf8_info</td>
+      <td>1</td>
+      <td>UTF-8编码的字符串</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_Integer_info</td>
+      <td>3</td>
+      <td>整型字面量</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_Float_info</td>
+      <td>4</td>
+      <td>浮点型字面量</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_Long_info</td>
+      <td>5</td>
+      <td>长整型字面量</td>
+    </tr>
+        <tr>
+      <td>CONSTANT_Double_info</td>
+      <td>6</td>
+      <td>双精度浮点型字面量</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_Class_info</td>
+      <td>7</td>
+      <td>类或接口的符号引用</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_String_info</td>
+      <td>8</td>
+      <td>字符串类型字面量</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_Filedref_info</td>
+      <td>9</td>
+      <td>字段的符号引用</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_Methodref_info</td>
+      <td>10</td>
+      <td>类中方法的符号引用</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_InterfaceMethodref_info</td>
+      <td>11</td>
+      <td>接口中方法的符号引用</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_NameAndType_info</td>
+      <td>12</td>
+      <td>字段或方法的部分符号引用</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_MethodHandle_info</td>
+      <td>15</td>
+      <td>表示方法句柄</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_MethodType_info</td>
+      <td>16</td>
+      <td>表示方法类型</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_Dynamic_info</td>
+      <td>17</td>
+      <td>表示一个动态计算常量</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_InvokeDynamic_info</td>
+      <td>18</td>
+      <td>表示一个动态方法调用点</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_Module_info</td>
+      <td>19</td>
+      <td>表示一个模块</td>
+    </tr>
+    <tr>
+      <td>CONSTANT_Package_info</td>
+      <td>20</td>
+      <td>表示一个模块中开放或者导出的包</td>
+    </tr>
+  </tbody>
+</table>
+
+- 使用javap命令输出常量表
+
+```java
+javap -verbose TestClass  
+Compiled from "TestClass.java"  
+public class org.fenixsoft.clazz.TestClass  
+  minor version: 0  
+  major version: 57  
+  flags: (0x0021) ACC_PUBLIC, ACC_SUPER  
+  this_class: #8                          // org/fenixsoft/clazz/TestClass  
+  super_class: #2                         // java/lang/Object  
+  interfaces: 0, fields: 1, methods: 2, attributes: 1  
+Constant pool:  
+   #1 = Methodref          #2.#3          // java/lang/Object."<init>":()V  
+   #2 = Class              #4             // java/lang/Object  
+   #3 = NameAndType        #5:#6          // "<init>":()V  
+   #4 = Utf8               java/lang/Object  
+   #5 = Utf8               <init>  
+   #6 = Utf8               ()V  
+   #7 = Fieldref           #8.#9          // org/fenixsoft/clazz/TestClass.m:I  
+   #8 = Class              #10            // org/fenixsoft/clazz/TestClass  
+   #9 = NameAndType        #11:#12        // m:I  
+  #10 = Utf8               org/fenixsoft/clazz/TestClass  
+  #11 = Utf8               m  
+  #12 = Utf8               I  
+  #13 = Utf8               Code  
+  #14 = Utf8               LineNumberTable  
+  #15 = Utf8               inc  
+  #16 = Utf8               ()I  
+  #17 = Utf8               SourceFile  
+  #18 = Utf8               TestClass.java  
+```
+
+### 6.3.3 访问标志
+- 在常量池结束之后，紧接着的2个字节代表**访问标志**（access_flags），这个标志用于识别一些类或者接口层次的访问信息，包括：这个Class是类还是接口；是否定义为public类型；是否定义为abstract类型；如果是类的话，是否被声明为final；等等。
+
+<table>
+  <thead>
+    <tr>
+      <th>标志名称</th>
+      <th>标志值</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>ACC_PUBLIC</td>
+      <td>0x0001</td>
+      <td>是否为public类型</td>
+    </tr>
+    <tr>
+      <td>ACC_FINAL</td>
+      <td>0x0010</td>
+      <td>是否被声明为fianl，只有类可设置</td>
+    </tr>
+    <tr>
+      <td>ACC_SUPER</td>
+      <td>0x0020</td>
+      <td>是否允许使用invokespecial字节码指令的新语义，<br>JDK 1.0.2之后都为真</td>
+    </tr>
+    <tr>
+      <td>ACC_INTERFACE</td>
+      <td>0x0200</td>
+      <td>标识这是一个接口</td>
+    </tr>
+        <tr>
+      <td>ACC_ABSTRACT</td>
+      <td>0x0400</td>
+      <td>是否为abstract类型，<br>接口和抽象类为真，其他为假</td>
+    </tr>
+    <tr>
+      <td>ACC_SYNTHETIC</td>
+      <td>0x1000</td>
+      <td>标识这个类并非由用户代码生成</td>
+    </tr>
+    <tr>
+      <td>ACC_ANNOTATION</td>
+      <td>0x2000</td>
+      <td>标识这是一个注解</td>
+    </tr>
+    <tr>
+      <td>ACC_ENUM</td>
+      <td>0x4000</td>
+      <td>标识这是一个枚举</td>
+    </tr>
+    <tr>
+      <td>ACC_MODULE</td>
+      <td>0x8000</td>
+      <td>标识这是一个模块</td>
+    </tr>
+  </tbody>
+</table>
+
+- access_flags中一共有16个标志位可以使用，当前之定义了其中9个，没有使用到的标识位要求一律为0。
+
+![image](/assets/img/post_img/ClassWinHex3.png)
+
+> 如图，前例中，TestClass是一个普通的Java类，它的ACC_PUBLIC、ACC_SUPER标识位为真，而其他7个标识位为假，因此它的access_flags的值为：0x0001|0x020 = 0x0021。即图中0x0021。
+
+### 6.3.4 类索引、父类索引与接口索引集合
+- **类索引**（this_class）和**父类索引**（super_class）都是一个u2类型的数据，而**接口索引集合**（interfaces）是一组u2类型的数据的集合，Class文件由这三项数据来确定该类型的继承关系。
+- 类索引用于确定这个类的全限定名，父类索引用于确定这个类的父类的全限定名。
+
+> 除了java.lang.Object之外，所有的Java类都有父类，因此除了java.lang.Object外，所有Java类的父类索引都不为0。
+
+- 接口索引集合就用来描述这个类实现了哪些接口，这些被实现的接口将按implements关键字（若该Class文件表示的是一个接口，则应当是extends关键字）后的接口顺序从左到右排列在接口索引集合中。
+- 类索引、父类索引各用两个u2类型的索引值表示。而接口索引集合，入口的第一项u2数据类型为接口计数器（interfaces_count），表示索引表的容量。
+
+![image](/assets/img/post_img/ClassWinHex4.png)
+
+> 如图，0x0008、0x0002、0x0000分别表示类索引为8，父类索引为2，接口索引集合大小为0。对照前面javap命令计算出来的常量池，可以找到对应的类和父类的常量。
+
+```java
+  #2 = Class              #4             // java/lang/Object
+  #8 = Class              #10            // org/fenixsoft/clazz/TestClass
+```
+
+### 6.3.5 字段表集合
+- **字段表**（field_info）用于描述接口或者类中声明的变量。
+- Java语言中的“字段”包括类级变量以及实例级变量，但不包括在方法内部声明的局部变量。
+- 字段表结构：
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>名称</th>
+      <th>数量</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>u2</td>
+      <td>access_flags</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>name_index</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>descriptor_index</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>attributes_count</td>
+      <td>1</td>
+    </tr>
+        <tr>
+      <td>attribute_info</td>
+      <td>attributes</td>
+      <td>attributes_count</td>
+    </tr>
+  </tbody>
+</table>
+
+- 字段访问标识：
+
+<table>
+  <thead>
+    <tr>
+      <th>标志名称</th>
+      <th>标志值</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>ACC_PUBLIC</td>
+      <td>0x0001</td>
+      <td>字段是否public</td>
+    </tr>
+    <tr>
+      <td>ACC_PRIVATE</td>
+      <td>0x0002</td>
+      <td>字段是否private</td>
+    </tr>
+    <tr>
+      <td>ACC_PROTECTED</td>
+      <td>0x0004</td>
+      <td>字段是否protected</td>
+    </tr>
+    <tr>
+      <td>ACC_STATIC</td>
+      <td>0x0008</td>
+      <td>字段是否static</td>
+    </tr>
+        <tr>
+      <td>ACC_FINAL</td>
+      <td>0x0010</td>
+      <td>字段是否final</td>
+    </tr>
+    <tr>
+      <td>ACC_VOLATILE</td>
+      <td>0x0040</td>
+      <td>字段是否volatile</td>
+    </tr>
+    <tr>
+      <td>ACC_TRANSIENT</td>
+      <td>0x0080</td>
+      <td>字段是否transient</td>
+    </tr>
+    <tr>
+      <td>ACC_SYNTHETIC</td>
+      <td>0x1000</td>
+      <td>字段是否由编译器自动产生</td>
+    </tr>
+    <tr>
+      <td>ACC_ENUM</td>
+      <td>0x4000</td>
+      <td>字段是否enum</td>
+    </tr>
+  </tbody>
+</table>
+
+- **全限定名**：“org/fenixsoft/clazz/TestClass”即是这个类的全限定名。
+- **简单名称**：即是指没有类型和参数修饰的方法或者字段名称，这个类中的inc()方法和m字段的简单名称分别就是“inc”和“m”。
+- **描述符**的作用是描述字段的数据类型、方法的参数列表（包括数量、类型以及顺序）和返回值。
+- 基本数据类型以及代表无返回值的void类型都用一个大写字母来表示，而对象类型则用字符L加对象的全限定名来表示。
+
+<table>
+  <thead>
+    <tr>
+      <th>标识字符</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>B</td>
+      <td>基本类型byte</td>
+    </tr>
+    <tr>
+      <td>C</td>
+      <td>基本类型char</td>
+    </tr>
+    <tr>
+      <td>D</td>
+      <td>基本类型double</td>
+    </tr>
+    <tr>
+      <td>F</td>
+      <td>基本类型float</td>
+    </tr>
+        <tr>
+      <td>I</td>
+      <td>基本类型int</td>
+    </tr>
+    <tr>
+      <td>J</td>
+      <td>基本类型long</td>
+    </tr>
+    <tr>
+      <td>S</td>
+      <td>基本类型short</td>
+    </tr>
+    <tr>
+      <td>Z</td>
+      <td>基本类型boolean</td>
+    </tr>
+    <tr>
+      <td>V</td>
+      <td>特殊类型void</td>
+    </tr>
+    <tr>
+      <td>L</td>
+      <td>对象类型，如Ljava/lang/Object;</td>
+    </tr>
+  </tbody>
+</table>
+
+- 对于数组类型，每一维度将使用一个前置的“[”字符来描述。
+
+> 如一个定义为“java.lang.String[][]”类型的二维数组将被记录城“[[Ljava/lang/String;”，一个整型数组“int[]”将被记录成“[I”。
+
+- 用描述符来描述方法时，按照先参数列表、后返回值的顺序描述，参数列表按照参数的严格顺序放在一组小括号“()”之内。
+
+> 如方法void inc()的描述符为“()V”，  
+方法java.lang.String toString()的描述符为“()Ljava/lang/String;”，  
+方法int indexOf(char[] source, int sourceOffset, int sourceCount, char[] target, int targetOffset, int targetCount, int fromIndex)的描述符为“([CII[CII)I”。
+
+![image](/assets/img/post_img/ClassWinHex5.png)
+
+> 如图，第一个u2类型的数据为容量计数器fields_count，其值为0x0001，说明这个类只有一个字段表数据。接下来是access_flags标志，值为0x0002，代表private修饰符的ACC_PRIVATE标志位为真。接下来是代表字段名称的name_index，值为0x000B（十进制的11）对应m，接下来是代表字段描述的descriptor_index，值为0x000C（十进制的12）对应I。根据以上信息，可以推断出原代码定义的字段为“private int m”。
+
+```java
+  #11 = Utf8               m
+  #12 = Utf8               I
+```
+
+### 6.3.6 方法表集合
+
+- 方法表结构：
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>名称</th>
+      <th>数量</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>u2</td>
+      <td>access_flags</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>name_index</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>descriptor_index</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>attributes_count</td>
+      <td>1</td>
+    </tr>
+        <tr>
+      <td>attribute_info</td>
+      <td>attributes</td>
+      <td>attributes_count</td>
+    </tr>
+  </tbody>
+</table>
+
+- 方法访问标志：
+
+<table>
+  <thead>
+    <tr>
+      <th>标志名称</th>
+      <th>标志值</th>
+      <th>含义</th>
+    </tr>
+  </thead>
+    <tbody>
+    <tr>
+      <td>ACC_PUBLIC</td>
+      <td>0x0001</td>
+      <td>方法是否为public</td>
+    </tr>
+    <tr>
+      <td>ACC_PRIVATE</td>
+      <td>0x0002</td>
+      <td>方法是否为private</td>
+    </tr>
+    <tr>
+      <td>ACC_PROTECTED</td>
+      <td>0x0004</td>
+      <td>方法是否为protected</td>
+    </tr>
+    <tr>
+      <td>ACC_STATIC</td>
+      <td>0x0008</td>
+      <td>方法是否为static</td>
+    </tr>
+    <tr>
+      <td>ACC_FINAL</td>
+      <td>0x0010</td>
+      <td>方法是否为final</td>
+    </tr>
+    <tr>
+      <td>ACC_SYNCHRONIZED</td>
+      <td>0x0020</td>
+      <td>方法是否为synchronized</td>
+    </tr>
+    <tr>
+      <td>ACC_BRIDGE</td>
+      <td>0x0040</td>
+      <td>方法是不是由编译器产生的桥接方法</td>
+    </tr>
+    <tr>
+      <td>ACC_VARARGS</td>
+      <td>0x0080</td>
+      <td>方法是否接受不定参数</td>
+    </tr>
+    <tr>
+      <td>ACC_NATIVE</td>
+      <td>0x0100</td>
+      <td>方法是否为native</td>
+    </tr>
+    <tr>
+      <td>ACC_ABSTRACT</td>
+      <td>0x0400</td>
+      <td>方法是否为abstract</td>
+    </tr>
+    <tr>
+      <td>ACC_STRICT</td>
+      <td>0x0800</td>
+      <td>方法是否为strictfp</td>
+    </tr>
+    <tr>
+      <td>ACC_SYNTHETIC</td>
+      <td>0x1000</td>
+      <td>方法是否由编译器自动产生</td>
+    </tr>
+  </tbody>
+</table>
+
+- 方法里的Java代码，经过Javac编译器编译成字节码指令之后，存放在方法属性表集合中一个名为“Code”的属性里面，属性表作为Class文件格式中最具扩展性的一种数据项目。
+
+![image](/assets/img/post_img/ClassWinHex6.png)
+
+> 如图，第一个u2类型的数据（即计数器容量）的值为0x0002，代表集合中有两个方法，这两个方法为编译器添加的实例构造器<init>和源码中定义的方法inc()。第一个方法的访问标志值为0x0001，也就是只有ACC_PUBLIC标志为真，名称索引值为0x0005，对应常量池中“<init>”，描述索引值为0x0006，对应常量池中“()V”，属性表计数器attributes_count的值为0x0001，表示此方法的属性表集合有1项属性，属性名称的索引值为0x000D（十进制的13），对应常量池中“Code”，说明此属性是方法的字节码描述。
