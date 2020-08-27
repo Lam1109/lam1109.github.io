@@ -1850,4 +1850,59 @@ public class Test {
     static int i =1;
 }
 ```
+> 2. &lt;clinit&gt;()方法与类的构造函数（即在虚拟机视角中的实例构造器&lt;init&gt;()方法）不同，它不需要显示地调用父类构造器，Java虚拟机会保证在子类的&lt;clinit&gt;()方法执行前，父类的&lt;clinit&gt;()方法已经执行完毕。因此在Java虚拟机中第一个被执行的&lt;clinit&gt;()方法的类型肯定是java.lang.Object。
+> 3. 由于父类的&lt;clinit&gt;()方法先执行，也就意味着父类中定义的静态语句块要优先于子类的变量赋值操作。
+```java
+public class Test {
+    static class Parent {
+        public static int A = 1;
+        static {
+            A = 2;
+        }
+    }
+    static class Sub extends Parent {
+        public static int B = A;
+    }
+    public static void main(String[] args) {
+        System.out.println(Sub.B);
+        // 输出 2
+    }
+}
+```
+> 4. &lt;clinit&gt;()方法对于类或接口来说并不是必须的，如果一个类中没有静态语句块，也没有对变量的赋值操作，那么编译器可以不为这个类生成&lt;clinit&gt;()方法。
+> 5. 接口中不能使用静态语句块，但仍然有变量初始化的赋值操作，因此接口与类一样都会生成&lt;clinit&gt;()方法。但接口与类不同的是，执行接口的&lt;clinit&gt;()方法不需要先执行父接口的&lt;clinit&gt;()方法，因为只有当父接口中定义的变量被使用时，父接口才会被初始化。此外，接口的实现类在初始化时也一样不会执行接口的&lt;clinit&gt;()方法。
+> 6. Java虚拟机必须保证一个类的&lt;clinit&gt;()方法在多线程环境中被正确地加锁同步，如果多个线程同时去初始化一个类，那么只会有其中一个线程去执行这个类的&lt;clinit&gt;()方法，其他线程都需要阻塞等待，直到活动线程执行完毕&lt;clinit&gt;()方法。如果在一个类的&lt;clinit&gt;()方法中有耗时很长的操作，那就可能造成多个进程阻塞，在实际应用中这种阻塞往往是很隐蔽的。
+```java
+public class Test {
+    static class DeadLoopClass {
+        static {
+            if (true) {
+                System.out.println(Thread.currentThread() + "init DeadLoopClass");
+                while (true) {
+                }
+            }
+        }
+    }
+    public static void main(String[] args) {
+        Runnable script = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(Thread.currentThread() + "start");
+                DeadLoopClass dlc = new DeadLoopClass();
+                System.out.println(Thread.currentThread() + "run over");
+            }
+        };
+        Thread thread1 = new Thread(script);
+        Thread thread2 = new Thread(script);
+        thread1.start();
+        thread2.start();
+    }
+}
+/** 输出结果
+ * Thread[Thread-1,5,main]start
+ * Thread[Thread-0,5,main]start
+ * Thread[Thread-1,5,main]init DeadLoopClass
+ * 一条线程死循环模拟长时间操作，另外一条线程阻塞等待
+ **/
+```
 
