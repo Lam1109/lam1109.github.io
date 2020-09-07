@@ -370,7 +370,7 @@ author: Lam
 
 - **图片演示**
 
-![image](/assets/img/post_img/BucketSort.gif)
+![image](/assets/img/post_img/BucketSort.png)
 
 - **代码实现**
 
